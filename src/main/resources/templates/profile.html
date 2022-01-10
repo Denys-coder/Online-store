@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="www.thymeleaf.org/extras/spring-security" lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Profile</title>
+    </head>
+    <body>
+        
+        <b>Your profile</b>
+        <div th:object="${user}">
+            Name: <span th:text="*{name}"></span><br>
+            Surname: <span th:text="*{surname}"></span><br>
+            Email: <span th:text="*{email}"></span><br>
+            Telephone number: <span th:text="*{telephoneNumber}"></span><br>
+            Country: <span th:text="*{country}"></span><br>
+            Address: <span th:text="*{address}"></span><br>
+        </div>
+        
+        <a href="">change data</a><br>
+        
+        <a href="">change password</a><br>
+        
+    </body>
+</html>

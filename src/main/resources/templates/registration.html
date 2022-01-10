@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Registration</title>
+    </head>
+    <body>
+        <form action="#" th:action="@{/registration}" th:object="${user}" method="post">
+            
+            Name:<input type="text" th:field="*{name}" placeholder="Enter name"/>
+            <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name error</span>
+            <br>
+            
+            Surname:<input type="text" th:field="*{surname}" placeholder="Enter surname"/>
+            <span th:if="${#fields.hasErrors('surname')}" th:errors="*{surname}">Surname error</span>
+            <br>
+    
+            Email:<input type="text" th:field="*{email}" placeholder="Enter email"/>
+            <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email error</span>
+            <br>
+            
+            Password:<input type="password" th:field="*{password}" placeholder="Enter password"/>
+            <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password error</span>
+            <br>
+    
+            Repeated password:<input type="password" th:field="*{repeatedPassword}" placeholder="Repeat password"/>
+            <span th:if="${#fields.hasErrors('repeatedPassword')}" th:errors="*{repeatedPassword}">Repeated password error</span>
+            <br>
+    
+            Telephone number:<input type="text" th:field="*{telephoneNumber}" placeholder="Enter telephone number"/>
+            <span th:if="${#fields.hasErrors('telephoneNumber')}" th:errors="*{telephoneNumber}">Telephone number error</span>
+            <br>
+    
+            Country:<input type="text" th:field="*{country}" placeholder="Enter country"/>
+            <span th:if="${#fields.hasErrors('country')}" th:errors="*{country}">Country error</span>
+            <br>
+    
+            Address:<input type="text" th:field="*{address}" placeholder="Enter address"/>
+            <span th:if="${#fields.hasErrors('address')}" th:errors="*{address}">Address error</span>
+            <br>
+            
+            <button type="submit">Submit</button>
+            
+        </form>
+    </body>
+</html>

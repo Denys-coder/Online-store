@@ -11,6 +11,11 @@
         <script src="/js/limitNumberOfUploadedFiles.js"></script>
     </head>
     <body>
+        
+        <a href="/"><button>Main page</button></a>
+        <br>
+        <br>
+        
         <form th:action="@{/admin/add-product}" method="post" enctype="multipart/form-data">
             
             <!-- product name input -->
@@ -58,5 +63,6 @@
             <input id="send" type="submit" value="Send">
         
         </form>
+        
     </body>
 </html>

@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Registration</title>
+        <title>Change profile data</title>
     </head>
     <body>
     
@@ -10,9 +10,9 @@
         <br>
         <br>
         
-        <b>Enter your data:</b>
-        <form th:action="@{/registration}" th:object="${user}" method="post">
-            
+        <b>Change data you want to update:</b>
+        <form th:action="@{/profile/change-profile-data}" th:object="${user}" method="post">
+    
             <label for="name">Name:</label>
             <input id="name" type="text" th:field="*{name}" placeholder="Enter name"/>
             <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name error</span>
@@ -26,16 +26,6 @@
             <label for="email">Email:</label>
             <input id="email" type="text" th:field="*{email}" placeholder="Enter email"/>
             <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email error</span>
-            <br>
-    
-            <label for="password">Password:</label>
-            <input id="password" type="password" th:field="*{password}" placeholder="Enter password"/>
-            <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password error</span>
-            <br>
-    
-            <label for="repeated-password">Repeated password:</label>
-            <input id="repeated-password" type="password" th:field="*{repeatedPassword}" placeholder="Repeat password"/>
-            <span th:if="${#fields.hasErrors('repeatedPassword')}" th:errors="*{repeatedPassword}">Repeated password error</span>
             <br>
     
             <label for="telephone-number">Telephone number:</label>
@@ -53,8 +43,9 @@
             <span th:if="${#fields.hasErrors('address')}" th:errors="*{address}">Address error</span>
             <br>
             
-            <button type="submit">Submit</button>
+            <button type="submit">Send</button>
             
         </form>
+        
     </body>
 </html>

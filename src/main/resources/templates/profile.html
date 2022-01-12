@@ -1,10 +1,14 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="www.thymeleaf.org/extras/spring-security" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
     <head>
         <meta charset="UTF-8">
         <title>Profile</title>
     </head>
     <body>
+    
+        <a href="/"><button>Main page</button></a>
+        <br>
+        <br>
         
         <b>Your profile</b>
         <div th:object="${user}">
@@ -16,9 +20,11 @@
             Address: <span th:text="*{address}"></span><br>
         </div>
         
-        <a href="">change data</a><br>
+        <a href="/profile/change-profile-data">change data</a><br>
         
-        <a href="">change password</a><br>
+        <a href="/profile/change-password">change password</a><br>
+        
+        <a href="/profile/delete-account">delete account</a><br>
         
     </body>
 </html>

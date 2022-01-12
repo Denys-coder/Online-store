@@ -32,11 +32,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter
     @Override
     protected void configure(HttpSecurity http) throws Exception
     {
-        // todo check every combination
         http
                 .authorizeRequests()
                     .antMatchers("/about").permitAll()
-                    .antMatchers("/profile").authenticated()
+                    .antMatchers("/profile/**").authenticated()
                     .antMatchers("/admin/**").hasRole("ADMIN")
                     .antMatchers("/cart/**").hasRole("USER")
                     .antMatchers("/registration").anonymous()

@@ -2,7 +2,6 @@ package Onlinestore.entity;
 
 import Onlinestore.model.OnlyDigitsConstraint;
 import Onlinestore.model.RoleNames;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,12 +11,17 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.util.List;
 
-@Entity(name = "user")
+@Entity
 @Table(name = "users")
 @NoArgsConstructor
-@AllArgsConstructor
 public class User
 {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Getter
+    @Setter
+    private int id;
+    
     @Getter
     @Setter
     @Column(nullable = false)
@@ -31,7 +35,6 @@ public class User
     @Size(min = 1, max = 30)
     private String surname;
     
-    @Id
     @Getter
     @Setter
     @Column(unique = true)
@@ -81,4 +84,18 @@ public class User
     @Setter
     @Enumerated(EnumType.STRING)
     RoleNames roleNames;
+    
+    public User(String name, String surname, String email, String password, String repeatedPassword, String telephoneNumber, String country, String address, List<Order> orders, RoleNames roleNames)
+    {
+        this.name = name;
+        this.surname = surname;
+        this.email = email;
+        this.password = password;
+        this.repeatedPassword = repeatedPassword;
+        this.telephoneNumber = telephoneNumber;
+        this.country = country;
+        this.address = address;
+        this.orders = orders;
+        this.roleNames = roleNames;
+    }
 }

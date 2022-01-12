@@ -3,7 +3,6 @@ package Onlinestore.controller;
 import Onlinestore.entity.User;
 import Onlinestore.model.RoleNames;
 import Onlinestore.repository.UserRepository;
-import Onlinestore.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -18,13 +17,11 @@ public class AuthController
 {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final UserService userService;
     
-    public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder, UserService userService)
+    public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder)
     {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.userService = userService;
     }
     
     @GetMapping("/login")
@@ -34,7 +31,7 @@ public class AuthController
     }
     
     @GetMapping("/registration")
-    public String getRegistrationPage(@ModelAttribute("user") User userForm)
+    public String getRegistrationPage(@ModelAttribute("user") User user)
     {
         return "registration";
     }
@@ -43,13 +40,13 @@ public class AuthController
     public String checkAndRegisterUser(@Valid @ModelAttribute("user") User user, BindingResult bindingResult)
     {
         // check if email already in use
-        if (!userService.isEmailUnique(user))
+        if (userRepository.existsByEmail(user.getEmail()))
         {
             bindingResult.addError(new FieldError("user", "email", "email address already in use"));
         }
         
         // check if telephoneNumber already in use
-        if (!userService.isTelephoneNumberUnique(user))
+        if (userRepository.existsByTelephoneNumber(user.getTelephoneNumber()))
         {
             bindingResult.addError(new FieldError("user", "telephoneNumber", "telephone number already in use"));
         }

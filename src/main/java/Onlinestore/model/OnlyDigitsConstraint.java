@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface OnlyDigitsConstraint
 {
-    String message() default "must contain only digits";
+    String message() default "is not a valid price";
     
     Class<?>[] groups() default {};
     

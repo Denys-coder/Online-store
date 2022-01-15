@@ -7,13 +7,13 @@ import javax.validation.ConstraintValidatorContext;
 public class OnlyDigitsValidator implements ConstraintValidator<OnlyDigitsConstraint, String>
 {
     @Override
-    public void initialize(OnlyDigitsConstraint telephoneNumberNumber)
+    public void initialize(OnlyDigitsConstraint digits)
     {
     }
     
     @Override
-    public boolean isValid(String telephoneNumber, ConstraintValidatorContext cxt)
+    public boolean isValid(String digits, ConstraintValidatorContext cxt)
     {
-        return telephoneNumber != null && telephoneNumber.matches("[0-9]+");
+        return digits != null && digits.matches("[0-9]+");
     }
 }

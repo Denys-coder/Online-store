@@ -3,17 +3,16 @@ package Onlinestore.entity;
 import Onlinestore.model.OnlyDigitsConstraint;
 import Onlinestore.model.RoleNames;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import javax.persistence.*;
 import javax.validation.constraints.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "users")
-@NoArgsConstructor
 public class User
 {
     @Id
@@ -54,7 +53,7 @@ public class User
     @Setter
     @Transient
     @NotNull
-    private String repeatedPassword = "";
+    private String repeatedPassword;
     
     @Getter
     @Setter
@@ -84,6 +83,12 @@ public class User
     @Setter
     @Enumerated(EnumType.STRING)
     RoleNames roleNames;
+    
+    public User()
+    {
+        repeatedPassword = "";
+        orders = new ArrayList<>();
+    }
     
     public User(String name, String surname, String email, String password, String repeatedPassword, String telephoneNumber, String country, String address, List<Order> orders, RoleNames roleNames)
     {

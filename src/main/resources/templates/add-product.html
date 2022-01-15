@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
     <head>
         <meta charset="UTF-8">
         <title>Add product</title>
@@ -12,46 +12,57 @@
     </head>
     <body>
         
-        <a href="/"><button>Main page</button></a>
+        <a href="/">
+            <button>Main page</button>
+        </a>
         <br>
         <br>
         
-        <form th:action="@{/admin/add-product}" method="post" enctype="multipart/form-data">
+        <form th:action="@{/admin/add-product}" method="post" enctype="multipart/form-data" th:object="${item}">
             
             <!-- product name input -->
-            <input name="header-input" type="text" placeholder="Enter product name">
+            <label for="name">Product name:</label>
+            <input name="name" id="name" type="text" th:field="*{name}" placeholder="Enter product name" required>
             <br>
             
             <!-- price input -->
-            <input name="price" type="text" placeholder="Enter price">
+            <label for="price">Price:</label>
+            <input name="price" id="price" type="text" th:field="*{price}" placeholder="Enter price" required>
             <br>
             
             <!-- amount input -->
-            <input name="amount" type="text" placeholder="Enter amount">
+            <label for="amount">Amount:</label>
+            <input name="amount" id="amount" type="text" th:field="*{amount}" placeholder="Enter amount" required>
+            <br>
+            
+            <!-- description -->
+            <label for="description">Description:</label>
+            <br>
+            <textarea name="description" id="description" th:field="*{description}" rows="8" cols="50"
+                      placeholder="Enter description"></textarea>
             <br>
             
             <!-- logo input -->
-            <label for="image-input" id="logo-input-label">Choose a logo (image)</label><br>
-            <input name="logo-input" type="file" id="logo-input" accept="image/*"
+            <label for="logo-input" id="logo-input-label">Choose a logo (image)</label>
+            <br>
+            <input name="logo" type="file" id="logo-input" accept="image/*"
                    onchange="ensureLogoIsImage(this)">
             <br>
             
             <!-- images input -->
-            <label for="image-input" id="image-label">Choose images (max is 10)</label><br>
-            <input name="image-input" type="file" id="image-input" accept="image/*"
+            <label for="image-input" id="image-label">Choose images (max is 10)</label>
+            <br>
+            <input name="images" type="file" id="image-input" accept="image/*"
                    onchange="ensureFilesAreImages(this); limitNumberOfUploadedFiles(this, 10)" multiple>
             <br>
             
             <!-- specs input -->
             Specifications:<br>
             <div id="specsForm">
-                <div>
-                    <input type="text" name="specNames" placeholder="spec name"/>
-                    <input type="text" name="specValues" placeholder="spec value"/>
-                    <button type="button" onclick="deleteRow(this)">-</button>
-                    <br>
-                </div>
+                <!-- add button inserts here rows to create specs -->
             </div>
+            
+            <!-- this button adds a new row -->
             <button type="button" onclick="addRow()">+</button>
             <br>
             
@@ -63,6 +74,6 @@
             <input id="send" type="submit" value="Send">
         
         </form>
-        
+    
     </body>
 </html>

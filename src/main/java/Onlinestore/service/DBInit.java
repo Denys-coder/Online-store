@@ -1,5 +1,6 @@
 package Onlinestore.service;
 
+import Onlinestore.entity.Item;
 import Onlinestore.entity.User;
 import Onlinestore.model.RoleNames;
 import Onlinestore.repository.ItemRepository;
@@ -8,7 +9,7 @@ import Onlinestore.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
+import java.util.*;
 
 @Service
 public class DBInit implements CommandLineRunner
@@ -37,6 +38,43 @@ public class DBInit implements CommandLineRunner
                 "22222222222", "country2", "address222", new ArrayList<>(), RoleNames.ROLE_ADMIN);
         userRepository.save(user1);
         userRepository.save(user2);
+        
+        Set<String> images1 = new HashSet<>();
+        images1.add("image1.1");
+        images1.add("image1.2");
+        images1.add("image1.3");
+        images1.add("image1.4");
+        images1.add("image1.5");
+        Map<String, String> specs1 = new HashMap<>();
+        specs1.put("spec1", "value1");
+        specs1.put("spec2", "value2");
+        Item item1 = new Item("Item2", 25.5, 8, "description1", "logo1", images1, specs1);
+        
+        Set<String> images2 = new HashSet<>();
+        images2.add("image2.1");
+        images2.add("image2.2");
+        images2.add("image2.3");
+        images2.add("image2.4");
+        images2.add("image2.5");
+        Map<String, String> specs2 = new HashMap<>();
+        specs2.put("spec1", "value1");
+        specs2.put("spec2", "value2");
+        Item item2 = new Item("Item2", 25.5, 8, "description2", "logo2", images2, specs2);
+        
+        Set<String> images3 = new HashSet<>();
+        images3.add("image3.1");
+        images3.add("image3.2");
+        images3.add("image3.3");
+        images3.add("image3.4");
+        images3.add("image3.5");
+        Map<String, String> specs3 = new HashMap<>();
+        specs3.put("spec1", "value1");
+        specs3.put("spec2", "value2");
+        Item item3 = new Item("Item1", 25.5, 8, "description3", "logo3", images3, specs3);
+        
+        itemRepository.save(item1);
+        itemRepository.save(item2);
+        itemRepository.save(item3);
     }
 }
 

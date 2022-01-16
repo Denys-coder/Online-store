@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="www.thymeleaf.org/extras/spring-security" lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title th:text="${item.getName()}">Title</title>
+    </head>
+    <body>
+    
+        <a href="/catalog"><button>Catalog</button></a>
+        <br>
+        <br>
+        
+        <!-- name -->
+        <b><span th:text="${item.getName()}"></span></b>
+        <br>
+        
+        <!-- logo -->
+        <img th:if="${item.getLogoName() != null}" th:src="${logoFolder + item.getLogoName()}"
+             width="90px" height="90px" style="object-fit: contain; border: 1px solid black"/>
+        <br>
+        
+        <!-- images -->
+        <span th:each="image : ${item.getImageNames()}">
+            <img th:src="${imagesFolder + image}"
+                 width="400px" height="400px" style="object-fit: contain; border: 1px solid black"/>
+        </span>
+        <br>
+        
+        <!-- price -->
+        Price: <span th:text="${item.getPrice()}"></span>
+        <br>
+        
+        <!-- amount -->
+        Amount: <span th:text="${item.getAmount()}"></span>
+        <br>
+        
+        <!-- description -->
+        <p th:text="${item.getDescription()}"></p>
+        
+        <!-- specs -->
+        Specifications:
+        <table th:each="spec : ${item.getSpecs()}">
+            <tr>
+                <td th:text="${spec.key}" style="border: 1px solid gray"></td>
+                <td th:text="${spec.value}" style="border: 1px solid gray"></td>
+            </tr>
+        </table>
+        
+        <!-- buy button if ROLE == ROLE_USER -->
+        <a sec:authorize="hasRole('ROLE_USER')">
+            <button>Buy</button>
+        </a>
+    
+    </body>
+</html>

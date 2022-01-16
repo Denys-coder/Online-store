@@ -142,6 +142,6 @@ public class AdminController
     @GetMapping("/admin/edit-or-delete-products")
     public String getEditOrDeletePage()
     {
-        return "edit-or-delete-products";
+        return "redirect:/catalog";
     }
 }

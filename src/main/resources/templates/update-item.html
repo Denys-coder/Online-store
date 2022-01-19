@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html" lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Update item</title>
+        <script src="/js/addRow.js"></script>
+        <script src="/js/deleteRow.js"></script>
+        <script src="/js/ensureFilesAreImages.js"></script>
+        <script src="/js/ensureLogoIsImage.js"></script>
+        <script src="/js/resetAddingForm.js"></script>
+        <script src="/js/limitNumberOfUploadedFiles.js"></script>
+        <script src="/js/concealLogoInput.js"></script>
+        <script src="/js/concealImagesInput.js"></script>
+    </head>
+    <body>
+        
+        <a href="/catalog">
+            <button>Back</button>
+        </a>
+        <br>
+        <br>
+        
+        <form th:action="@{/admin/update-item}" method="post" enctype="multipart/form-data">
+    
+            <!-- id -->
+            <input type="hidden" name="id" th:value="${id}">
+            
+            <!-- product name input -->
+            <label for="name">Product name:</label>
+            <input name="name" id="name" type="text" placeholder="Enter product name" th:value="${name}" required>
+            <br>
+            
+            <!-- price input -->
+            <label for="price">Price:</label>
+            <input name="price" id="price" type="text" placeholder="Enter price" th:value="${price}" required>
+            <br>
+            
+            <!-- amount input -->
+            <label for="amount">Amount:</label>
+            <input name="amount" id="amount" type="text" placeholder="Enter amount" th:value="${amount}" required>
+            <br>
+            
+            <!-- description -->
+            <label for="description">Description:</label>
+            <br>
+            <textarea name="description" id="description" rows="8" cols="50"
+                      placeholder="Enter description" th:text="${description}"></textarea>
+            <br>
+            
+            <!-- logo input -->
+            <div id="select-logo-block">
+                <label for="logo-input" id="logo-input-label">Choose a logo (image)</label>
+                <br>
+                <input name="logo" type="file" id="logo-input" accept="image/*"
+                       onchange="ensureLogoIsImage(this)">
+                <br>
+            </div>
+            
+            <!-- delete previous logo checkbox -->
+            <div th:if="${isLogoPresent}">
+                <input type="checkbox" name="delete-previous-logo" id="delete-previous-logo"
+                       onchange="concealLogoInput()">
+                <label for="delete-previous-logo">Delete previous logo</label>
+                <br><br>
+            </div>
+            
+            <!-- images input -->
+            <div id="select-images-block">
+                <label for="image-input" id="image-label">Choose images (max is 10)</label>
+                <br>
+                <input name="images" type="file" id="image-input" accept="image/*"
+                       onchange="ensureFilesAreImages(this); limitNumberOfUploadedFiles(this, 10)" multiple>
+                <br>
+            </div>
+            
+            <!-- delete previous images checkbox -->
+            <div th:if="${isAnyImage}">
+                <input type="checkbox" name="delete-previous-images" id="delete-previous-images"
+                       onchange="concealImagesInput()">
+                <label for="delete-previous-images">Delete previous images</label>
+                <br><br>
+            </div>
+            
+            <!-- specs input -->
+            Specifications:<br>
+            <div id="specsForm">
+                <div th:each="spec : ${specs}">
+                    <input type="text" name="spec-names" th:value="${spec.key}" placeholder="spec name">
+                    <input type="text" name="spec-values" th:value="${spec.value}" placeholder="spec value">
+                    <button type="button" onclick="deleteRow(this)">-</button>
+                    <br>
+                </div>
+                <!-- add button inserts here rows to create specs -->
+            </div>
+            
+            <!-- this button adds a new row -->
+            <button type="button" onclick="addRow()">+</button>
+            <br>
+            
+            <!-- reset button -->
+            <input id="reset" type="reset" value="Reset" onclick="resetAddingForm()">
+            <br>
+            
+            <!-- send button -->
+            <input id="send" type="submit" value="Send">
+        
+        </form>
+    
+    </body>
+</html>

@@ -103,4 +103,9 @@ public class User
         this.orders = orders;
         this.roleNames = roleNames;
     }
+    
+    public void addOrder(Order order)
+    {
+        orders.add(order);
+    }
 }

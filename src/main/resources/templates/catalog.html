@@ -6,7 +6,9 @@
     </head>
     <body>
         
-        <a href="/"><button>Main page</button></a>
+        <a href="/">
+            <button>Main page</button>
+        </a>
         <br>
         <br>
         
@@ -30,22 +32,25 @@
             <br>
             
             <!-- details button -->
-            <a th:href="${'/catalog/' + item.getId()}"><button>Watch details</button></a>
+            <a th:href="${'/catalog/' + item.getId()}">
+                <button>Watch details</button>
+            </a>
             <br>
-    
+            
             <!-- update button if ROLE == ROLE_ADMIN -->
-            <a sec:authorize="hasRole('ROLE_ADMIN')">
+            <a sec:authorize="hasRole('ROLE_ADMIN')" th:href="${'/admin/update-item/' + item.getId()}">
                 <button>Update</button>
             </a>
-    
+            
             <!-- delete button if ROLE == ROLE_ADMIN -->
-            <a sec:authorize="hasRole('ROLE_ADMIN')">
-                <button>Delete</button>
-            </a>
+            <form sec:authorize="hasRole('ROLE_ADMIN')" method="post" th:action="@{/admin/delete-item}">
+                <input type="hidden" name="id" th:value="${item.getId()}">
+                <button type="submit">Delete</button>
+            </form>
             
             <br>
-            
-        </div>
         
+        </div>
+    
     </body>
 </html>

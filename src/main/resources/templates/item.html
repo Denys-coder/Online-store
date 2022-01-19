@@ -47,9 +47,10 @@
         </table>
         
         <!-- buy button if ROLE == ROLE_USER -->
-        <a sec:authorize="hasRole('ROLE_USER')">
-            <button>Buy</button>
-        </a>
+        <form th:action="@{/cart/add-order}" method="post" sec:authorize="hasRole('ROLE_USER')">
+            <input type="hidden" name="item-id" th:value="${item.getId()}">
+            <button type="submit">Buy</button>
+        </form>
     
     </body>
 </html>

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import java.util.Comparator;
 import java.util.List;
 
 @Controller
@@ -25,6 +26,8 @@ public class CatalogController
     public String getCatalogPage(Model model)
     {
         List<Item> items = itemRepository.findAll();
+        Comparator<Item> idComparator = (firstItem, secondItem) -> firstItem.getId() - secondItem.getId();
+        items.sort(idComparator);
         model.addAttribute("items", items);
         
         model.addAttribute("logoFolder", environment.getProperty("item.logos.directory.on.server"));

@@ -47,10 +47,13 @@
         </table>
         
         <!-- buy button if ROLE == ROLE_USER -->
-        <form th:action="@{/cart/add-order}" method="post" sec:authorize="hasRole('ROLE_USER')">
+        <form th:action="@{/cart/add-order}" method="post" sec:authorize="hasRole('ROLE_USER')" th:if="${!alreadyOrdered}">
             <input type="hidden" name="item-id" th:value="${item.getId()}">
             <button type="submit">Buy</button>
         </form>
+        
+        <!-- "you already bought it" label if ROLE == ROLE_USER and user already bought it -->
+        <span th:if="${alreadyOrdered}">You already ordered this item</span>
     
     </body>
 </html>

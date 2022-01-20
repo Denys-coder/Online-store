@@ -1,8 +1,12 @@
 package Onlinestore.controller;
 
 import Onlinestore.entity.Item;
+import Onlinestore.entity.Order;
+import Onlinestore.entity.User;
 import Onlinestore.repository.ItemRepository;
+import Onlinestore.security.UserPrincipal;
 import org.springframework.core.env.Environment;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,7 +30,7 @@ public class CatalogController
     public String getCatalogPage(Model model)
     {
         List<Item> items = itemRepository.findAll();
-        Comparator<Item> idComparator = (firstItem, secondItem) -> firstItem.getId() - secondItem.getId();
+        Comparator<Item> idComparator = Comparator.comparingInt(Item::getId);
         items.sort(idComparator);
         model.addAttribute("items", items);
         
@@ -39,6 +43,20 @@ public class CatalogController
     public String getShowItemPage(Model model, @PathVariable("id") int id)
     {
         Item item = itemRepository.findById(id).get();
+        User user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+    
+        // check if user already bought it
+        boolean alreadyOrdered = false;
+        List<Order> userOrders = user.getOrders();
+        for (Order order : userOrders)
+        {
+            if (order.getItem().getId() == item.getId())
+            {
+                alreadyOrdered = true;
+                break;
+            }
+        }
+        model.addAttribute("alreadyOrdered", alreadyOrdered);
         
         model.addAttribute("item", item);
         model.addAttribute("logoFolder", environment.getProperty("item.logos.directory.on.server"));

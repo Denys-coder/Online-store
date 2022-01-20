@@ -1,16 +1,48 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
     <head>
         <meta charset="UTF-8">
         <title>Orders</title>
     </head>
     <body>
         
-        <a href="/"><button>Main page</button></a>
+        <a href="/">
+            <button>Main page</button>
+        </a>
         <br>
         <br>
         
-        It's a cart page
+        <div th:each="order: ${orders}" class="post" style="background: gray">
+            
+            <!-- logo -->
+            <img th:if="${order.getItem().getLogoName() != null}" th:src="${logoFolder + order.getItem().getLogoName()}"
+                 width="90px" height="90px" style="object-fit: contain; border: 1px solid black"/>
+            <br>
+            
+            <!-- name -->
+            Name: <a th:text="${order.getItem().getName()}" th:href="${'/catalog/' + order.getItem().getId()}"></a>
+            <br>
+            
+            <!-- amount in store -->
+            Amount in store: <span th:text="${order.getItem().getAmount()}"></span>
+            <br>
+    
+            <!-- amount to purchase -->
+            Amount to purchase: <span th:text="${order.getAmount()}"></span>
+            <button>-</button>
+            <button>+</button>
+            <br>
+            
+            <!-- price -->
+            Price: <span th:text="${order.getItem().getPrice()}"></span>
+            <br>
+            
+            <button>Delete</button>
+            
+        </div>
+        <br>
         
+        <button th:if="${orders.size() > 0}">Make an order</button>
+    
     </body>
 </html>

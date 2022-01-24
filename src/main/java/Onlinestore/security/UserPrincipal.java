@@ -1,7 +1,7 @@
 package Onlinestore.security;
 
 import Onlinestore.entity.User;
-import Onlinestore.model.RoleNames;
+import Onlinestore.controller.model.RoleNames;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;

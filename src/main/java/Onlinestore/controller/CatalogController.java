@@ -43,20 +43,30 @@ public class CatalogController
     public String getShowItemPage(Model model, @PathVariable("id") int id)
     {
         Item item = itemRepository.findById(id).get();
-        User user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
-    
-        // check if user already bought it
-        boolean alreadyOrdered = false;
-        List<Order> userOrders = user.getOrders();
-        for (Order order : userOrders)
+        
+        // if user logged in
+        if (SecurityContextHolder.getContext().getAuthentication() != null
+                && !("anonymousUser").equals(SecurityContextHolder.getContext().getAuthentication().getName()))
         {
-            if (order.getItem().getId() == item.getId())
+            User user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+    
+            // check if user already bought it
+            boolean alreadyOrdered = false;
+            List<Order> userOrders = user.getOrders();
+            for (Order order : userOrders)
             {
-                alreadyOrdered = true;
-                break;
+                if (order.getItem().getId() == item.getId())
+                {
+                    alreadyOrdered = true;
+                    break;
+                }
             }
+            model.addAttribute("alreadyOrdered", alreadyOrdered);
         }
-        model.addAttribute("alreadyOrdered", alreadyOrdered);
+        else
+        {
+            model.addAttribute("alreadyOrdered", false);
+        }
         
         model.addAttribute("item", item);
         model.addAttribute("logoFolder", environment.getProperty("item.logos.directory.on.server"));

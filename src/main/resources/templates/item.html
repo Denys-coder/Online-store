@@ -5,8 +5,10 @@
         <title th:text="${item.getName()}">Title</title>
     </head>
     <body>
-    
-        <a href="/catalog"><button>Catalog</button></a>
+        
+        <a href="/catalog">
+            <button>Catalog</button>
+        </a>
         <br>
         <br>
         
@@ -22,7 +24,7 @@
         <!-- images -->
         <span th:each="image : ${item.getImageNames()}">
             <img th:src="${imagesFolder + image}"
-                 width="400px" height="400px" style="object-fit: contain; border: 1px solid black"/>
+                 width="250px" height="250px" style="object-fit: contain; border: 1px solid black"/>
         </span>
         <br>
         
@@ -46,14 +48,21 @@
             </tr>
         </table>
         
-        <!-- buy button if ROLE == ROLE_USER -->
-        <form th:action="@{/cart/add-order}" method="post" sec:authorize="hasRole('ROLE_USER')" th:if="${!alreadyOrdered}">
+        <!-- buy button if (ROLE == ROLE_USER && amount > 0) -->
+        <form th:action="@{/cart/add-order}" method="post" sec:authorize="hasRole('ROLE_USER')"
+              th:if="${!alreadyOrdered && item.getAmount() > 0}">
             <input type="hidden" name="item-id" th:value="${item.getId()}">
-            <button type="submit">Buy</button>
+            <button type="submit">Order</button>
         </form>
         
-        <!-- "you already bought it" label if ROLE == ROLE_USER and user already bought it -->
-        <span th:if="${alreadyOrdered}">You already ordered this item</span>
+        <!-- "you already bought it" label if (ROLE == ROLE_USER && user already bought it) -->
+        <div th:if="${alreadyOrdered}">
+            You already ordered this item
+            <br>
+        </div>
+        
+        <!-- "out of stock" label if (amount == 0) -->
+        <span th:if="${item.getAmount() == 0}">Item out of stock</span>
     
     </body>
 </html>

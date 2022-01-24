@@ -1,4 +1,4 @@
-package Onlinestore.model;
+package Onlinestore.controller.model;
 
 public enum RoleNames
 {

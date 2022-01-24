@@ -1,8 +1,10 @@
 package Onlinestore.controller;
 
 import Onlinestore.entity.Item;
+import Onlinestore.entity.User;
 import Onlinestore.repository.ItemRepository;
 import Onlinestore.repository.OrderRepository;
+import Onlinestore.repository.UserRepository;
 import Onlinestore.service.ItemService;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
@@ -10,23 +12,22 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Controller
 public class AdminController
 {
     private final ItemRepository itemRepository;
     private final OrderRepository orderRepository;
+    private final UserRepository userRepository;
     private final Environment environment;
     private final ItemService itemService;
     
-    public AdminController(ItemRepository itemRepository, OrderRepository orderRepository, Environment environment, ItemService itemService)
+    public AdminController(ItemRepository itemRepository, OrderRepository orderRepository, UserRepository userRepository, Environment environment, ItemService itemService)
     {
         this.itemRepository = itemRepository;
         this.orderRepository = orderRepository;
+        this.userRepository = userRepository;
         this.environment = environment;
         this.itemService = itemService;
     }
@@ -153,6 +154,11 @@ public class AdminController
             return "redirect:/admin";
         }
         
+        if (amount < 0)
+        {
+            return "redirect:/error";
+        }
+        
         Item currentItem = itemRepository.getById(id);
         currentItem.setName(name);
         currentItem.setPrice(price);
@@ -174,7 +180,7 @@ public class AdminController
             // delete from the database
             currentItem.setLogoName(null);
             itemRepository.save(currentItem);
-    
+            
             // delete from the folder
             itemService.deleteLogoFromFolder(id);
             
@@ -200,7 +206,7 @@ public class AdminController
             // delete from the database
             currentItem.setImageNames(null);
             itemRepository.save(currentItem);
-    
+            
             // delete from the folder
             itemService.deleteImagesFromFolder(id);
             
@@ -211,7 +217,7 @@ public class AdminController
             currentItem.setImageNames(imageNames);
             itemRepository.save(currentItem);
         }
-    
+        
         // fill item.specs
         Map<String, String> specs = new HashMap<>();
         for (int i = 0; i < specNames.size(); i++)
@@ -225,14 +231,33 @@ public class AdminController
     }
     
     @PostMapping("/admin/delete-item")
-    public String deleteItem(@RequestParam("id") int id)
+    public String deleteItem(@RequestParam("id") int itemId)
     {
-        Item itemToDelete = itemRepository.getById(id);
-        itemRepository.delete(itemToDelete);
-        orderRepository.deleteOrdersByItem(itemRepository.getById(id));
+        // delete user's orders from database
+        List<User> users = userRepository.findAll();
+        for (int i = 0; i < users.size(); i++)
+        {
+            for (int j = 0; j < users.get(i).getOrders().size(); j++)
+            {
+                if (users.get(i).getOrders().get(j).getItem().getId() == itemId)
+                {
+                    users.get(i).getOrders().remove(users.get(i).getOrders().get(j));
+                    break;
+                }
+            }
+            userRepository.save(users.get(i));
+        }
         
-        itemService.deleteLogoFromFolder(id);
-        itemService.deleteImagesFromFolder(id);
+        // delete orders from database
+        orderRepository.deleteOrdersByItem(itemRepository.getById(itemId));
+    
+        // delete item from database
+        Item itemToDelete = itemRepository.getById(itemId);
+        itemRepository.delete(itemToDelete);
+        
+        // delete logo and images from disc
+        itemService.deleteLogoFromFolder(itemId);
+        itemService.deleteImagesFromFolder(itemId);
         
         return "redirect:/catalog";
     }

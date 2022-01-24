@@ -1,6 +1,6 @@
 package Onlinestore.service;
 
-import Onlinestore.model.OnlyDigitsConstraint;
+import Onlinestore.controller.model.OnlyDigitsConstraint;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 

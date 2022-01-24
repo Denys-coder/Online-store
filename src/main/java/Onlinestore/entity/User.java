@@ -1,7 +1,7 @@
 package Onlinestore.entity;
 
-import Onlinestore.model.OnlyDigitsConstraint;
-import Onlinestore.model.RoleNames;
+import Onlinestore.controller.model.OnlyDigitsConstraint;
+import Onlinestore.controller.model.RoleNames;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Fetch;
@@ -107,5 +107,17 @@ public class User
     public void addOrder(Order order)
     {
         orders.add(order);
+    }
+    
+    public void deleteOrder(int orderId)
+    {
+        for (int i = 0; i < orders.size(); i++)
+        {
+            if (orders.get(i).getId() == orderId)
+            {
+                orders.remove(i);
+                break;
+            }
+        }
     }
 }

@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-@Entity(name = "item")
+@Entity
 @Table(name = "items")
 public class Item
 {

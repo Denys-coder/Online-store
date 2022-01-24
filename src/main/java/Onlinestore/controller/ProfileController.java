@@ -1,6 +1,7 @@
 package Onlinestore.controller;
 
 import Onlinestore.entity.User;
+import Onlinestore.repository.OrderRepository;
 import Onlinestore.repository.UserRepository;
 import Onlinestore.security.UserPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,11 +20,13 @@ import javax.validation.Valid;
 public class ProfileController
 {
     private final UserRepository userRepository;
+    private final OrderRepository orderRepository;
     private final PasswordEncoder passwordEncoder;
     
-    public ProfileController(UserRepository userRepository, PasswordEncoder passwordEncoder)
+    public ProfileController(UserRepository userRepository, OrderRepository orderRepository, PasswordEncoder passwordEncoder)
     {
         this.userRepository = userRepository;
+        this.orderRepository = orderRepository;
         this.passwordEncoder = passwordEncoder;
     }
     
@@ -124,7 +127,9 @@ public class ProfileController
     public String deleteAccount()
     {
         User user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
-        userRepository.delete(user);
+        User userInDB = userRepository.getById(user.getId());
+        userRepository.delete(userInDB);
+        
         return "redirect:/logout";
     }
 }

@@ -3,6 +3,10 @@
     <head>
         <meta charset="UTF-8">
         <title>Orders</title>
+        <script src="/js/increaseAmountToPurchase.js"></script>
+        <script src="/js/decreaseAmountToPurchase.js"></script>
+        <script src="/js/deleteOrderById.js"></script>
+        <script src="/js/checkIfAllItemsInStockAndSendForm.js"></script>
     </head>
     <body>
         
@@ -12,37 +16,46 @@
         <br>
         <br>
         
-        <div th:each="order: ${orders}" class="post" style="background: gray">
-            
-            <!-- logo -->
-            <img th:if="${order.getItem().getLogoName() != null}" th:src="${logoFolder + order.getItem().getLogoName()}"
-                 width="90px" height="90px" style="object-fit: contain; border: 1px solid black"/>
-            <br>
-            
-            <!-- name -->
-            Name: <a th:text="${order.getItem().getName()}" th:href="${'/catalog/' + order.getItem().getId()}"></a>
-            <br>
-            
-            <!-- amount in store -->
-            Amount in store: <span th:text="${order.getItem().getAmount()}"></span>
-            <br>
-    
-            <!-- amount to purchase -->
-            Amount to purchase: <span th:text="${order.getAmount()}"></span>
-            <button>-</button>
-            <button>+</button>
-            <br>
-            
-            <!-- price -->
-            Price: <span th:text="${order.getItem().getPrice()}"></span>
-            <br>
-            
-            <button>Delete</button>
-            
-        </div>
+        <form th:action="@{/cart/buy-orders}" method="post" id="purchase-form">
+            <div th:each="order: ${orders}" class="post" style="background: gray">
+                
+                <!-- logo -->
+                <img th:if="${order.getItem().getLogoName() != null}"
+                     th:src="${logoFolder + order.getItem().getLogoName()}"
+                     width="90px" height="90px" style="object-fit: contain; border: 1px solid black"/>
+                <br>
+                
+                Name:
+                <a th:text="${order.getItem().getName()}" th:href="${'/catalog/' + order.getItem().getId()}"></a>
+                <br>
+                
+                Amount in store:
+                <span class="stored-amount" th:text="${order.getItem().getAmount()}"></span>
+                <br>
+                
+                Amount to purchase:
+                <span class="amount-to-purchase-label" th:text="${order.getAmount()}"></span>
+                <input type="hidden" class="amount-to-purchase-field" th:value="${order.getAmount()}" name="amount_to_purchase">
+                <button type="button" onclick="decreaseAmountToPurchase(this)">-</button>
+                <button type="button" onclick="increaseAmountToPurchase(this)">+</button>
+                <br>
+                
+                Price:
+                <span th:text="${order.getItem().getPrice()}"></span>
+                <br>
+                
+                <!-- delete item button (another form) -->
+                <button type="button" th:onclick="'deleteOrderById(' + ${order.getId()} + ')'">Delete</button>
+            </div>
+        </form>
+        
+        <!-- delete form -->
+        <form id="delete-order-form" th:action="@{/cart/delete-order}" method="post">
+        </form>
         <br>
         
-        <button th:if="${orders.size() > 0}">Make an order</button>
+        <!-- make an order button -->
+        <button form="purchase-form" th:if="${orders.size() > 0}" type="button" onclick="checkIfAllItemsInStockAndSendForm()">Buy orders</button>
     
     </body>
 </html>

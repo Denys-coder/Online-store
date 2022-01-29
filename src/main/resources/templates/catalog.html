@@ -47,10 +47,10 @@
                 <b><div th:text="${item.getName()}"></div></b>
                 
                 <!-- price -->
-                Price: <div th:text="${item.getPrice()} + ' grn'"></div>
+                <div th:text="'Price: ' + ${item.getPrice()} + ' grn'"></div>
                 
                 <!-- amount -->
-                Amount: <div th:text="${item.getAmount()}"></div>
+                <div th:text="'Amount: ' + ${item.getAmount()}"></div>
                 
                 <!-- if item is out of stock -->
                 <div th:if="${item.getAmount == 0}" class="red">Item is out of stock</div>

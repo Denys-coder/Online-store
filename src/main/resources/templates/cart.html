@@ -54,8 +54,7 @@
                     <b><a th:text="${order.getItem().getName()}" th:href="${'/catalog/' + order.getItem().getId()}"></a></b>
                     <br>
                     
-                    Amount in store:
-                    <div class="stored-amount" th:text="${order.getItem().getAmount()}"></div>
+                    <div class="stored-amount" th:text="'Amount in store: ' + ${order.getItem().getAmount()}"></div>
                     
                     Amount to purchase:
                     <button type="button" class="small-sign" onclick="decreaseAmountToPurchase(this)">-</button>
@@ -65,8 +64,7 @@
                     <button type="button" class="small-sign" onclick="increaseAmountToPurchase(this)">+</button>
                     <br>
                     
-                    Price:
-                    <div th:text="${order.getItem().getPrice()} + ' grn'"></div>
+                    <div th:text="'Price: ' + ${order.getItem().getPrice()} + ' grn'"></div>
                     
                     <!-- delete item button (another form) -->
                     <button type="button" class="red-button" th:onclick="'deleteOrderById(' + ${order.getId()} + ')'">Delete</button>

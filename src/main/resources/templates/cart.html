@@ -53,8 +53,9 @@
                     <!-- item name -->
                     <b><a th:text="${order.getItem().getName()}" th:href="${'/catalog/' + order.getItem().getId()}"></a></b>
                     <br>
-                    
-                    <div class="stored-amount" th:text="'Amount in store: ' + ${order.getItem().getAmount()}"></div>
+    
+                    Amount in store: <span class="stored-amount" th:text="${order.getItem().getAmount()}"></span>
+                    <br>
                     
                     Amount to purchase:
                     <button type="button" class="small-sign" onclick="decreaseAmountToPurchase(this)">-</button>

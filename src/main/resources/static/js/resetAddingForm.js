@@ -1,6 +1,16 @@
 function resetAddingForm()
 {
-    document.getElementById('image-label').innerHTML = 'Choose images (max is 10)';
-    document.getElementById("image-label").style.color = "gray";
-    document.getElementById('image-input').value = '';
+    let logoInputLabel = document.getElementById('logo-input-label');
+    logoInputLabel.innerHTML = 'Choose an image file';
+    logoInputLabel.style.color = "gray";
+    
+    let logoInput = document.getElementById('logo-input');
+    logoInput.value = '';
+    
+    let imagesInputLabel = document.getElementById('images-input-label');
+    imagesInputLabel.innerText = 'Choose images';
+    logoInputLabel.style.color = 'gray';
+    
+    let imagesInput = document.getElementById('images-input');
+    imagesInput.value = '';
 }

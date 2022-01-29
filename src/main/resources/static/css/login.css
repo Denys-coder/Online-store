@@ -1,0 +1,7 @@
+.login-grid
+{
+    display: grid;
+    grid-template-rows: repeat(2, auto);
+    grid-template-columns: max-content auto;
+    gap: 5px;
+}

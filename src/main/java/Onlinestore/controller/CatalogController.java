@@ -33,7 +33,6 @@ public class CatalogController
         Comparator<Item> idComparator = Comparator.comparingInt(Item::getId);
         items.sort(idComparator);
         model.addAttribute("items", items);
-        
         model.addAttribute("logoFolder", environment.getProperty("item.logos.directory.on.server"));
         
         return "catalog";

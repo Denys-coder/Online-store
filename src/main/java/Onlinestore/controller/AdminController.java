@@ -38,13 +38,13 @@ public class AdminController
         return "admin";
     }
     
-    @GetMapping("/admin/add-product")
+    @GetMapping("/admin/add-item")
     public String getAddProductPage(@ModelAttribute("item") Item item)
     {
         return "add-item";
     }
     
-    @PostMapping("/admin/add-product")
+    @PostMapping("/admin/add-item")
     public String addProduct(@Valid @ModelAttribute("item") Item item,
                              @RequestParam(value = "logo", required = false) MultipartFile logo,
                              @RequestParam(value = "images", required = false) MultipartFile[] images,
@@ -112,7 +112,7 @@ public class AdminController
         return "redirect:/admin";
     }
     
-    @GetMapping("/admin/edit-or-delete-products")
+    @GetMapping("/admin/edit-or-delete-items")
     public String getEditOrDeletePage()
     {
         return "redirect:/catalog";

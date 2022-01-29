@@ -1,8 +1,11 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="www.thymeleaf.org/extras/spring-security" lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Add product</title>
+        <title>Add item</title>
+        <link href="/css/navbar.css" rel="stylesheet" type="text/css">
+        <link href="/css/main-part.css" rel="stylesheet" type="text/css">
+        <link href="/css/add-item.css" rel="stylesheet" type="text/css">
         <script src="/js/addRow.js"></script>
         <script src="/js/deleteRow.js"></script>
         <script src="/js/ensureFilesAreImages.js"></script>
@@ -12,68 +15,116 @@
     </head>
     <body>
         
-        <a href="/">
-            <button>Main page</button>
-        </a>
-        <br>
-        <br>
+        <header>
+            Admin
+        </header>
         
-        <form th:action="@{/admin/add-product}" method="post" enctype="multipart/form-data" th:object="${item}">
-            
-            <!-- product name input -->
-            <label for="name">Product name:</label>
-            <input name="name" id="name" type="text" th:field="*{name}" placeholder="Enter product name" required>
-            <br>
-            
-            <!-- price input -->
-            <label for="price">Price:</label>
-            <input name="price" id="price" type="text" th:field="*{price}" placeholder="Enter price" required>
-            <br>
-            
-            <!-- amount input -->
-            <label for="amount">Amount:</label>
-            <input name="amount" id="amount" type="text" th:field="*{amount}" placeholder="Enter amount" required>
-            <br>
-            
-            <!-- description -->
-            <label for="description">Description:</label>
-            <br>
-            <textarea name="description" id="description" th:field="*{description}" rows="8" cols="50"
-                      placeholder="Enter description"></textarea>
-            <br>
-            
-            <!-- logo input -->
-            <label for="logo-input" id="logo-input-label">Choose a logo (image)</label>
-            <br>
-            <input name="logo" type="file" id="logo-input" accept="image/*"
-                   onchange="ensureLogoIsImage(this)">
-            <br>
-            
-            <!-- images input -->
-            <label for="image-input" id="image-label">Choose images (max is 10)</label>
-            <br>
-            <input name="images" type="file" id="image-input" accept="image/*"
-                   onchange="ensureFilesAreImages(this); limitNumberOfUploadedFiles(this, 10)" multiple>
-            <br>
-            
-            <!-- specs input -->
-            Specifications:<br>
-            <div id="specsForm">
-                <!-- add button inserts here rows to create specs -->
-            </div>
-            
-            <!-- this button adds a new row -->
-            <button type="button" onclick="addRow()">+</button>
-            <br>
-            
-            <!-- reset button -->
-            <input id="reset" type="reset" value="Reset" onclick="resetAddingForm()">
-            <br>
-            
-            <!-- send button -->
-            <input id="send" type="submit" value="Send">
-        
+        <form method="post" th:action="@{/logout}" id="logout-form">
         </form>
+        <nav>
+            <ul>
+                <li><a href="/about" class="headerLink">About</a></li>
+                <li sec:authorize="isAuthenticated()"><a href="/profile" class="headerLink">Profile</a></li>
+                <li sec:authorize="hasRole('ROLE_USER')"><a href="/cart" class="headerLink">Cart</a></li>
+                <li sec:authorize="hasRole('ROLE_ADMIN')"><a href="/admin" class="headerLink current-category">Admin</a></li>
+                <li><a href="/catalog" class="headerLink">Catalog</a></li>
+                <li sec:authorize="isAuthenticated()">
+                    <a class="headerLink">
+                        <button type="submit" form="logout-form" class="gray">Logout</button>
+                    </a>
+                </li>
+                <li sec:authorize="isAnonymous()"><a th:href="@{~/login}" class="headerLink">Login</a></li>
+                <li sec:authorize="isAnonymous()"><a th:href="@{~/registration}" class="headerLink">Register</a></li>
+            </ul>
+        </nav>
+        <br>
+        
+        <div class="main-part">
+            <form th:action="@{/admin/add-item}" method="post" enctype="multipart/form-data" th:object="${item}">
+                
+                <div class="gray-text-label">Create new item</div>
+                <br>
+                
+                <div class="add-item-grid">
+                    
+                    <!-- item name input -->
+                    <div>
+                        <label for="name" class="gray-text-label">Item name:</label>
+                    </div>
+                    <div>
+                        <input name="name" id="name" class="text-field" type="text" th:field="*{name}"
+                               placeholder="Enter item name"
+                               required>
+                    </div>
+                    
+                    <!-- price input -->
+                    <div>
+                        <label for="price" class="gray-text-label">Price:</label>
+                    </div>
+                    <div>
+                        <input name="price" id="price" class="text-field" type="text" th:field="*{price}"
+                               placeholder="Enter price" required>
+                    </div>
+                    
+                    <!-- amount input -->
+                    <div>
+                        <label for="amount" class="gray-text-label">Amount:</label>
+                    </div>
+                    <div>
+                        <input name="amount" id="amount" class="text-field" type="text" th:field="*{amount}"
+                               placeholder="Enter amount" required>
+                    </div>
+                    
+                    <!-- description -->
+                    <div>
+                        <label for="description" class="gray-text-label">Description:</label>
+                    </div>
+                    <div>
+                    <textarea name="description" id="description" class="text-field" th:field="*{description}" rows="8"
+                              cols="50" placeholder="Enter description"></textarea>
+                    </div>
+                    
+                    <!-- logo input -->
+                    <div>
+                        <label for="logo-input" class="gray-text-label">Choose a logo (image)</label>
+                    </div>
+                    <div>
+                        <label for="logo-input" id="logo-input-label" class="image-input-label">Choose an image file</label>
+                    </div>
+                    <input name="logo" type="file" id="logo-input" accept="image/*"
+                           onchange="ensureLogoIsImage(this)" class="display-none">
+                    
+                    <!-- images input -->
+                    <div>
+                        <label for="images-input" class="gray-text-label">Choose images (max is 10)</label>
+                    </div>
+                    <div>
+                        <label for="images-input" id="images-input-label" class="image-input-label">Choose images</label>
+                    </div>
+                    <input name="images" type="file" id="images-input" accept="image/*"
+                           onchange="ensureFilesAreImages(this); limitNumberOfUploadedFiles(this, 10)"
+                           class="display-none" multiple>
+                    
+                </div>
+                
+                <!-- specs input -->
+                <div class="gray-text-label">Specifications:</div>
+                <div id="specsForm">
+                    <!-- add button inserts rows here to create specs -->
+                </div>
+                
+                <!-- this button adds a new row -->
+                <button type="button" onclick="addRow()" class="big-sign">+</button>
+                <br>
+                
+                <!-- reset button -->
+                <input id="reset" type="reset" class="red-button" value="Reset" onclick="resetAddingForm()">
+                <br>
+                
+                <!-- send button -->
+                <input id="send" type="submit" class="green-button" value="Send">
+            </form>
+        </div>
     
     </body>
 </html>

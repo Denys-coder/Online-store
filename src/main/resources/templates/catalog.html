@@ -3,53 +3,76 @@
     <head>
         <meta charset="UTF-8">
         <title>Catalog</title>
+        <link href="/css/navbar.css" rel="stylesheet" type="text/css">
+        <link href="/css/main-part.css" rel="stylesheet" type="text/css">
     </head>
     <body>
         
-        <a href="/">
-            <button>Main page</button>
-        </a>
-        <br>
+        <header>
+            Catalog
+        </header>
+    
+        <form method="post" th:action="@{/logout}" id="logout-form">
+        </form>
+        <nav>
+            <ul>
+                <li><a href="/about" class="headerLink">About</a></li>
+                <li sec:authorize="isAuthenticated()"><a href="/profile" class="headerLink">Profile</a></li>
+                <li sec:authorize="hasRole('ROLE_USER')"><a href="/cart" class="headerLink">Cart</a></li>
+                <li sec:authorize="hasRole('ROLE_ADMIN')"><a href="/admin" class="headerLink">Admin</a></li>
+                <li><a href="/catalog" class="headerLink current-category">Catalog</a></li>
+                <li sec:authorize="isAuthenticated()">
+                    <a class="headerLink">
+                        <button type="submit" form="logout-form" class="gray">Logout</button>
+                    </a>
+                </li>
+                <li sec:authorize="isAnonymous()"><a th:href="@{~/login}" class="headerLink">Login</a></li>
+                <li sec:authorize="isAnonymous()"><a th:href="@{~/registration}" class="headerLink">Register</a></li>
+            </ul>
+        </nav>
         <br>
         
-        <div th:each="item : ${items}" style="background: lightgray;">
-            
-            <!-- logo -->
-            <img th:if="${item.getLogoName() != null}" th:src="${logoFolder + item.getLogoName()}"
-                 width="90px" height="90px" style="object-fit: contain; border: 1px solid black"/>
-            <br>
-            
-            <!-- name -->
-            <b><span th:text="${item.getName()}"></span></b>
-            <br>
-            
-            <!-- price -->
-            Price: <span th:text="${item.getPrice()}"></span>
-            <br>
-            
-            <!-- amount -->
-            Amount: <span th:text="${item.getAmount()}"></span>
-            <br>
-            
-            <!-- details button -->
-            <a th:href="${'/catalog/' + item.getId()}">
-                <button>Watch details</button>
-            </a>
-            <br>
-            
-            <!-- update button if ROLE == ROLE_ADMIN -->
-            <a sec:authorize="hasRole('ROLE_ADMIN')" th:href="${'/admin/update-item/' + item.getId()}">
-                <button>Update</button>
-            </a>
-            
-            <!-- delete button if ROLE == ROLE_ADMIN -->
-            <form sec:authorize="hasRole('ROLE_ADMIN')" method="post" th:action="@{/admin/delete-item}">
-                <input type="hidden" name="id" th:value="${item.getId()}">
-                <button type="submit">Delete</button>
-            </form>
-            
-            <br>
-        
+        <div class="main-part">
+            <div class="gray-box margin" th:each="item : ${items}">
+                
+                <!-- logo -->
+                <img th:if="${item.getLogoName() != null}" th:src="${logoFolder + item.getLogoName()}"
+                     width="90px" height="90px" class="object-fit-contain"/>
+                <!-- if logo is not present -->
+                <img th:if="${item.getLogoName() == null}" src="/images/default-logo-image"
+                     width="90px" height="90px" class="object-fit-contain"/>
+                <br>
+                
+                <!-- name -->
+                <b><div th:text="${item.getName()}"></div></b>
+                
+                <!-- price -->
+                Price: <div th:text="${item.getPrice()} + ' grn'"></div>
+                
+                <!-- amount -->
+                Amount: <div th:text="${item.getAmount()}"></div>
+                
+                <!-- if item is out of stock -->
+                <div th:if="${item.getAmount == 0}" class="red">Item is out of stock</div>
+                
+                <!-- details button -->
+                <a th:href="${'/catalog/' + item.getId()}">
+                    <button class="gray-button">Watch details</button>
+                </a>
+                <br>
+                
+                <!-- update button if ROLE == ROLE_ADMIN -->
+                <a sec:authorize="hasRole('ROLE_ADMIN')" th:href="${'/admin/update-item/' + item.getId()}">
+                    <button class="gray-button">Update</button>
+                </a>
+                
+                <!-- delete button if ROLE == ROLE_ADMIN -->
+                <form sec:authorize="hasRole('ROLE_ADMIN')" method="post" th:action="@{/admin/delete-item}">
+                    <input type="hidden" name="id" th:value="${item.getId()}">
+                    <button type="submit" class="red-button">Delete</button>
+                </form>
+                
+            </div>
         </div>
     
     </body>

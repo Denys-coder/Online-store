@@ -120,7 +120,7 @@ public class ProfileController
     @GetMapping("/profile/delete-account")
     public String getDeleteAccountPage()
     {
-        return "delete-page";
+        return "delete-account";
     }
     
     @PostMapping("/profile/delete-account")

@@ -1,13 +1,39 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="www.thymeleaf.org/extras/spring-security" lang="en">
     <head>
         <meta charset="UTF-8">
         <title>About</title>
+        <link href="/css/navbar.css" rel="stylesheet" type="text/css">
+        <link href="/css/main-part.css" rel="stylesheet" type="text/css">
     </head>
     <body>
-        <a href="/"><button>Main page</button></a>
+        
+        <header>
+            About us
+        </header>
+        
+        <form method="post" th:action="@{/logout}" id="logout-form">
+        </form>
+        <nav>
+            <ul>
+                <li><a href="/about" class="headerLink current-category">About</a></li>
+                <li sec:authorize="isAuthenticated()"><a href="/profile" class="headerLink">Profile</a></li>
+                <li sec:authorize="hasRole('ROLE_USER')"><a href="/cart" class="headerLink">Cart</a></li>
+                <li sec:authorize="hasRole('ROLE_ADMIN')"><a href="/admin" class="headerLink">Admin</a></li>
+                <li><a href="/catalog" class="headerLink">Catalog</a></li>
+                <li sec:authorize="isAuthenticated()">
+                    <a class="headerLink">
+                        <button type="submit" form="logout-form" class="gray">Logout</button>
+                    </a>
+                </li>
+                <li sec:authorize="isAnonymous()"><a th:href="@{~/login}" class="headerLink">Login</a></li>
+                <li sec:authorize="isAnonymous()"><a th:href="@{~/registration}" class="headerLink">Register</a></li>
+            </ul>
+        </nav>
         <br>
-        <br>
-        It's an about page
+        
+        <div class="main-part">
+            <p>Online-Store.com is an online retailer that sells electronics.</p>
+        </div>
     </body>
 </html>

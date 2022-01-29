@@ -3,48 +3,53 @@
     <head>
         <meta charset="UTF-8">
         <title th:text="${item.getName()}">Title</title>
+        <link href="/css/main-part.css" rel="stylesheet" type="text/css">
+        <link href="/css/item.css" rel="stylesheet" type="text/css">
     </head>
     <body>
         
         <a href="/catalog">
-            <button>Catalog</button>
+            <button class="gray-button">Catalog</button>
         </a>
         <br>
         <br>
         
         <!-- name -->
-        <b><span th:text="${item.getName()}"></span></b>
-        <br>
+        <div th:text="${item.getName()}" class="black-text-label"></div>
         
         <!-- logo -->
         <img th:if="${item.getLogoName() != null}" th:src="${logoFolder + item.getLogoName()}"
-             width="90px" height="90px" style="object-fit: contain; border: 1px solid black"/>
+             width="90px" height="90px" class="object-fit-contain"/>
+        <!-- if logo is not present -->
+        <img th:if="${item.getLogoName() == null}" src="/images/default-logo-image"
+             width="90px" height="90px" class="object-fit-contain"/>
         <br>
         
         <!-- images -->
         <span th:each="image : ${item.getImageNames()}">
-            <img th:src="${imagesFolder + image}"
-                 width="250px" height="250px" style="object-fit: contain; border: 1px solid black"/>
+            <img th:src="${imagesFolder + image}" width="250px" height="250px" class="object-fit-contain"/>
         </span>
         <br>
         
         <!-- price -->
-        Price: <span th:text="${item.getPrice()}"></span>
+        <div th:text="'Price: ' + ${item.getPrice()}" class="black-text-label gray-box"></div>
+        <br>
         <br>
         
         <!-- amount -->
-        Amount: <span th:text="${item.getAmount()}"></span>
+        <div th:text="'Amount: ' + ${item.getAmount()}" class="black-text-label gray-box"></div>
         <br>
         
         <!-- description -->
-        <p th:text="${item.getDescription()}"></p>
+        <p th:text="${item.getDescription()}" class="black-text-label gray-box"></p>
+        <br>
         
         <!-- specs -->
-        Specifications:
-        <table th:each="spec : ${item.getSpecs()}">
-            <tr>
-                <td th:text="${spec.key}" style="border: 1px solid gray"></td>
-                <td th:text="${spec.value}" style="border: 1px solid gray"></td>
+        <div class="black-text-label gray-box">Specifications:</div>
+        <table class="specs-table">
+            <tr th:each="spec : ${item.getSpecs()}">
+                <td th:text="${spec.key}" class="text-field"></td>
+                <td th:text="${spec.value}" class="text-field"></td>
             </tr>
         </table>
         
@@ -52,7 +57,7 @@
         <form th:action="@{/cart/add-order}" method="post" sec:authorize="hasRole('ROLE_USER')"
               th:if="${!alreadyOrdered && item.getAmount() > 0}">
             <input type="hidden" name="item-id" th:value="${item.getId()}">
-            <button type="submit">Order</button>
+            <button type="submit" class="green-button">Order</button>
         </form>
         
         <!-- "you already bought it" label if (ROLE == ROLE_USER && user already bought it) -->
@@ -62,7 +67,7 @@
         </div>
         
         <!-- "out of stock" label if (amount == 0) -->
-        <span th:if="${item.getAmount() == 0}">Item out of stock</span>
+        <div th:if="${item.getAmount() == 0}" class="red">Item is out of stock</div>
     
     </body>
 </html>

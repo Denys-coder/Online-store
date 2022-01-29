@@ -10,7 +10,7 @@ function ensureLogoIsImage(inputField)
     imageObjectToTest.onerror = function ()
     {
         alert('You paste not an image');
-        document.getElementById('logo-input-label').innerHTML = 'Choose a logo (image)';
+        document.getElementById('logo-input-label').innerHTML = 'Choose an image file';
         document.getElementById("logo-input-label").style.color = "gray";
         inputField.value = '';
     };

@@ -7,13 +7,13 @@ function ensureFilesAreImages(inputForm)
         imageObjectToTest.onerror = function ()
         {
             alert('There is non image file in the input');
-            document.getElementById('image-label').innerHTML = 'Choose images (max is 10)';
-            document.getElementById("image-label").style.color = "gray";
+            document.getElementById('images-input-label').innerHTML = 'Choose images';
+            document.getElementById("images-input-label").style.color = "gray";
             inputForm.value = '';
             return;
         };
         imageObjectToTest.src = URL.createObjectURL(image);
     }
-    document.getElementById('image-label').innerHTML = 'You selected ' + inputForm.files.length + ' files';
-    document.getElementById("image-label").style.color = "green";
+    document.getElementById('images-input-label').innerHTML = 'You selected ' + inputForm.files.length + ' files';
+    document.getElementById("images-input-label").style.color = "green";
 }

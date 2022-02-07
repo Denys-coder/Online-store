@@ -1,7 +1,7 @@
 package Onlinestore.controller;
 
 import Onlinestore.entity.User;
-import Onlinestore.controller.model.RoleNames;
+import Onlinestore.model.RoleNames;
 import Onlinestore.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;

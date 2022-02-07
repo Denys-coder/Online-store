@@ -2,7 +2,7 @@ package Onlinestore.service;
 
 import Onlinestore.entity.Item;
 import Onlinestore.entity.User;
-import Onlinestore.controller.model.RoleNames;
+import Onlinestore.model.RoleNames;
 import Onlinestore.repository.ItemRepository;
 import Onlinestore.repository.OrderRepository;
 import Onlinestore.repository.UserRepository;

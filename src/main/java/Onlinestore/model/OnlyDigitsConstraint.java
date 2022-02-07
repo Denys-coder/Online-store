@@ -1,4 +1,4 @@
-package Onlinestore.controller.model;
+package Onlinestore.model;
 
 import Onlinestore.service.OnlyDigitsValidator;
 import javax.validation.Constraint;

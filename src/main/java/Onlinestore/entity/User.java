@@ -1,7 +1,7 @@
 package Onlinestore.entity;
 
-import Onlinestore.controller.model.OnlyDigitsConstraint;
-import Onlinestore.controller.model.RoleNames;
+import Onlinestore.model.OnlyDigitsConstraint;
+import Onlinestore.model.RoleNames;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Fetch;

@@ -1,4 +1,4 @@
-package Onlinestore.bean;
+package Onlinestore.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

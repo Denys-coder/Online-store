@@ -21,21 +21,17 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter</artifactId>
-			<version>2.6.2</version>
 		</dependency>
 
 		<!-- Spring Boot MVC -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
-			<version>2.6.2</version>
 		</dependency>
 
-		<!-- local server -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
-			<version>2.6.2</version>
 			<scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>
@@ -44,7 +40,6 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
-			<version>2.6.2</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -52,28 +47,26 @@
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
-			<version>5.6.3.Final</version>
+			<version>5.6.5.Final</version>
 		</dependency>
 
 		<!-- postgres JDBC driver -->
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>42.3.1</version>
+			<version>42.3.3</version>
 		</dependency>
 
-		<!-- Spring Data Jpa -->
+		<!-- Spring Boot Data Jpa -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
-			<version>2.6.2</version>
 		</dependency>
 
 		<!-- Spring Boot Security -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
-			<version>2.6.2</version>
 		</dependency>
 
 		<!-- Spring Boot Security integration in Thymeleaf -->
@@ -86,7 +79,6 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
-			<version>2.6.2</version>
 		</dependency>
 
 		<!-- Lombok -->
@@ -101,7 +93,6 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-validation</artifactId>
-			<version>2.6.2</version>
 		</dependency>
 
 		<!-- junit5 -->

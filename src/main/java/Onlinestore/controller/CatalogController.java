@@ -44,30 +44,26 @@ public class CatalogController
         Item item = itemRepository.findById(id).get();
         
         // if user logged in
+        model.addAttribute("alreadyOrdered", false);
         if (SecurityContextHolder.getContext().getAuthentication() != null
                 && !("anonymousUser").equals(SecurityContextHolder.getContext().getAuthentication().getName()))
         {
             User user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
-    
+            
             // check if user already bought it
-            boolean alreadyOrdered = false;
             List<Order> userOrders = user.getOrders();
             for (Order order : userOrders)
             {
                 if (order.getItem().getId() == item.getId())
                 {
-                    alreadyOrdered = true;
+                    model.addAttribute("alreadyOrdered", true);
                     break;
                 }
             }
-            model.addAttribute("alreadyOrdered", alreadyOrdered);
-        }
-        else
-        {
-            model.addAttribute("alreadyOrdered", false);
         }
         
         model.addAttribute("item", item);
+        
         model.addAttribute("logoFolder", environment.getProperty("item.logos.directory.on.server"));
         model.addAttribute("imagesFolder", environment.getProperty("item.images.directory.on.server"));
         

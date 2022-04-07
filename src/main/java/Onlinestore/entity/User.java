@@ -4,8 +4,6 @@ import Onlinestore.model.OnlyDigitsConstraint;
 import Onlinestore.model.RoleNames;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.util.ArrayList;
@@ -75,14 +73,13 @@ public class User
     
     @Getter
     @Setter
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @Fetch(value = FetchMode.SUBSELECT)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "userId") // делает нерабочим восстановление корзины
     private List<Order> orders;
     
     @Getter
     @Setter
     @Enumerated(EnumType.STRING)
-    RoleNames roleNames;
+    private RoleNames roleNames;
     
     public User()
     {
@@ -109,7 +106,7 @@ public class User
         orders.add(order);
     }
     
-    public void deleteOrder(int orderId)
+    public void deleteOrderById(int orderId)
     {
         for (int i = 0; i < orders.size(); i++)
         {

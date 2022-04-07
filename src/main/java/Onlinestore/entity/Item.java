@@ -2,13 +2,9 @@ package Onlinestore.entity;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.Cascade;
 import javax.persistence.*;
 import javax.validation.constraints.*;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "items")
@@ -51,15 +47,16 @@ public class Item
     @Getter
     @Setter
     @ElementCollection
-    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     // only filenames without directories
     // null if empty
     private Set<String> imageNames;
     
+    // blob
+    // two lists
+    // wrap spec in class
     @Getter
     @Setter
     @ElementCollection
-    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     // null if empty
     private Map<String, String> specs;
     
@@ -67,7 +64,7 @@ public class Item
     {
         description = "";
         imageNames = new HashSet<>();
-        specs = new HashMap<>();
+        specs = new LinkedHashMap<>();
     }
     
     public Item(String name, double price, int amount, String description, String logoName, Set<String> imageNames, Map<String, String> specs)

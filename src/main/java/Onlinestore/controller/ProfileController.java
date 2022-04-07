@@ -20,13 +20,11 @@ import javax.validation.Valid;
 public class ProfileController
 {
     private final UserRepository userRepository;
-    private final OrderRepository orderRepository;
     private final PasswordEncoder passwordEncoder;
     
-    public ProfileController(UserRepository userRepository, OrderRepository orderRepository, PasswordEncoder passwordEncoder)
+    public ProfileController(UserRepository userRepository, PasswordEncoder passwordEncoder)
     {
         this.userRepository = userRepository;
-        this.orderRepository = orderRepository;
         this.passwordEncoder = passwordEncoder;
     }
     
@@ -127,8 +125,7 @@ public class ProfileController
     public String deleteAccount()
     {
         User user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
-        User userInDB = userRepository.getById(user.getId());
-        userRepository.delete(userInDB);
+        userRepository.delete(user);
         
         return "redirect:/logout";
     }

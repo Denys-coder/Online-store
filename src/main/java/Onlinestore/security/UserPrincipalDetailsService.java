@@ -1,4 +1,4 @@
-package Onlinestore.service;
+package Onlinestore.security;
 
 import Onlinestore.entity.User;
 import Onlinestore.repository.UserRepository;

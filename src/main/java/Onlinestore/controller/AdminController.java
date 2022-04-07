@@ -61,13 +61,12 @@ public class AdminController
         if (item.getDescription() == null || item.getDescription().equals(""))
         {
             item.setDescription(null);
-            itemRepository.save(item);
         }
         
         // fill item.specs
         if (specNames != null && specValues != null)
         {
-            Map<String, String> specs = new HashMap<>();
+            Map<String, String> specs = new LinkedHashMap<>();
             for (int i = 0; i < specNames.size(); i++)
             {
                 specs.put(specNames.get(i), specValues.get(i));
@@ -85,12 +84,10 @@ public class AdminController
         {
             String logoName = itemService.saveLogoToFolder(insertedId, logo);
             item.setLogoName(logoName);
-            itemRepository.save(item);
         }
         else
         {
             item.setLogoName(null);
-            itemRepository.save(item);
         }
         
         // (write images into file system) & (write image names into item) & (write item into database)
@@ -101,13 +98,12 @@ public class AdminController
             {
                 item.addImageName(imageName);
             }
-            itemRepository.save(item);
         }
         else
         {
             item.setImageNames(null);
-            itemRepository.save(item);
         }
+        itemRepository.save(item);
         
         return "redirect:/admin";
     }
@@ -170,7 +166,6 @@ public class AdminController
         {
             // delete from the database
             currentItem.setLogoName(null);
-            itemRepository.save(currentItem);
             
             // delete from the folder
             itemService.deleteLogoFromFolder(id);
@@ -179,7 +174,6 @@ public class AdminController
         {
             // delete from the database
             currentItem.setLogoName(null);
-            itemRepository.save(currentItem);
             
             // delete from the folder
             itemService.deleteLogoFromFolder(id);
@@ -189,14 +183,12 @@ public class AdminController
             
             // save file to the database
             currentItem.setLogoName(logoName);
-            itemRepository.save(currentItem);
         }
         
         if (deletePreviousImages)
         {
             // delete from the database
             currentItem.setImageNames(null);
-            itemRepository.save(currentItem);
             
             // delete from the folder
             itemService.deleteImagesFromFolder(id);
@@ -205,7 +197,6 @@ public class AdminController
         {
             // delete from the database
             currentItem.setImageNames(null);
-            itemRepository.save(currentItem);
             
             // delete from the folder
             itemService.deleteImagesFromFolder(id);
@@ -215,11 +206,10 @@ public class AdminController
             
             // save file to the database
             currentItem.setImageNames(imageNames);
-            itemRepository.save(currentItem);
         }
         
         // fill item.specs
-        Map<String, String> specs = new HashMap<>();
+        Map<String, String> specs = new LinkedHashMap<>();
         for (int i = 0; i < specNames.size(); i++)
         {
             specs.put(specNames.get(i), specValues.get(i));

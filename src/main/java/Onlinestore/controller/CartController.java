@@ -48,7 +48,6 @@ public class CartController
     public String addOrder(@RequestParam("item-id") int itemId)
     {
         User user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
-        User userInDB = userRepository.getById(user.getId());
         Item item = itemRepository.getById(itemId);
         
         // check if user already bought it
@@ -64,8 +63,7 @@ public class CartController
         Order order = new Order(item, 1);
         orderRepository.save(order);
         user.addOrder(order);
-        userInDB.addOrder(order);
-        userRepository.save(userInDB);
+        userRepository.save(user);
         
         return "redirect:/catalog";
     }
@@ -74,12 +72,10 @@ public class CartController
     public String deleteOrder(@RequestParam("order_id") int orderId)
     {
         User user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
-        User userInDB = userRepository.getById(user.getId());
-    
-        user.deleteOrder(orderId);
-        userInDB.deleteOrder(orderId);
         
-        userRepository.save(userInDB);
+        user.deleteOrderById(orderId);
+        
+        userRepository.save(user);
         orderRepository.deleteById(orderId);
         
         return "redirect:/cart";
@@ -89,13 +85,7 @@ public class CartController
     public String buyOrders(@RequestParam("amount_to_purchase") ArrayList<Integer> amountToPurchase)
     {
         User user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
-        User userInDB = userRepository.getById(user.getId());
-        List<Order> orders = userInDB.getOrders();
-        List<Integer> ordersIds = new ArrayList<>();
-        for (int i = 0; i < userInDB.getOrders().size(); i++)
-        {
-            ordersIds.add(orders.get(i).getId());
-        }
+        List<Order> orders = user.getOrders();
         
         // check if amount to buy <= stored amount for each order
         for (int i = 0; i < orders.size(); i++)
@@ -105,7 +95,7 @@ public class CartController
                 return "redirect:/error";
             }
         }
-    
+        
         // update amount of stored items
         for (int i = 0; i < orders.size(); i++)
         {
@@ -114,14 +104,10 @@ public class CartController
             itemRepository.save(item);
         }
         
-        user.getOrders().clear();
-        userInDB.getOrders().clear();
+        orderRepository.deleteAll(orders);
         
-        userRepository.save(userInDB);
-        for (int i = 0; i < ordersIds.size(); i++)
-        {
-            orderRepository.deleteById(ordersIds.get(i));
-        }
+        user.getOrders().clear();
+        userRepository.save(user);
         
         return "redirect:/cart";
     }

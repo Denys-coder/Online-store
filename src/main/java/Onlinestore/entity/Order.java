@@ -3,6 +3,7 @@ package Onlinestore.entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Cascade;
 import javax.persistence.*;
 
 @Entity
@@ -15,6 +16,11 @@ public class Order
     @Getter
     @Setter
     private int id;
+    
+    @Getter
+    @Setter
+    @JoinColumn
+    private int userId;
     
     @Getter
     @Setter

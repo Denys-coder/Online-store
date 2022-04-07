@@ -4,7 +4,6 @@ import Onlinestore.entity.Item;
 import Onlinestore.entity.User;
 import Onlinestore.model.RoleNames;
 import Onlinestore.repository.ItemRepository;
-import Onlinestore.repository.OrderRepository;
 import Onlinestore.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,14 +15,12 @@ public class DBInit implements CommandLineRunner
 {
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
-    private final OrderRepository orderRepository;
     private final PasswordEncoder passwordEncoder;
     
-    public DBInit(UserRepository userRepository, ItemRepository itemRepository, OrderRepository orderRepository, PasswordEncoder passwordEncoder)
+    public DBInit(UserRepository userRepository, ItemRepository itemRepository, PasswordEncoder passwordEncoder)
     {
         this.userRepository = userRepository;
         this.itemRepository = itemRepository;
-        this.orderRepository = orderRepository;
         this.passwordEncoder = passwordEncoder;
     }
     
@@ -48,7 +45,7 @@ public class DBInit implements CommandLineRunner
         images1.add("image1.2");
         images1.add("image1.3");
         images1.add("image1.4");
-        Map<String, String> specs1 = new HashMap<>();
+        Map<String, String> specs1 = new LinkedHashMap<>();
         specs1.put("Release date", "18th August 2021");
         specs1.put("RAM", "6GB");
         specs1.put("Screen type", "Super AMOLED");
@@ -85,14 +82,14 @@ public class DBInit implements CommandLineRunner
         specs1.put("IP Protection", "No");
         specs1.put("Kit items", "smartphone, travel adapter, charging cable, SIM slot pin, protection case");
         Item item1 = new Item("Realme GT Master Edition 6/128GB Grey", 9999, 18, "Realme mobile phone", "logo1", images1, specs1);
-
+        
         Set<String> images2 = new HashSet<>();
         images2.add("image2.1");
         images2.add("image2.2");
         images2.add("image2.3");
         images2.add("image2.4");
         images2.add("image2.5");
-        Map<String, String> specs2 = new HashMap<>();
+        Map<String, String> specs2 = new LinkedHashMap<>();
         specs2.put("Processor", "AMD Ryzen 5 5500U");
         specs2.put("GPU", "AMD Radeon Vega 7");
         specs2.put("RAM", "16GB");
@@ -129,7 +126,7 @@ public class DBInit implements CommandLineRunner
         specs2.put("Wi-Fi standards supported", "802.11 a/b/g/n/ac/ax");
         specs2.put("Kit items", "laptop, travel adapter");
         Item item2 = new Item("Lenovo IdeaPad 5 15ALC05 Graphite Grey", 24999, 8, "Lenovo laptop", "logo2", images2, specs2);
-
+        
         Set<String> images3 = new HashSet<>();
         images3.add("image3.1");
         images3.add("image3.2");
@@ -139,7 +136,7 @@ public class DBInit implements CommandLineRunner
         images3.add("image3.6");
         images3.add("image3.7");
         images3.add("image3.8");
-        Map<String, String> specs3 = new HashMap<>();
+        Map<String, String> specs3 = new LinkedHashMap<>();
         specs3.put("Color", "gray");
         specs3.put("Case weight (g)", "36.5");
         specs3.put("Earphone battery", "55mAh");
@@ -154,7 +151,7 @@ public class DBInit implements CommandLineRunner
         specs3.put("Call noise cancellation", "Yes");
         specs3.put("Kit items", "earbuds x2, charging case, silicone ear tips x3, USB-C charging cable");
         Item item3 = new Item("Huawei FreeBuds 4i Silver Frost", 1749, 12, "Huawei earphones", "logo3", images3, specs3);
-
+        
         itemRepository.save(item1);
         itemRepository.save(item2);
         itemRepository.save(item3);

@@ -46,7 +46,7 @@ public class CatalogController
         // if user logged in
         model.addAttribute("alreadyOrdered", false);
         if (SecurityContextHolder.getContext().getAuthentication() != null
-                && !("anonymousUser").equals(SecurityContextHolder.getContext().getAuthentication().getName()))
+                && !"anonymousUser".equals(SecurityContextHolder.getContext().getAuthentication().getName()))
         {
             User user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
             

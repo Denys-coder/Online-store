@@ -31,9 +31,10 @@ public class Order
     @Setter
     private int amount;
     
-    public Order(Item item, int amount)
+    public Order(Item item, int amount, int userId)
     {
         this.item = item;
         this.amount = amount;
+        this.userId = userId;
     }
 }

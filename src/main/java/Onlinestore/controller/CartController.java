@@ -60,7 +60,7 @@ public class CartController
             }
         }
         
-        Order order = new Order(item, 1);
+        Order order = new Order(item, 1, user.getId());
         orderRepository.save(order);
         user.addOrder(order);
         userRepository.save(user);

@@ -85,6 +85,11 @@
     color: red;
 }
 
+.bigger
+{
+    font-size: 1.2em;
+}
+
 .small-sign
 {
     border: 1px solid black;
@@ -106,12 +111,10 @@
 {
     font-weight: lighter;
     font-size: 1.2em;
-    width: 30%;
     background-color: #decd7f;
     border-radius: 5px;
     border: 1px solid black;
     color: gray;
-    display: block;
     padding: 15px;
 }
 
@@ -123,10 +126,4 @@
 .object-fit-contain
 {
     object-fit: contain;
-}
-
-.grid-double-column
-{
-    grid-column-start: 1;
-    grid-column-end: 3
 }

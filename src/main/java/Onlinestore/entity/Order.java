@@ -3,8 +3,8 @@ package Onlinestore.entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.Cascade;
 import javax.persistence.*;
+import javax.validation.constraints.Min;
 
 @Entity
 @Table(name = "orders")
@@ -29,6 +29,7 @@ public class Order
     
     @Getter
     @Setter
+    @Min(0)
     private int amount;
     
     public Order(Item item, int amount, int userId)
@@ -36,5 +37,17 @@ public class Order
         this.item = item;
         this.amount = amount;
         this.userId = userId;
+    }
+    
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (!(obj instanceof Order))
+        {
+            return false;
+        }
+        
+        Order secondOrder = (Order) obj;
+        return userId == secondOrder.getUserId() && item.equals(secondOrder.getItem());
     }
 }

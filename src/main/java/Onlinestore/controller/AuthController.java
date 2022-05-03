@@ -37,7 +37,7 @@ public class AuthController
     }
     
     @PostMapping("/registration")
-    public String checkAndRegisterUser(@Valid @ModelAttribute("user") User user, BindingResult bindingResult)
+    public String checkAndRegisterUser(@ModelAttribute("user") @Valid User user, BindingResult bindingResult)
     {
         // check if email already in use
         if (userRepository.existsByEmail(user.getEmail()))

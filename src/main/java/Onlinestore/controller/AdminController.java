@@ -9,6 +9,7 @@ import Onlinestore.service.ItemService;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
@@ -39,39 +40,40 @@ public class AdminController
     }
     
     @GetMapping("/admin/add-item")
-    public String getAddProductPage(@ModelAttribute("item") Item item)
+    public String getAddProductPage(Model model)
     {
+        Item item = new Item();
+        model.addAttribute("item", item);
         return "add-item";
     }
     
     @PostMapping("/admin/add-item")
-    public String addProduct(@Valid @ModelAttribute("item") Item item,
+    public String addItem(@ModelAttribute("item") @Valid Item item,
+                             BindingResult bindingResult,
                              @RequestParam(value = "logo", required = false) MultipartFile logo,
                              @RequestParam(value = "images", required = false) MultipartFile[] images,
                              @RequestParam(value = "spec-names", required = false) ArrayList<String> specNames,
                              @RequestParam(value = "spec-values", required = false) ArrayList<String> specValues)
     {
+        if (bindingResult.hasErrors())
+        {
+            return "add-item";
+        }
+        
         // ensure that admin uploads no more that item.images.upload.max.amount files
         if (images.length > Integer.parseInt(environment.getProperty("item.images.upload.max.amount")))
         {
             return "redirect:/admin";
         }
         
-        // if description is omitted set null
-        if (item.getDescription() == null || item.getDescription().equals(""))
-        {
-            item.setDescription(null);
-        }
-        
         // fill item.specs
         if (specNames != null && specValues != null)
         {
-            Map<String, String> specs = new LinkedHashMap<>();
+            Map<String, String> specs = item.getSpecs();
             for (int i = 0; i < specNames.size(); i++)
             {
                 specs.put(specNames.get(i), specValues.get(i));
             }
-            item.setSpecs(specs);
         }
         
         // save item to the database
@@ -79,7 +81,7 @@ public class AdminController
         itemRepository.flush();
         int insertedId = item.getId();
         
-        // (write logo image into file system) & (write logo name into item) & (write item into database)
+        // (write logo image into file system) & (write logo name into item)
         if (logo != null && !logo.isEmpty())
         {
             String logoName = itemService.saveLogoToFolder(insertedId, logo);
@@ -90,19 +92,18 @@ public class AdminController
             item.setLogoName(null);
         }
         
-        // (write images into file system) & (write image names into item) & (write item into database)
+        // (write images into file system) & (write image names into item)
         if (!images[0].isEmpty())
         {
             Set<String> imageNames = itemService.saveImagesToFolder(insertedId, images);
-            for (String imageName : imageNames)
-            {
-                item.addImageName(imageName);
-            }
+            item.setImageNames(imageNames);
         }
         else
         {
             item.setImageNames(null);
         }
+        
+        // write item into database
         itemRepository.save(item);
         
         return "redirect:/admin";
@@ -118,28 +119,17 @@ public class AdminController
     public String getUpdateItemPage(@PathVariable("id") int id, Model model)
     {
         Item item = itemRepository.getById(id);
-        
-        model.addAttribute("id", id);
-        model.addAttribute("name", item.getName());
-        model.addAttribute("price", item.getPrice());
-        model.addAttribute("amount", item.getAmount());
-        model.addAttribute("description", item.getDescription());
-        model.addAttribute("isLogoPresent", item.getLogoName() != null);
-        model.addAttribute("isAnyImage", item.getImageNames() != null);
-        model.addAttribute("specs", item.getSpecs());
+        model.addAttribute("item", item);
         
         return "update-item";
     }
     
     @PostMapping("/admin/update-item")
-    public String updateItem(@RequestParam("id") int id,
-                             @RequestParam("name") String name,
-                             @RequestParam("price") double price,
-                             @RequestParam("amount") int amount,
-                             @RequestParam("description") String description,
+    public String updateItem(@ModelAttribute("item") @Valid Item item,
+                             BindingResult bindingResult,
                              @RequestParam("logo") MultipartFile logo,
-                             @RequestParam(value = "delete-previous-logo", required = false) boolean deletePreviousLogo,
                              @RequestParam("images") MultipartFile[] images,
+                             @RequestParam(value = "delete-previous-logo", required = false) boolean deletePreviousLogo,
                              @RequestParam(value = "delete-previous-images", required = false) boolean deletePreviousImages,
                              @RequestParam("spec-names") ArrayList<String> specNames,
                              @RequestParam("spec-values") ArrayList<String> specValues)
@@ -147,65 +137,66 @@ public class AdminController
         // ensure that admin uploads no more that item.images.upload.max.amount files
         if (images != null && images.length > Integer.parseInt(environment.getProperty("item.images.upload.max.amount")))
         {
-            return "redirect:/admin";
+            return "error";
         }
         
-        if (amount < 0)
+        if (bindingResult.hasErrors())
         {
-            return "redirect:/error";
+            return "update-item";
         }
         
-        Item currentItem = itemRepository.getById(id);
-        currentItem.setName(name);
-        currentItem.setPrice(price);
-        currentItem.setAmount(amount);
-        currentItem.setDescription(description);
+        Item oldItem = itemRepository.getById(item.getId());
+        String oldLogoName = oldItem.getLogoName();
+        Set<String> oldImageNames = oldItem.getImageNames();
+        item.setLogoName(oldLogoName);
+        item.setImageNames(oldImageNames);
+        itemRepository.save(item);
         
         // process logo
         if (deletePreviousLogo)
         {
             // delete from the database
-            currentItem.setLogoName(null);
+            item.setLogoName(null);
             
             // delete from the folder
-            itemService.deleteLogoFromFolder(id);
+            itemService.deleteLogoFromFolder(item.getId());
         }
         else if (!logo.isEmpty())
         {
             // delete from the database
-            currentItem.setLogoName(null);
+            item.setLogoName(null);
             
             // delete from the folder
-            itemService.deleteLogoFromFolder(id);
+            itemService.deleteLogoFromFolder(item.getId());
             
             // save file to the folder
-            String logoName = itemService.saveLogoToFolder(id, logo);
+            String logoName = itemService.saveLogoToFolder(item.getId(), logo);
             
             // save file to the database
-            currentItem.setLogoName(logoName);
+            item.setLogoName(logoName);
         }
         
         if (deletePreviousImages)
         {
             // delete from the database
-            currentItem.setImageNames(null);
+            item.setImageNames(null);
             
             // delete from the folder
-            itemService.deleteImagesFromFolder(id);
+            itemService.deleteImagesFromFolder(item.getId());
         }
         else if (!images[0].isEmpty())
         {
             // delete from the database
-            currentItem.setImageNames(null);
+            item.setImageNames(null);
             
             // delete from the folder
-            itemService.deleteImagesFromFolder(id);
+            itemService.deleteImagesFromFolder(item.getId());
             
             // save files to the folder
-            Set<String> imageNames = itemService.saveImagesToFolder(id, images);
+            Set<String> imageNames = itemService.saveImagesToFolder(item.getId(), images);
             
             // save file to the database
-            currentItem.setImageNames(imageNames);
+            item.setImageNames(imageNames);
         }
         
         // fill item.specs
@@ -214,8 +205,8 @@ public class AdminController
         {
             specs.put(specNames.get(i), specValues.get(i));
         }
-        currentItem.setSpecs(specs);
-        itemRepository.save(currentItem);
+        item.setSpecs(specs);
+        itemRepository.save(item);
         
         return "redirect:/catalog";
     }
@@ -225,17 +216,10 @@ public class AdminController
     {
         // delete user's orders from database
         List<User> users = userRepository.findAll();
-        for (int i = 0; i < users.size(); i++)
+        for (User user : users)
         {
-            for (int j = 0; j < users.get(i).getOrders().size(); j++)
-            {
-                if (users.get(i).getOrders().get(j).getItem().getId() == itemId)
-                {
-                    users.get(i).getOrders().remove(users.get(i).getOrders().get(j));
-                    break;
-                }
-            }
-            userRepository.save(users.get(i));
+            user.deleteOrdersByItemId(itemId);
+            userRepository.save(user);
         }
         
         // delete orders from database

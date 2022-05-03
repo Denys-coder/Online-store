@@ -1,0 +1,11 @@
+refactoring:
+    1. move code from controllers into service classes
+    2. make html receive and respond item specs as map in place of two list (admin controller)
+
+minor fixes:
+    1. make item comply specs order (store as blob or as two lists or wrap spec in class)
+    3. comply item images order when displaying them (store them as list)
+    4. make "Choose an image file" and "Choose images" buttons display on a one line (/add-item, /update-item)
+
+new features
+    2. display item's images as carousel when creating/updating item

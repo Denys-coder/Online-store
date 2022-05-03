@@ -18,15 +18,16 @@
         <div th:text="${item.getName()}" class="black-text-label"></div>
         
         <!-- logo -->
-        <img th:if="${item.getLogoName() != null}" th:src="${logoFolder + item.getLogoName()}"
+        <img th:if="${item.getLogoName() != null && !item.getLogoName().equals('')}"
+             th:src="${logoFolder + item.getLogoName()}"
              width="90px" height="90px" class="object-fit-contain"/>
         <!-- if logo is not present -->
-        <img th:if="${item.getLogoName() == null}" src="/images/default-logo-image"
+        <img th:if="${item.getLogoName() == null || item.getLogoName().equals('')}" src="/images/default-logo-image"
              width="90px" height="90px" class="object-fit-contain"/>
         <br>
         
         <!-- images -->
-        <span th:each="image : ${item.getImageNames()}">
+        <span th:if="${item.getImageNames() != null}" th:each="image : ${item.getImageNames()}">
             <img th:src="${imagesFolder + image}" width="250px" height="250px" class="object-fit-contain"/>
         </span>
         <br>
@@ -41,17 +42,20 @@
         <br>
         
         <!-- description -->
-        <p th:text="${item.getDescription()}" class="black-text-label gray-box"></p>
+        <p th:if="${item.getDescription() != null && !item.getDescription().equals('')}"
+           th:text="${item.getDescription()}" class="black-text-label gray-box"></p>
         <br>
         
         <!-- specs -->
-        <div class="black-text-label gray-box">Specifications:</div>
-        <table class="specs-table">
-            <tr th:each="spec : ${item.getSpecs()}">
-                <td th:text="${spec.key}" class="text-field"></td>
-                <td th:text="${spec.value}" class="text-field"></td>
-            </tr>
-        </table>
+        <div th:if="${item.getSpecs() != null && item.getSpecs().size() > 0}">
+            <div class="black-text-label gray-box">Specifications:</div>
+            <table class="specs-table">
+                <tr th:each="spec : ${item.getSpecs()}">
+                    <td th:text="${spec.key}" class="text-field"></td>
+                    <td th:text="${spec.value}" class="text-field"></td>
+                </tr>
+            </table>
+        </div>
         
         <!-- buy button if (ROLE == ROLE_USER && amount > 0) -->
         <form th:action="@{/cart/add-order}" method="post" sec:authorize="hasRole('ROLE_USER')"
@@ -61,7 +65,7 @@
         </form>
         
         <!-- "you already bought it" label if (ROLE == ROLE_USER && user already bought it) -->
-        <div th:if="${alreadyOrdered}">
+        <div th:if="${alreadyOrdered}" class="red">
             You already ordered this item
             <br>
         </div>

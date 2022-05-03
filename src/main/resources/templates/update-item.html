@@ -17,9 +17,7 @@
     </head>
     <body>
         
-        <header>
-            Admin
-        </header>
+        <header>Admin</header>
         
         <form method="post" th:action="@{/logout}" id="logout-form">
         </form>
@@ -42,7 +40,7 @@
         <br>
         
         <div class="main-part">
-            <form th:action="@{/admin/update-item}" method="post" enctype="multipart/form-data">
+            <form th:action="@{/admin/update-item}" method="post" th:object="${item}" enctype="multipart/form-data">
                 
                 <div class="gray-text-label">Update item</div>
                 <br>
@@ -50,7 +48,7 @@
                 <div class="update-item-grid">
                     
                     <!-- id -->
-                    <input type="hidden" name="id" th:value="${id}">
+                    <input type="hidden" name="id" th:field="*{id}" th:value="${item.getId()}">
                     
                     <!-- item name input -->
                     <div>
@@ -58,7 +56,8 @@
                     </div>
                     <div>
                         <input name="name" id="name" type="text" class="text-field" placeholder="Enter item name"
-                               th:value="${name}" required>
+                               th:field="*{name}" th:value="${item.getName()}" required>
+                        <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="red">Name errors</div>
                     </div>
                     
                     <!-- price input -->
@@ -67,7 +66,8 @@
                     </div>
                     <div>
                         <input name="price" id="price" type="text" class="text-field" placeholder="Enter price"
-                               th:value="${price}" required>
+                               th:field="*{price}" th:value="${item.getPrice()}" required>
+                        <div th:if="${#fields.hasErrors('price')}" th:errors="*{price}" class="red">Price errors</div>
                     </div>
                     
                     <!-- amount input -->
@@ -76,7 +76,8 @@
                     </div>
                     <div>
                         <input name="amount" id="amount" type="text" class="text-field" placeholder="Enter amount"
-                               th:value="${amount}" required>
+                               th:field="*{amount}" th:value="${item.getAmount()}" required>
+                        <div th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}" class="red">Amount errors</div>
                     </div>
                     
                     <!-- description -->
@@ -85,43 +86,59 @@
                     </div>
                     <div>
                         <textarea name="description" id="description" rows="8" cols="50" placeholder="Enter description"
-                                  class="text-field" th:text="${description}"></textarea>
+                                  class="text-field" th:field="*{description}"
+                                  th:text="${item.getDescription()}"></textarea>
+                        <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}" class="red">Description errors</div>
                     </div>
-    
+                    
                     <!-- logo input -->
                     <div>
-                        <label for="logo-input" class="gray-text-label" id="logo-label">Choose a logo (image)</label>
+                        <label for="logo-input" class="gray-text-label" id="logo-label">
+                            Choose a logo (max is 10MB)
+                        </label>
                     </div>
                     <div>
-                        <label for="logo-input" id="logo-input-label" class="image-input-label">Choose an image file</label>
+                        <label for="logo-input" id="logo-input-label" class="image-input-label">
+                            Choose an image file
+                        </label>
                     </div>
                     <input name="logo" type="file" id="logo-input" class="display-none"
                            accept="image/*" onchange="ensureLogoIsImage(this)">
                     
                     <!-- delete previous logo checkbox -->
-                    <div th:if="${isLogoPresent}" class="grid-double-column">
+                    <div th:if="${item.getLogoName() != null}">
                         <input type="checkbox" name="delete-previous-logo" id="delete-previous-logo"
                                onchange="concealLogoInput()">
                         <label for="delete-previous-logo" class="gray-text-label">Delete previous logo</label>
                     </div>
+                    <div></div>
                     
                     <!-- images input -->
                     <div>
-                        <label for="images-input" class="gray-text-label" id="images-label">Choose images (max is 10)</label>
+                        <label for="images-input" class="gray-text-label" id="images-label">
+                            Choose images (max is 10, and 10MB max)
+                        </label>
                     </div>
                     <div>
-                        <label for="images-input" id="images-input-label" class="image-input-label">Choose images</label>
+                        <label for="images-input" id="images-input-label" class="image-input-label">
+                            Choose images
+                        </label>
+                    </div>
+                    <div>
+<!--                        <div th:if="hasErrors('images')" th:errors="${images}" class="red">Images errors</div>-->
                     </div>
                     <input name="images" type="file" id="images-input" accept="image/*"
                            onchange="ensureFilesAreImages(this); limitNumberOfUploadedFiles(this, 10)"
                            class="display-none" multiple>
                     
                     <!-- delete previous images checkbox -->
-                    <div th:if="${isAnyImage}" class="grid-double-column">
+                    <div th:if="${item.getImageNames() != null && item.getImageNames().size() > 0}">
                         <input type="checkbox" name="delete-previous-images" id="delete-previous-images"
                                onchange="concealImagesInput()">
                         <label for="delete-previous-images" class="gray-text-label">Delete previous images</label>
                     </div>
+                    <div></div>
+                    <div></div>
                 
                 </div>
                 <br>
@@ -129,9 +146,11 @@
                 <!-- specs input -->
                 <div class="gray-text-label">Specifications:</div>
                 <div id="specsForm">
-                    <div th:each="spec : ${specs}">
-                        <input type="text" name="spec-names" class="text-field" th:value="${spec.key}" placeholder="spec name">
-                        <input type="text" name="spec-values" class="text-field" th:value="${spec.value}" placeholder="spec value">
+                    <div th:each="spec : ${item.getSpecs()}">
+                        <input type="text" name="spec-names" class="text-field" th:value="${spec.key}"
+                               placeholder="spec name">
+                        <input type="text" name="spec-values" class="text-field" th:value="${spec.value}"
+                               placeholder="spec value">
                         <button type="button" class="big-sign" onclick="deleteRow(this)">-</button>
                         <br>
                     </div>

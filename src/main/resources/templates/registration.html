@@ -9,10 +9,8 @@
     </head>
     <body>
         
-        <header>
-            Registration
-        </header>
-    
+        <header>Registration</header>
+        
         <form method="post" th:action="@{/logout}" id="logout-form">
         </form>
         <nav>
@@ -28,7 +26,8 @@
                     </a>
                 </li>
                 <li sec:authorize="isAnonymous()"><a th:href="@{~/login}" class="headerLink">Login</a></li>
-                <li sec:authorize="isAnonymous()"><a th:href="@{~/registration}" class="headerLink current-category">Register</a></li>
+                <li sec:authorize="isAnonymous()"><a th:href="@{~/registration}" class="headerLink current-category">Register</a>
+                </li>
             </ul>
         </nav>
         <br>
@@ -47,6 +46,8 @@
                     </div>
                     <div>
                         <input id="name" type="text" class="text-field" th:field="*{name}" placeholder="Enter name"/>
+                    </div>
+                    <div>
                         <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name error</div>
                     </div>
                     
@@ -55,7 +56,10 @@
                         <label for="surname" class="gray-text-label">Surname</label>
                     </div>
                     <div>
-                        <input id="surname" type="text" class="text-field" th:field="*{surname}" placeholder="Enter surname"/>
+                        <input id="surname" type="text" class="text-field" th:field="*{surname}"
+                               placeholder="Enter surname"/>
+                    </div>
+                    <div>
                         <div th:if="${#fields.hasErrors('surname')}" th:errors="*{surname}">Surname error</div>
                     </div>
                     
@@ -65,6 +69,8 @@
                     </div>
                     <div>
                         <input id="email" type="text" class="text-field" th:field="*{email}" placeholder="Enter email"/>
+                    </div>
+                    <div>
                         <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email error</div>
                     </div>
                     
@@ -73,7 +79,10 @@
                         <label for="password" class="gray-text-label">Password</label>
                     </div>
                     <div>
-                        <input id="password" type="password" class="text-field" th:field="*{password}" placeholder="Enter password"/>
+                        <input id="password" type="password" class="text-field" th:field="*{password}"
+                               placeholder="Enter password"/>
+                    </div>
+                    <div>
                         <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password error</div>
                     </div>
                     
@@ -82,8 +91,13 @@
                         <label for="repeated-password" class="gray-text-label">Repeated password</label>
                     </div>
                     <div>
-                        <input id="repeated-password" type="password" class="text-field" th:field="*{repeatedPassword}" placeholder="Repeat password"/>
-                        <div th:if="${#fields.hasErrors('repeatedPassword')}" th:errors="*{repeatedPassword}">Repeated password error</div>
+                        <input id="repeated-password" type="password" class="text-field" th:field="*{repeatedPassword}"
+                               placeholder="Repeat password"/>
+                    </div>
+                    <div>
+                        <div th:if="${#fields.hasErrors('repeatedPassword')}" th:errors="*{repeatedPassword}">Repeated
+                            password error
+                        </div>
                     </div>
                     
                     <!-- telephone number -->
@@ -91,8 +105,14 @@
                         <label for="telephone-number" class="gray-text-label">Telephone number</label>
                     </div>
                     <div>
-                        <input id="telephone-number" type="text" class="text-field" th:field="*{telephoneNumber}" placeholder="Enter telephone number"/>
-                        <div th:if="${#fields.hasErrors('telephoneNumber')}" th:errors="*{telephoneNumber}">Telephone number error</div>
+                        <input id="telephone-number" type="text" class="text-field" th:field="*{telephoneNumber}"
+                               placeholder="Enter telephone number"/>
+                    </div>
+                    <div>
+                        <div th:if="${#fields.hasErrors('telephoneNumber')}" th:errors="*{telephoneNumber}">Telephone
+                            number
+                            error
+                        </div>
                     </div>
                     
                     <!-- country -->
@@ -100,7 +120,10 @@
                         <label for="country" class="gray-text-label">Country</label>
                     </div>
                     <div>
-                        <input id="country" type="text" class="text-field" th:field="*{country}" placeholder="Enter country"/>
+                        <input id="country" type="text" class="text-field" th:field="*{country}"
+                               placeholder="Enter country"/>
+                    </div>
+                    <div>
                         <div th:if="${#fields.hasErrors('country')}" th:errors="*{country}">Country error</div>
                     </div>
                     
@@ -109,7 +132,10 @@
                         <label for="address" class="gray-text-label">Address</label>
                     </div>
                     <div>
-                        <input id="address" type="text" class="text-field" th:field="*{address}" placeholder="Enter address"/>
+                        <input id="address" type="text" class="text-field" th:field="*{address}"
+                               placeholder="Enter address"/>
+                    </div>
+                    <div>
                         <div th:if="${#fields.hasErrors('address')}" th:errors="*{address}">Address error</div>
                     </div>
                 

@@ -6,13 +6,13 @@ import Onlinestore.entity.User;
 import Onlinestore.repository.ItemRepository;
 import Onlinestore.security.UserPrincipal;
 import org.springframework.core.env.Environment;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 @Controller
 public class CatalogController
@@ -29,9 +29,7 @@ public class CatalogController
     @GetMapping("/catalog")
     public String getCatalogPage(Model model)
     {
-        List<Item> items = itemRepository.findAll();
-        Comparator<Item> idComparator = Comparator.comparingInt(Item::getId);
-        items.sort(idComparator);
+        List<Item> items = itemRepository.findAll(Sort.by("id"));
         model.addAttribute("items", items);
         model.addAttribute("logoFolder", environment.getProperty("item.logos.directory.on.server"));
         
@@ -41,6 +39,11 @@ public class CatalogController
     @GetMapping("/catalog/{id}")
     public String getShowItemPage(Model model, @PathVariable("id") int id)
     {
+        Optional<Item> itemOptional = itemRepository.findById(id);
+        if (itemOptional.isEmpty())
+        {
+            return "error";
+        }
         Item item = itemRepository.findById(id).get();
         
         // if user logged in
@@ -51,8 +54,7 @@ public class CatalogController
             User user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
             
             // check if user already bought it
-            List<Order> userOrders = user.getOrders();
-            for (Order order : userOrders)
+            for (Order order : user.getOrders())
             {
                 if (order.getItem().getId() == item.getId())
                 {

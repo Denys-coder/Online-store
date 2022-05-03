@@ -19,50 +19,41 @@ public class Item
     @Getter
     @Setter
     @Column(nullable = false)
-    @NotBlank
     @Size(min = 1, max = 64)
     private String name;
     
     @Getter
     @Setter
     @NotNull
+    @Min(0)
     private double price;
     
     @Getter
     @Setter
     @NotNull
+    @Min(0)
     private int amount;
 
     @Getter
     @Setter
-    // null if empty
     private String description;
     
     @Getter
     @Setter
-    // only filename without directory
-    // null if empty
-    private String logoName;
+    private String logoName; // only filename without directory
     
     @Getter
     @Setter
     @ElementCollection
-    // only filenames without directories
-    // null if empty
-    private Set<String> imageNames;
+    private Set<String> imageNames; // only filenames without directories
     
-    // blob
-    // two lists
-    // wrap spec in class
     @Getter
     @Setter
     @ElementCollection
-    // null if empty
     private Map<String, String> specs;
     
     public Item()
     {
-        description = "";
         imageNames = new HashSet<>();
         specs = new LinkedHashMap<>();
     }
@@ -78,8 +69,9 @@ public class Item
         this.specs = specs;
     }
     
-    public void addImageName(String imageName)
+    @Override
+    public boolean equals(Object obj)
     {
-        imageNames.add(imageName);
+        return id == ((Item) obj).getId();
     }
 }

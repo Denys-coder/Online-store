@@ -12,9 +12,7 @@
     </head>
     <body>
         
-        <header>
-            Cart
-        </header>
+        <header>Cart</header>
     
         <form method="post" th:action="@{/logout}" id="logout-form">
         </form>
@@ -53,7 +51,7 @@
                     <!-- item name -->
                     <b><a th:text="${order.getItem().getName()}" th:href="${'/catalog/' + order.getItem().getId()}"></a></b>
                     <br>
-    
+                    
                     Amount in store: <span class="stored-amount" th:text="${order.getItem().getAmount()}"></span>
                     <br>
                     

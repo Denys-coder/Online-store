@@ -1,13 +1,11 @@
 package Onlinestore.entity;
 
-import Onlinestore.model.OnlyDigitsConstraint;
 import Onlinestore.model.RoleNames;
 import lombok.Getter;
 import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
@@ -57,8 +55,7 @@ public class User
     @Setter
     @Column(name = "telephone_number", nullable = false, unique = true)
     @NotNull
-    @Size(min = 6, max = 12)
-    @OnlyDigitsConstraint
+    @Pattern(regexp = "\\d{6,12}", message = "telephone number must be from 6 to 12 digits")
     private String telephoneNumber;
     
     @Getter
@@ -73,8 +70,8 @@ public class User
     
     @Getter
     @Setter
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "userId") // делает нерабочим восстановление корзины
-    private List<Order> orders;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "userId")
+    private Set<Order> orders;
     
     @Getter
     @Setter
@@ -84,10 +81,10 @@ public class User
     public User()
     {
         repeatedPassword = "";
-        orders = new ArrayList<>();
+        orders = new HashSet<>();
     }
     
-    public User(String name, String surname, String email, String password, String repeatedPassword, String telephoneNumber, String country, String address, List<Order> orders, RoleNames roleNames)
+    public User(String name, String surname, String email, String password, String repeatedPassword, String telephoneNumber, String country, String address, Set<Order> orders, RoleNames roleNames)
     {
         this.name = name;
         this.surname = surname;
@@ -108,11 +105,25 @@ public class User
     
     public void deleteOrderById(int orderId)
     {
-        for (int i = 0; i < orders.size(); i++)
+        Iterator<Order> orderIterator = orders.iterator();
+        while (orderIterator.hasNext())
         {
-            if (orders.get(i).getId() == orderId)
+            if (orderIterator.next().getId() == orderId)
             {
-                orders.remove(i);
+                orderIterator.remove();
+                break;
+            }
+        }
+    }
+    
+    public void deleteOrdersByItemId(int itemIdToDelete)
+    {
+        Iterator<Order> orderIterator = orders.iterator();
+        while (orderIterator.hasNext())
+        {
+            if (orderIterator.next().getItem().getId() == itemIdToDelete)
+            {
+                orderIterator.remove();
                 break;
             }
         }

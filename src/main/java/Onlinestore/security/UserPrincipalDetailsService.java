@@ -2,7 +2,6 @@ package Onlinestore.security;
 
 import Onlinestore.entity.User;
 import Onlinestore.repository.UserRepository;
-import Onlinestore.security.UserPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

@@ -116,6 +116,7 @@
     border: 1px solid black;
     color: gray;
     padding: 15px;
+    display: block;
 }
 
 .display-none

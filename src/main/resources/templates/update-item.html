@@ -124,9 +124,6 @@
                             Choose images
                         </label>
                     </div>
-                    <div>
-<!--                        <div th:if="hasErrors('images')" th:errors="${images}" class="red">Images errors</div>-->
-                    </div>
                     <input name="images" type="file" id="images-input" accept="image/*"
                            onchange="ensureFilesAreImages(this); limitNumberOfUploadedFiles(this, 10)"
                            class="display-none" multiple>
@@ -137,7 +134,6 @@
                                onchange="concealImagesInput()">
                         <label for="delete-previous-images" class="gray-text-label">Delete previous images</label>
                     </div>
-                    <div></div>
                     <div></div>
                 
                 </div>

@@ -1,7 +1,7 @@
 .update-item-grid
 {
     display: grid;
-    grid-template-rows: repeat(8, auto);
+    grid-template-rows: repeat(8, max-content);
     grid-template-columns: repeat(2, max-content);
     gap: 10px;
 }

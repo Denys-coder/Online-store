@@ -82,7 +82,7 @@ public class DBInit implements CommandLineRunner
         specs1.put("IP Protection", "No");
         specs1.put("Kit items", "smartphone, travel adapter, charging cable, SIM slot pin, protection case");
         Item item1 = new Item("Realme GT Master Edition 6/128GB Grey", 9999, 18, "Realme mobile phone", "logo1", images1, specs1);
-        
+
         Set<String> images2 = new HashSet<>();
         images2.add("image2.1");
         images2.add("image2.2");
@@ -126,7 +126,7 @@ public class DBInit implements CommandLineRunner
         specs2.put("Wi-Fi standards supported", "802.11 a/b/g/n/ac/ax");
         specs2.put("Kit items", "laptop, travel adapter");
         Item item2 = new Item("Lenovo IdeaPad 5 15ALC05 Graphite Grey", 24999, 8, "Lenovo laptop", "logo2", images2, specs2);
-        
+
         Set<String> images3 = new HashSet<>();
         images3.add("image3.1");
         images3.add("image3.2");
@@ -151,7 +151,7 @@ public class DBInit implements CommandLineRunner
         specs3.put("Call noise cancellation", "Yes");
         specs3.put("Kit items", "earbuds x2, charging case, silicone ear tips x3, USB-C charging cable");
         Item item3 = new Item("Huawei FreeBuds 4i Silver Frost", 1749, 12, "Huawei earphones", "logo3", images3, specs3);
-        
+
         itemRepository.save(item1);
         itemRepository.save(item2);
         itemRepository.save(item3);

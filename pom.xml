@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.example</groupId>
 	<artifactId>Online-store</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1</version>
 	<name>Online-store</name>
 	<description>Simple online store</description>
 	<properties>
@@ -43,18 +43,11 @@
 			<scope>test</scope>
 		</dependency>
 
-		 <!-- Hibernate -->
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-core</artifactId>
-			<version>5.6.5.Final</version>
-		</dependency>
-
 		<!-- postgres JDBC driver -->
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>42.3.3</version>
+			<scope>runtime</scope>
 		</dependency>
 
 		<!-- Spring Boot Data Jpa -->
@@ -85,7 +78,7 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.18.22</version>
+			<version>1.18.24</version>
 			<scope>provided</scope>
 		</dependency>
 

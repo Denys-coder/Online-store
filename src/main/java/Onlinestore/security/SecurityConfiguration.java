@@ -27,7 +27,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter
     @Override
     protected void configure(AuthenticationManagerBuilder auth)
     {
-        auth.authenticationProvider(authenticationProvider());
+        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
+        daoAuthenticationProvider.setUserDetailsService(userDetailsService);
+        auth.authenticationProvider(daoAuthenticationProvider);
     }
     
     @Override
@@ -35,7 +38,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter
     {
         http
                 .authorizeRequests()
+                    .antMatchers("/").permitAll()
                     .antMatchers("/about").permitAll()
+                    .antMatchers("/error").permitAll()
                     .antMatchers("/profile/**").authenticated()
                     .antMatchers("/admin/**").hasRole("ADMIN")
                     .antMatchers("/cart/**").hasRole("USER")
@@ -58,15 +63,5 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter
                     .key("mySecret!")
                     .rememberMeParameter("remember-me")
                     .userDetailsService(userDetailsService);
-    }
-    
-    @Bean
-    DaoAuthenticationProvider authenticationProvider()
-    {
-        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
-        daoAuthenticationProvider.setUserDetailsService(userDetailsService);
-        
-        return daoAuthenticationProvider;
     }
 }

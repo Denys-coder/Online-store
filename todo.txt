@@ -1,10 +1,19 @@
-refactoring:
-    1. move code from controllers into service classes
-    2. make html receive and respond item specs as map in place of two list (admin controller)
+// TODO refactoring:
+• move code from controllers into service classes
+• make html receive and respond item specs as map in spite of two list (admin controller)
+• create DTO layer
+• make @JoinColumn type as referenced class type and refactor Spring Data JPA code
 
-minor fixes:
-    1. make item comply specs order (store as blob or as two lists or wrap spec in class)
-    2. comply item images order when displaying them (store them as list)
+// TODO minor fixes:
+• make item comply specs order (store as blob or as two lists or wrap spec in class)
+• comply item images order when displaying them (store them as list)
+• move /resources/static/images into folder that's not in the projects directory
+  and make Dockerfile mount images folder from disc into docker container
 
-new features
-    1. display item's images as carousel when creating/updating item
+// TODO new features
+• display item's images as carousel when creating/updating item
+• save session before restarting server
+• make email confirmation and forgot password feature
+• add reset password feature
+• rename admin to manager and create admin role that can create/delete admins
+• add comments section under each item

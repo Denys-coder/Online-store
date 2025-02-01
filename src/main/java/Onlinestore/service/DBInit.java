@@ -28,13 +28,13 @@ public class DBInit implements CommandLineRunner
     public void run(String[] args)
     {
         User user1 = new User("name1", "surname1", "email1@email.com",
-                passwordEncoder.encode("bghnfghgnfghnbfgbh"), passwordEncoder.encode("bghnfghgnfghnbfgbh"),
+                passwordEncoder.encode("11111111"), passwordEncoder.encode("bghnfghgnfghnbfgbh"),
                 "11111111111", "country1", "address111", new HashSet<>(), RoleNames.ROLE_USER);
         User user2 = new User("name2", "surname2", "email2@email.com",
-                passwordEncoder.encode("bghnfghgnfghnbfgbh"), passwordEncoder.encode("bghnfghgnfghnbfgbh"),
+                passwordEncoder.encode("22222222"), passwordEncoder.encode("bghnfghgnfghnbfgbh"),
                 "22222222222", "country2", "address222", new HashSet<>(), RoleNames.ROLE_ADMIN);
         User user3 = new User("name3", "surname3", "email3@email.com",
-                passwordEncoder.encode("fsdfgdfggdfgsf"), passwordEncoder.encode("fsdfgdfggdfgsf"),
+                passwordEncoder.encode("33333333"), passwordEncoder.encode("fsdfgdfggdfgsf"),
                 "33333333333", "country3", "address333", new HashSet<>(), RoleNames.ROLE_USER);
         userRepository.save(user1);
         userRepository.save(user2);

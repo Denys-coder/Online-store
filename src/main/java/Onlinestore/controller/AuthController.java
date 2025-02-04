@@ -40,6 +40,7 @@ public class AuthController {
 
     @PostMapping("/registration")
     public ResponseEntity<?> checkAndRegisterUser(@ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
+
         // check if email already in use
         if (userRepository.existsByEmail(user.getEmail())) {
             bindingResult.addError(new FieldError("user", "email", "email address already in use"));
@@ -49,12 +50,7 @@ public class AuthController {
         if (userRepository.existsByTelephoneNumber(user.getTelephoneNumber())) {
             bindingResult.addError(new FieldError("user", "telephoneNumber", "telephone number already in use"));
         }
-
-        // check if passwords match
-        if (user.getRepeatedPassword() != null && !user.getPassword().equals(user.getRepeatedPassword())) {
-            bindingResult.addError(new FieldError("user", "repeatedPassword", "passwords don't match"));
-        }
-
+        
         if (bindingResult.hasErrors()) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

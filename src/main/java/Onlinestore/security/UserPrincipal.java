@@ -7,63 +7,55 @@ import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class UserPrincipal implements UserDetails
-{
-    @Getter
-    @Setter
+@Setter
+@Getter
+public class UserPrincipal implements UserDetails {
     private User user;
-    
-    public UserPrincipal(User user)
-    {
+
+    public UserPrincipal(User user) {
         this.user = user;
     }
-    
+
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities()
-    {
+    public Collection<? extends GrantedAuthority> getAuthorities() {
         RoleNames roleNames = user.getRoleNames();
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority(roleNames.name()));
         return authorities;
     }
-    
+
     @Override
-    public String getUsername()
-    {
+    public String getUsername() {
         return user.getEmail();
     }
-    
+
     @Override
-    public String getPassword()
-    {
+    public String getPassword() {
         return user.getPassword();
     }
-    
+
     @Override
-    public boolean isAccountNonExpired()
-    {
+    public boolean isAccountNonExpired() {
         return true;
     }
-    
+
     @Override
-    public boolean isAccountNonLocked()
-    {
+    public boolean isAccountNonLocked() {
         return true;
     }
-    
+
     @Override
-    public boolean isCredentialsNonExpired()
-    {
+    public boolean isCredentialsNonExpired() {
         return true;
     }
-    
+
     @Override
-    public boolean isEnabled()
-    {
+    public boolean isEnabled() {
         return true;
     }
 }

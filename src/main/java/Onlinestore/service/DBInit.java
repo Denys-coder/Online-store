@@ -8,38 +8,36 @@ import Onlinestore.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import java.util.*;
 
 @Service
-public class DBInit implements CommandLineRunner
-{
+public class DBInit implements CommandLineRunner {
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
     private final PasswordEncoder passwordEncoder;
-    
-    public DBInit(UserRepository userRepository, ItemRepository itemRepository, PasswordEncoder passwordEncoder)
-    {
+
+    public DBInit(UserRepository userRepository, ItemRepository itemRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.itemRepository = itemRepository;
         this.passwordEncoder = passwordEncoder;
     }
-    
+
     @Override
-    public void run(String[] args)
-    {
+    public void run(String[] args) {
         User user1 = new User("name1", "surname1", "email1@email.com",
-                passwordEncoder.encode("11111111"), passwordEncoder.encode("bghnfghgnfghnbfgbh"),
+                passwordEncoder.encode("11111111"),
                 "11111111111", "country1", "address111", new HashSet<>(), RoleNames.ROLE_USER);
         User user2 = new User("name2", "surname2", "email2@email.com",
-                passwordEncoder.encode("22222222"), passwordEncoder.encode("bghnfghgnfghnbfgbh"),
+                passwordEncoder.encode("22222222"),
                 "22222222222", "country2", "address222", new HashSet<>(), RoleNames.ROLE_ADMIN);
         User user3 = new User("name3", "surname3", "email3@email.com",
-                passwordEncoder.encode("33333333"), passwordEncoder.encode("fsdfgdfggdfgsf"),
+                passwordEncoder.encode("33333333"),
                 "33333333333", "country3", "address333", new HashSet<>(), RoleNames.ROLE_USER);
         userRepository.save(user1);
         userRepository.save(user2);
         userRepository.save(user3);
-        
+
         Set<String> images1 = new HashSet<>();
         images1.add("image1.1");
         images1.add("image1.2");

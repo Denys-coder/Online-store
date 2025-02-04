@@ -1,7 +1,0 @@
-.change-profile-data-grid
-{
-    display: grid;
-    grid-template-rows: repeat(6, auto);
-    grid-template-columns: max-content auto;
-    gap: 5px;
-}

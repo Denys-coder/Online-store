@@ -1,7 +1,0 @@
-.registration-grid
-{
-    display: grid;
-    grid-template-rows: repeat(8, auto);
-    grid-template-columns: repeat(3, max-content);
-    gap: 5px;
-}

@@ -1,7 +1,0 @@
-.add-item-grid
-{
-    display: grid;
-    grid-template-rows: repeat(6, max-content);
-    grid-template-columns: repeat(2, max-content);
-    gap: 10px;
-}

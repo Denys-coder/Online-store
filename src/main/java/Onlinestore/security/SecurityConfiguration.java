@@ -2,66 +2,73 @@ package Onlinestore.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+
+import java.util.List;
 
 @Configuration
-@EnableWebSecurity
-public class SecurityConfiguration extends WebSecurityConfigurerAdapter
-{
+public class SecurityConfiguration {
+
     private final UserDetailsService userDetailsService;
-    private final PasswordEncoder passwordEncoder;
-    
-    public SecurityConfiguration(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder)
-    {
+    private final BCryptPasswordEncoder passwordEncoder;
+
+    public SecurityConfiguration(UserDetailsService userDetailsService, BCryptPasswordEncoder passwordEncoder) {
         this.userDetailsService = userDetailsService;
         this.passwordEncoder = passwordEncoder;
     }
-    
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth)
-    {
-        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
-        daoAuthenticationProvider.setUserDetailsService(userDetailsService);
-        auth.authenticationProvider(daoAuthenticationProvider);
-    }
-    
-    @Override
-    protected void configure(HttpSecurity http) throws Exception
-    {
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeRequests()
-                    .antMatchers("/").permitAll()
-                    .antMatchers("/about").permitAll()
-                    .antMatchers("/error").permitAll()
-                    .antMatchers("/profile/**").authenticated()
-                    .antMatchers("/admin/**").hasRole("ADMIN")
-                    .antMatchers("/cart/**").hasRole("USER")
-                    .antMatchers("/registration").anonymous()
-                    .antMatchers("/catalog/**").permitAll()
-                .and()
-                    .formLogin()
-                    .loginProcessingUrl("/login")
-                    .loginPage("/login").permitAll()
-                    .usernameParameter("username")
-                    .passwordParameter("password")
-                    .defaultSuccessUrl("/")
-                .and()
-                    .logout()
-                    .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                    .logoutSuccessUrl("/")
-                .and()
-                    .rememberMe()
-                    .tokenValiditySeconds(2592000) // 30 days
-                    .key("mySecret!")
-                    .rememberMeParameter("remember-me")
-                    .userDetailsService(userDetailsService);
+                .cors(cors -> cors.configurationSource(request -> {
+                    var config = new CorsConfiguration();
+                    config.setAllowedOrigins(List.of("http://localhost:4200"));
+                    config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
+                    config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+                    config.setAllowCredentials(true);
+                    return config;
+                }))
+                .csrf(AbstractHttpConfigurer::disable) // Disable CSRF for REST APIs
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/", "/about", "/error", "/catalog/**").permitAll()
+                        .requestMatchers("/profile/**").authenticated()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/cart/**").hasRole("USER")
+                        .requestMatchers("/registration").anonymous()
+                        .requestMatchers("/login", "/logout").permitAll() // Updated paths
+                        .anyRequest().authenticated()
+                )
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                )
+                .formLogin(AbstractHttpConfigurer::disable) // Disable default form login
+                .logout(logout -> logout
+                        .logoutUrl("/logout") // Updated path
+                        .logoutSuccessHandler((request, response, authentication) -> {
+                            response.setStatus(200);
+                            response.getWriter().write("{\"message\": \"Logout successful\"}");
+                        })
+                );
+
+        return http.build();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder);
+
+        return new ProviderManager(authProvider);
     }
 }

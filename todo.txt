@@ -1,35 +1,23 @@
-// TODO refactoring:
-• move code from controllers into service classes
-• make html receive and respond item specs as map in spite of two list (admin controller)
-• create DTO layer
-• make @JoinColumn type as referenced class type and refactor Spring Data JPA code
-
-// TODO minor fixes:
+// TODO
 • make item comply specs order (store as blob or as two lists or wrap spec in class)
 • comply item images order when displaying them (store them as list)
-• move /resources/static/images into folder that's not in the projects directory
-  and make Dockerfile mount images folder from disc into docker container
-
-// TODO new features
-• display item's images as carousel when creating/updating item
+• try to simplify SecurityConfiguration
+• update readme
+• check if all code of Spring Boot Data JPA configured properly
+• validate data obtained from rest endpoint in a proper way
+• add liquibase before making changed to annotations of the entity classes
+• migrate adding of admin to liquibase
+• make apis always return proper response with description
+• make apis:
+    - user -> create, get, update, delete
+    - item -> create, get, update, delete
+    - user/cart -> get, delete
+    - user/cart/item -> create, get, update, delete
+• add all kinds of tests
 • save session before restarting server
 • make email confirmation and forgot password feature
 • add reset password feature
 • rename admin to manager and create admin role that can create/delete admins
 • add comments section under each item
-
-// TODO migration to REST API
-• fully understand these annotations
-  - ResponseEntity
-  - @Controller
-  - @RestController
-  - @RequestMapping("/api/users")
-  - @GetMapping
-  - @PostMapping (also with parenthesis)
-  - @RequestBody
-  - @ModelAttribute
-  - @Valid
-• make /registration accept DTO,
-  convert it into entity class using MapStruct,
-  validate data in a proper way
-  and make proper json response considering all problems that might occur with received DTO class and server errors
+• find a solution to add test data into a database in a proper way, which will not come into productions and projects will still be able to be to run for test from IDE and Docker
+• find a solution to add test media files into a resource folder in a proper way, which will not come into productions and projects will still be able to be run for test from IDE and Docker

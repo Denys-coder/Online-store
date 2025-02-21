@@ -78,7 +78,7 @@ public class AuthController {
             // Load user details
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-            // Verify password using BCrypt
+            // Verify password
             if (!passwordEncoder.matches(password, userDetails.getPassword())) {
                 return ResponseEntity.status(401).body(Map.of("error", "Invalid username or password"));
             }

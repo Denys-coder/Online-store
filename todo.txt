@@ -17,3 +17,19 @@
 • add reset password feature
 • rename admin to manager and create admin role that can create/delete admins
 • add comments section under each item
+
+// TODO migration to REST API
+• fully understand these annotations
+  - ResponseEntity
+  - @Controller
+  - @RestController
+  - @RequestMapping("/api/users")
+  - @GetMapping
+  - @PostMapping (also with parenthesis)
+  - @RequestBody
+  - @ModelAttribute
+  - @Valid
+• make /registration accept DTO,
+  convert it into entity class using MapStruct,
+  validate data in a proper way
+  and make proper json response considering all problems that might occur with received DTO class and server errors

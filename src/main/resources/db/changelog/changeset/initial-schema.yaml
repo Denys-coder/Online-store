@@ -1,0 +1,215 @@
+databaseChangeLog:
+- changeSet:
+    id: 1740417015749-1
+    author: denyslapshyn (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: amount
+            type: INTEGER
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: items_pkey
+            name: id
+            type: INTEGER
+        - column:
+            constraints:
+              nullable: false
+            name: price
+            type: FLOAT8
+        - column:
+            constraints:
+              nullable: false
+            name: name
+            type: VARCHAR(64)
+        - column:
+            name: description
+            type: VARCHAR(255)
+        - column:
+            name: logo_name
+            type: VARCHAR(255)
+        tableName: items
+- changeSet:
+    id: 1740417015749-2
+    author: denyslapshyn (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: amount
+            type: INTEGER
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: orders_pkey
+            name: id
+            type: INTEGER
+        - column:
+            name: item_id
+            type: INTEGER
+        - column:
+            constraints:
+              nullable: false
+            name: user_id
+            type: INTEGER
+        tableName: orders
+- changeSet:
+    id: 1740417015749-3
+    author: denyslapshyn (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: users_pkey
+            name: id
+            type: INTEGER
+        - column:
+            constraints:
+              nullable: false
+            name: name
+            type: VARCHAR(30)
+        - column:
+            constraints:
+              nullable: false
+            name: surname
+            type: VARCHAR(30)
+        - column:
+            constraints:
+              nullable: false
+            name: email
+            type: VARCHAR(32)
+        - column:
+            name: country
+            type: VARCHAR(50)
+        - column:
+            constraints:
+              nullable: false
+            name: password
+            type: VARCHAR(64)
+        - column:
+            name: address
+            type: VARCHAR(100)
+        - column:
+            name: role_names
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: telephone_number
+            type: VARCHAR(255)
+        tableName: users
+- changeSet:
+    id: 1740417015749-4
+    author: denyslapshyn (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: email
+        constraintName: users_email_key
+        tableName: users
+- changeSet:
+    id: 1740417015749-5
+    author: denyslapshyn (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: telephone_number
+        constraintName: users_telephone_number_key
+        tableName: users
+- changeSet:
+    id: 1740417015749-6
+    author: denyslapshyn (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: item_id
+            type: INTEGER
+        - column:
+            name: image_names
+            type: VARCHAR(255)
+        tableName: item_image_names
+- changeSet:
+    id: 1740417015749-7
+    author: denyslapshyn (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: item_specs_pkey
+            name: item_id
+            type: INTEGER
+        - column:
+            name: specs
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: item_specs_pkey
+            name: specs_key
+            type: VARCHAR(255)
+        tableName: item_specs
+- changeSet:
+    id: 1740417015749-8
+    author: denyslapshyn (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: item_id
+        baseTableName: orders
+        constraintName: fk247nnxschdfm8lre0ssvy3k1r
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: items
+        validate: true
+- changeSet:
+    id: 1740417015749-9
+    author: denyslapshyn (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: item_id
+        baseTableName: item_specs
+        constraintName: fk7oaskhbt6lp8k4gds17aymv38
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: items
+        validate: true
+- changeSet:
+    id: 1740417015749-10
+    author: denyslapshyn (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: item_id
+        baseTableName: item_image_names
+        constraintName: fkc3jj5jhljqj9bh8lqgbwlwg7p
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: items
+        validate: true
+

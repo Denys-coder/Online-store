@@ -1,6 +1,6 @@
 package Onlinestore.entity;
 
-import Onlinestore.model.RoleNames;
+import Onlinestore.model.RoleName;
 import lombok.Getter;
 import lombok.Setter;
 import jakarta.persistence.*;
@@ -52,13 +52,13 @@ public class User {
     private Set<Order> orders;
 
     @Enumerated(EnumType.STRING)
-    private RoleNames roleNames;
+    private RoleName roleName;
 
     public User() {
         orders = new HashSet<>();
     }
 
-    public User(String name, String surname, String email, String password, String telephoneNumber, String country, String address, Set<Order> orders, RoleNames roleNames) {
+    public User(String name, String surname, String email, String password, String telephoneNumber, String country, String address, Set<Order> orders, RoleName roleName) {
         this.name = name;
         this.surname = surname;
         this.email = email;
@@ -67,7 +67,7 @@ public class User {
         this.country = country;
         this.address = address;
         this.orders = orders;
-        this.roleNames = roleNames;
+        this.roleName = roleName;
     }
 
     public void addOrder(Order order) {

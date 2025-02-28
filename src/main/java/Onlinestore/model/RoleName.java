@@ -1,6 +1,6 @@
 package Onlinestore.model;
 
-public enum RoleNames {
+public enum RoleName {
     ROLE_USER,
     ROLE_ADMIN
 }

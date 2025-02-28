@@ -7,7 +7,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import Onlinestore.model.RoleNames;
+import Onlinestore.model.RoleName;
 
 @NoArgsConstructor(force = true)
 @Mapper(componentModel = "spring")
@@ -15,7 +15,7 @@ public abstract class UserRegistrationMapper {
 
     public PasswordEncoder passwordEncoder;
 
-    public RoleNames userRole = RoleNames.ROLE_USER;
+    public RoleName userRole = RoleName.ROLE_USER;
 
     protected UserRegistrationMapper(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
@@ -27,6 +27,6 @@ public abstract class UserRegistrationMapper {
     }
 
     @Mapping(target = "password", expression = "java(passwordEncoder.encode(userRegistrationDTO.getPassword()))")
-    @Mapping(target = "roleNames", expression = "java(userRole)")
+    @Mapping(target = "roleName", expression = "java(userRole)")
     public abstract User userRegistrationDtoToUserMapper(UserRegistrationDTO userRegistrationDTO);
 }

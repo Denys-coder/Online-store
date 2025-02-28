@@ -1,0 +1,25 @@
+databaseChangeLog:
+  - changeSet:
+      id: rename-columns
+      author: denyslapshyn (generated)
+      changes:
+        - renameColumn:
+            tableName: item_image_names
+            oldColumnName: image_names
+            newColumnName: image_name
+            columnDataType: VARCHAR(255)
+        - renameColumn:
+            tableName: item_specs
+            oldColumnName: specs_key
+            newColumnName: spec_name
+            columnDataType: VARCHAR(255)
+        - renameColumn:
+            tableName: item_specs
+            oldColumnName: specs
+            newColumnName: spec_value
+            columnDataType: VARCHAR(255)
+        - renameColumn:
+            tableName: users
+            oldColumnName: role_names
+            newColumnName: role_name
+            columnDataType: VARCHAR(255)

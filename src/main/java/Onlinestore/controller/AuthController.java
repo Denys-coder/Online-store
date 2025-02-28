@@ -86,7 +86,7 @@ public class AuthController {
 
             // Authenticate user
             UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                    username, password, List.of(new SimpleGrantedAuthority(user.getRoleNames().toString())));
+                    username, password, List.of(new SimpleGrantedAuthority(user.getRoleName().toString())));
             Authentication authentication = authenticationManager.authenticate(authToken);
             SecurityContextHolder.getContext().setAuthentication(authentication);
 

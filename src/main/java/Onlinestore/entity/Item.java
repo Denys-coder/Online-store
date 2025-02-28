@@ -33,9 +33,14 @@ public class Item {
     private String logoName; // only filename without directory
 
     @ElementCollection
+    @CollectionTable(name = "item_image_names", joinColumns = @JoinColumn(name = "item_id"))
+    @Column(name = "image_name")
     private Set<String> imageNames; // only filenames without directories
 
     @ElementCollection
+    @CollectionTable(name = "item_specs", joinColumns = @JoinColumn(name = "item_id"))
+    @MapKeyColumn(name = "spec_name") // Column for the map key
+    @Column(name = "spec_value") // Column for the map value
     private Map<String, String> specs;
 
     public Item() {

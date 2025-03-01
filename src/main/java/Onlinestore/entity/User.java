@@ -4,7 +4,6 @@ import Onlinestore.model.RoleName;
 import lombok.Getter;
 import lombok.Setter;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 
 import java.util.*;
 
@@ -17,41 +16,32 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(nullable = false)
-    @NotBlank(message = "should not be blank")
-    @Size(min = 1, max = 30, message = "should be from 1 to 30 symbols")
+    @Column(nullable = false, length = 30)
     private String name;
 
-    @NotBlank(message = "should not be blank")
-    @Size(min = 1, max = 30, message = "should be from 1 to 30 symbols")
+    @Column(nullable = false, length = 30)
     private String surname;
 
-    @Column(unique = true)
-    @NotBlank(message = "should not be blank")
-    @Size(min = 5, max = 32, message = "should be from 5 to 32 symbols")
-    @Email(message = "this is not an email")
+    @Column(nullable = false, unique = true, length = 100)
     private String email;
 
-    @Column(nullable = false)
-    @NotNull(message = "should not be blank")
-    @Size(min = 8, max = 64, message = "should be from 8 to 64 symbols")
+    @Column(nullable = false, length = 60)
     private String password;
 
-    @Column(name = "telephone_number", nullable = false, unique = true)
-    @NotNull(message = "should not be blank")
-    @Pattern(regexp = "\\d{6,12}", message = "telephone number must be from 6 to 12 digits")
+    @Column(name = "telephone_number", nullable = false, unique = true, length = 15)
     private String telephoneNumber;
 
-    @Size(min = 3, max = 50, message = "should be from 3 to 50 symbols")
+    @Column(nullable = false, length = 50)
     private String country;
 
-    @Size(min = 10, max = 100, message = "should be from 10 to 100 symbols")
+    @Column(nullable = false, length = 100)
     private String address;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "userId")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
     private Set<Order> orders;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "role_name", nullable = false, length = 20)
     private RoleName roleName;
 
     public User() {
@@ -68,29 +58,5 @@ public class User {
         this.address = address;
         this.orders = orders;
         this.roleName = roleName;
-    }
-
-    public void addOrder(Order order) {
-        orders.add(order);
-    }
-
-    public void deleteOrderById(int orderId) {
-        Iterator<Order> orderIterator = orders.iterator();
-        while (orderIterator.hasNext()) {
-            if (orderIterator.next().getId() == orderId) {
-                orderIterator.remove();
-                break;
-            }
-        }
-    }
-
-    public void deleteOrdersByItemId(int itemIdToDelete) {
-        Iterator<Order> orderIterator = orders.iterator();
-        while (orderIterator.hasNext()) {
-            if (orderIterator.next().getItem().getId() == itemIdToDelete) {
-                orderIterator.remove();
-                break;
-            }
-        }
     }
 }

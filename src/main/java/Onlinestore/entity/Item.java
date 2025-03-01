@@ -3,7 +3,6 @@ package Onlinestore.entity;
 import lombok.Getter;
 import lombok.Setter;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 
 import java.util.*;
 
@@ -16,31 +15,30 @@ public class Item {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(nullable = false)
-    @Size(min = 1, max = 64)
+    @Column(nullable = false, unique = true, length = 100)
     private String name;
 
-    @NotNull
-    @Min(0)
+    @Column(nullable = false)
     private double price;
 
-    @NotNull
-    @Min(0)
+    @Column(nullable = false)
     private int amount;
 
+    @Column(nullable = false, length = 500)
     private String description;
 
+    @Column(nullable = false, unique = true, length = 10)
     private String logoName; // only filename without directory
 
     @ElementCollection
     @CollectionTable(name = "item_image_names", joinColumns = @JoinColumn(name = "item_id"))
-    @Column(name = "image_name")
+    @Column(name = "image_name",  nullable = false, unique = true, length = 11)
     private Set<String> imageNames; // only filenames without directories
 
     @ElementCollection
     @CollectionTable(name = "item_specs", joinColumns = @JoinColumn(name = "item_id"))
-    @MapKeyColumn(name = "spec_name") // Column for the map key
-    @Column(name = "spec_value") // Column for the map value
+    @MapKeyColumn(name = "spec_name", nullable = false, length = 30) // Column for the map key
+    @Column(name = "spec_value", nullable = false, length = 30) // Column for the map value
     private Map<String, String> specs;
 
     public Item() {
@@ -56,10 +54,5 @@ public class Item {
         this.logoName = logoName;
         this.imageNames = imageNames;
         this.specs = specs;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return id == ((Item) obj).getId();
     }
 }

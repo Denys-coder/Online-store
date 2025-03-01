@@ -1,0 +1,106 @@
+databaseChangeLog:
+- changeSet:
+    id: 1740787450391-9
+    author: denyslapshyn (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: image_name
+        constraintName: item_image_names_image_name_key
+        tableName: item_image_names
+- changeSet:
+    id: 1740787450391-10
+    author: denyslapshyn (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: logo_name
+        constraintName: items_logo_name_key
+        tableName: items
+- changeSet:
+    id: 1740787450391-11
+    author: denyslapshyn (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: name
+        constraintName: items_name_key
+        tableName: items
+- changeSet:
+    id: 1740787450391-12
+    author: denyslapshyn (generated)
+    changes:
+    - addPrimaryKey:
+        columnNames: item_id, image_name
+        constraintName: item_image_names_pkey
+        tableName: item_image_names
+- changeSet:
+    id: 1740787450391-1
+    author: denyslapshyn (generated)
+    changes:
+    - addNotNullConstraint:
+        columnDataType: varchar(100)
+        columnName: address
+        tableName: users
+        validate: true
+- changeSet:
+    id: 1740787450391-2
+    author: denyslapshyn (generated)
+    changes:
+    - addNotNullConstraint:
+        columnDataType: varchar(50)
+        columnName: country
+        tableName: users
+        validate: true
+- changeSet:
+    id: 1740787450391-3
+    author: denyslapshyn (generated)
+    changes:
+    - addNotNullConstraint:
+        columnDataType: varchar(500)
+        columnName: description
+        tableName: items
+        validate: true
+- changeSet:
+    id: 1740787450391-4
+    author: denyslapshyn (generated)
+    changes:
+    - addNotNullConstraint:
+        columnDataType: varchar(11)
+        columnName: image_name
+        tableName: item_image_names
+        validate: true
+- changeSet:
+    id: 1740787450391-5
+    author: denyslapshyn (generated)
+    changes:
+    - addNotNullConstraint:
+        columnDataType: int
+        columnName: item_id
+        tableName: orders
+        validate: true
+- changeSet:
+    id: 1740787450391-6
+    author: denyslapshyn (generated)
+    changes:
+    - addNotNullConstraint:
+        columnDataType: varchar(10)
+        columnName: logo_name
+        tableName: items
+        validate: true
+- changeSet:
+    id: 1740787450391-7
+    author: denyslapshyn (generated)
+    changes:
+    - addNotNullConstraint:
+        columnDataType: varchar(20)
+        columnName: role_name
+        tableName: users
+        validate: true
+- changeSet:
+    id: 1740787450391-8
+    author: denyslapshyn (generated)
+    changes:
+    - addNotNullConstraint:
+        columnDataType: varchar(30)
+        columnName: spec_value
+        tableName: item_specs
+        validate: true
+

@@ -3,3 +3,5 @@ databaseChangeLog:
       file: db/changelog/changeset/initial-schema.yaml
   - include:
       file: db/changelog/changeset/rename-columns.yaml
+  - include:
+      file: db/changelog/changeset/apply-multiple-constraints.yaml

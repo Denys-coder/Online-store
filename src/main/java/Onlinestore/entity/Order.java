@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
 
 @Setter
 @Getter
@@ -16,28 +15,20 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @JoinColumn
-    private int userId;
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "item_id", nullable = false)
     private Item item;
 
-    @Min(0)
+    @Column(nullable = false)
     private int amount;
 
-    public Order(Item item, int amount, int userId) {
+    public Order(Item item, int amount, User user) {
         this.item = item;
         this.amount = amount;
-        this.userId = userId;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof Order)) {
-            return false;
-        }
-
-        Order secondOrder = (Order) obj;
-        return userId == secondOrder.getUserId() && item.equals(secondOrder.getItem());
+        this.user = user;
     }
 }

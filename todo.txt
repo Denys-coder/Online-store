@@ -1,23 +1,19 @@
 // TODO
-• make item comply specs order (store as blob or as two lists or wrap spec in class)
-• comply item images order when displaying them (store them as list)
-• try to simplify SecurityConfiguration
-• update readme
-• check if all code of Spring Boot Data JPA configured properly
-• validate data obtained from rest endpoint in a proper way
-• add liquibase before making changed to annotations of the entity classes
-• migrate adding of admin to liquibase
-• make apis always return proper response with description
+• add admin user using Liquibase
+• check if repository beans configured properly
+• make proper validation of DTO classes
+• refactor AuthController methods
+• return well-designed response from endpoints considering all possible cases
+• check and possibly update security configuration
+• make resources be read and written from path specified in environment variable
 • make apis:
     - user -> create, get, update, delete
     - item -> create, get, update, delete
     - user/cart -> get, delete
     - user/cart/item -> create, get, update, delete
+• update readme
+• make microservice that works as warehouse for items
 • add all kinds of tests
 • save session before restarting server
-• make email confirmation and forgot password feature
+• add email confirmation feature
 • add reset password feature
-• rename admin to manager and create admin role that can create/delete admins
-• add comments section under each item
-• find a solution to add test data into a database in a proper way, which will not come into productions and projects will still be able to be to run for test from IDE and Docker
-• find a solution to add test media files into a resource folder in a proper way, which will not come into productions and projects will still be able to be run for test from IDE and Docker

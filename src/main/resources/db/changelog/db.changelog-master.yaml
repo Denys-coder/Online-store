@@ -5,3 +5,5 @@ databaseChangeLog:
       file: db/changelog/changeset/rename-columns.yaml
   - include:
       file: db/changelog/changeset/apply-multiple-constraints.yaml
+  - include:
+      file: db/changelog/changeset/add-admin-into-users.yaml

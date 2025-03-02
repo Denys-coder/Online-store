@@ -1,0 +1,44 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: your_name
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: integer
+                  value: 1
+              - column:
+                  name: name
+                  type: varchar(30)
+                  value: "adminName"
+              - column:
+                  name: surname
+                  type: varchar(30)
+                  value: "adminSurname"
+              - column:
+                  name: email
+                  type: varchar(100)
+                  value: "email1@email.com"
+              - column:
+                  name: country
+                  type: varchar(50)
+                  value: "adminCountry"
+              - column:
+                  name: password
+                  type: varchar(60)
+                  value: "$2a$10$9Zztd3lJJY7hmgHG7PZQfOwrSR9SUC/tPvrvJT/0Z79ocPQMUe2m6"
+              - column:
+                  name: address
+                  type: varchar(100)
+                  value: "adminAddress"
+              - column:
+                  name: role_name
+                  type: varchar(20)
+                  value: "ROLE_ADMIN"
+              - column:
+                  name: telephone_number
+                  type: varchar(15)
+                  value: "11111111111"

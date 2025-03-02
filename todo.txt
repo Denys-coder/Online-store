@@ -1,15 +1,14 @@
 // TODO
-• check if repository beans configured properly
 • refactor AuthController methods
 • return well-designed response from endpoints considering all possible cases
 • check and possibly update security configuration
-• make resources be read and written from path specified in environment variable
 • make apis:
     - user -> create, get, update, delete
     - item -> create, get, update, delete
     - user/cart -> get, delete
     - user/cart/item -> create, get, update, delete
 • update readme
+
 • make microservice that works as warehouse for items
 • add all kinds of tests
 • save session before restarting server

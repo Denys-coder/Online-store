@@ -1,7 +1,5 @@
 // TODO
-• add admin user using Liquibase
 • check if repository beans configured properly
-• make proper validation of DTO classes
 • refactor AuthController methods
 • return well-designed response from endpoints considering all possible cases
 • check and possibly update security configuration

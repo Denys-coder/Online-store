@@ -11,11 +11,11 @@ import lombok.Setter;
 public class UserLoginDTO {
 
     @NotBlank
-    @Size(min = 3, max = 20)
+    @Size(max = 100)
     @Email
     private String email;
 
     @NotBlank
-    @Size(min = 8, max = 32)
+    @Size(min = 8, max = 64)
     private String password;
 }

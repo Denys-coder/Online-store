@@ -12,22 +12,22 @@ import lombok.Setter;
 public class UserRegistrationDTO {
 
     @NotBlank
-    @Size(min = 3, max = 20)
+    @Size(min = 2, max = 30)
     @Pattern(regexp = "^(?![- ])([a-zA-Z -]+)(?<![- ])$")
     private String name;
 
     @NotBlank
-    @Size(min = 3, max = 20)
+    @Size(min = 2, max = 30)
     @Pattern(regexp = "^(?![- ])([a-zA-Z -]+)(?<![- ])$")
     private String surname;
 
     @NotBlank
-    @Size(min = 3, max = 20)
+    @Size(max = 100)
     @Email
     private String email;
 
     @NotBlank
-    @Size(min = 8, max = 32)
+    @Size(min = 8, max = 64)
     private String password;
 
     @NotBlank

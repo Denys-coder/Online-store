@@ -19,13 +19,13 @@ public class SecurityConfiguration {
         http
                 .cors(cors -> cors.configurationSource(request -> {
                     var config = new CorsConfiguration();
-                    config.setAllowedOrigins(List.of("*"));
-                    config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-                    config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+                    config.setAllowedOrigins(List.of("http://localhost:4200"));
+                    config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH", "HEAD", "CONNECT", "TRACE", "COPY"));
+                    config.setAllowedHeaders(List.of("*"));
                     config.setAllowCredentials(true);
                     return config;
                 }))
-                .csrf(AbstractHttpConfigurer::disable) // Disable CSRF for REST APIs
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/about", "/error", "/catalog/**").permitAll()
                         .requestMatchers("/profile/**").authenticated()
@@ -36,6 +36,8 @@ public class SecurityConfiguration {
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // Allow session creation
+                        .maximumSessions(-1) // Allow any number of sessions per user
+                        .expiredUrl("/auth/login") // Redirect when session expires
                 )
                 .logout(logout -> logout
                         .logoutUrl("/auth/logout") // Enable logout on /auth/logout

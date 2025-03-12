@@ -42,6 +42,8 @@ databaseChangeLog:
                   name: telephone_number
                   type: varchar(15)
                   value: "11111111111"
+        - sql:
+            sql: SELECT setval('users_id_seq', 2, false);
       rollback:
         - delete:
             tableName: users

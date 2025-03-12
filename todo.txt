@@ -1,6 +1,4 @@
 // TODO
-• refactor AuthController methods
-• return well-designed response from endpoints considering all possible cases
 • make apis:
     - user -> create, get, update, delete
     - item -> create, get, update, delete

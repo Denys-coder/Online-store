@@ -6,12 +6,11 @@ import Onlinestore.entity.User;
 import Onlinestore.mapper.user.UserRegistrationMapper;
 import Onlinestore.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
-import org.springframework.http.HttpStatus;
+    import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -23,7 +22,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -46,62 +44,64 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> checkAndRegisterUser(@Valid @RequestBody UserRegistrationDTO userRegistrationDTO, BindingResult bindingResult) {
 
-        User user = userRegistrationMapper.userRegistrationDtoToUserMapper(userRegistrationDTO);
+        Map<String, String> errors = new HashMap<>();
 
-        // check if email already in use
-        if (userRepository.existsByEmail(user.getEmail())) {
-            bindingResult.addError(new FieldError("user", "email", "email address already in use"));
-        }
-
-        // check if telephoneNumber already in use
-        if (userRepository.existsByTelephoneNumber(user.getTelephoneNumber())) {
-            bindingResult.addError(new FieldError("user", "telephoneNumber", "telephone number already in use"));
-        }
-
+        // Collect automatic validation errors
         if (bindingResult.hasErrors()) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            for (FieldError error : bindingResult.getFieldErrors()) {
+                errors.put(error.getField(), error.getDefaultMessage());
+            }
         }
 
+        // Check if email is already in use
+        if (userRepository.existsByEmail(userRegistrationDTO.getEmail())) {
+            errors.put("email", "Email address already in use");
+        }
+
+        // Check if telephone number is already in use
+        if (userRepository.existsByTelephoneNumber(userRegistrationDTO.getTelephoneNumber())) {
+            errors.put("telephoneNumber", "Telephone number already in use");
+        }
+
+        // Return errors if any
+        if (!errors.isEmpty()) {
+            return ResponseEntity.badRequest().body(errors);
+        }
+
+        // Convert DTO to Entity and save
+        User user = userRegistrationMapper.userRegistrationDtoToUserMapper(userRegistrationDTO);
         userRepository.save(user);
 
-        return new ResponseEntity<>(HttpStatus.OK);
-
+        return ResponseEntity.ok(Map.of("message", "Success"));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody UserLoginDTO userLoginDTO, HttpServletRequest httpServletRequest) {
+    public ResponseEntity<?> login(@Valid @RequestBody UserLoginDTO userLoginDTO, HttpServletRequest request) {
 
         String username = userLoginDTO.getEmail();
         String password = userLoginDTO.getPassword();
 
         try {
-            // Load user details
+
+            // load user details
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-            // Verify password
+            // check if password is valid
             if (!passwordEncoder.matches(password, userDetails.getPassword())) {
-                return ResponseEntity.status(401).body(Map.of("error", "Invalid username or password"));
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Invalid username or password"));
             }
-            User user = userRepository.findUserByEmail(userDetails.getUsername());
 
-            // Authenticate user
-            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                    username, password, List.of(new SimpleGrantedAuthority(user.getRoleName().toString())));
+            // authenticate user
+            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(username, password, userDetails.getAuthorities());
             Authentication authentication = authenticationManager.authenticate(authToken);
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            // Create session
-            HttpSession session = httpServletRequest.getSession(true);
-            session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
+            // create session
+            request.getSession(true).setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
 
-            // Generate response
-            Map<String, Object> response = new HashMap<>();
-            response.put("message", "Login successful");
-            response.put("username", user.getName());
-            return ResponseEntity.ok(response);
-
-        } catch (Exception e) {
-            return ResponseEntity.status(401).body(Map.of("error", "Invalid username or password"));
+            return ResponseEntity.ok(Map.of("message", "Success"));
+        } catch (UsernameNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "No such user"));
         }
     }
 

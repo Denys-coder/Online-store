@@ -1,5 +1,7 @@
 package Onlinestore.dto.user;
 
+import Onlinestore.validation.annotation.UniqueEmail;
+import Onlinestore.validation.annotation.UniqueTelephone;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -24,6 +26,7 @@ public class UserRegistrationDTO {
     @NotBlank
     @Size(max = 100)
     @Email
+    @UniqueEmail
     private String email;
 
     @NotBlank
@@ -33,6 +36,7 @@ public class UserRegistrationDTO {
     @NotBlank
     @Size(min = 6, max = 12)
     @Pattern(regexp = "\\d*")
+    @UniqueTelephone
     private String telephoneNumber;
 
     @NotBlank

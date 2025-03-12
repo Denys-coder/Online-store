@@ -6,7 +6,7 @@ import Onlinestore.entity.User;
 import Onlinestore.mapper.user.UserRegistrationMapper;
 import Onlinestore.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
-    import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,7 +21,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -44,27 +46,14 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> checkAndRegisterUser(@Valid @RequestBody UserRegistrationDTO userRegistrationDTO, BindingResult bindingResult) {
 
-        Map<String, String> errors = new HashMap<>();
-
-        // Collect automatic validation errors
+        // Collect validation errors
         if (bindingResult.hasErrors()) {
+            Map<String, List<String>> errors = new HashMap<>();
+
             for (FieldError error : bindingResult.getFieldErrors()) {
-                errors.put(error.getField(), error.getDefaultMessage());
+                errors.computeIfAbsent(error.getField(), key -> new ArrayList<>()).add(error.getDefaultMessage());
             }
-        }
 
-        // Check if email is already in use
-        if (userRepository.existsByEmail(userRegistrationDTO.getEmail())) {
-            errors.put("email", "Email address already in use");
-        }
-
-        // Check if telephone number is already in use
-        if (userRepository.existsByTelephoneNumber(userRegistrationDTO.getTelephoneNumber())) {
-            errors.put("telephoneNumber", "Telephone number already in use");
-        }
-
-        // Return errors if any
-        if (!errors.isEmpty()) {
             return ResponseEntity.badRequest().body(errors);
         }
 

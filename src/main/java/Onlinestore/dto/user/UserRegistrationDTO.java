@@ -32,7 +32,7 @@ public class UserRegistrationDTO {
 
     @NotBlank
     @Size(min = 6, max = 12)
-    @Pattern(regexp = "/d*")
+    @Pattern(regexp = "\\d*")
     private String telephoneNumber;
 
     @NotBlank

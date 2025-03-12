@@ -1,4 +1,4 @@
-package Onlinestore.model;
+package Onlinestore.entity;
 
 public enum RoleName {
     ROLE_USER,

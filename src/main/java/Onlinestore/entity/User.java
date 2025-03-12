@@ -1,6 +1,5 @@
 package Onlinestore.entity;
 
-import Onlinestore.model.RoleName;
 import lombok.Getter;
 import lombok.Setter;
 import jakarta.persistence.*;

@@ -7,7 +7,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import Onlinestore.model.RoleName;
+import Onlinestore.entity.RoleName;
 
 @NoArgsConstructor(force = true)
 @Mapper(componentModel = "spring")

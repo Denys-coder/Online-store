@@ -6,6 +6,7 @@ import Onlinestore.entity.User;
 import Onlinestore.mapper.user.UserRegistrationMapper;
 import Onlinestore.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,20 +29,13 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
+@AllArgsConstructor
 public class AuthController {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
     public final UserRegistrationMapper userRegistrationMapper;
-
-    public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, UserDetailsService userDetailsService, UserRegistrationMapper userRegistrationMapper) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.authenticationManager = authenticationManager;
-        this.userDetailsService = userDetailsService;
-        this.userRegistrationMapper = userRegistrationMapper;
-    }
 
     @PostMapping("/register")
     public ResponseEntity<?> checkAndRegisterUser(@Valid @RequestBody UserRegistrationDTO userRegistrationDTO, BindingResult bindingResult) {

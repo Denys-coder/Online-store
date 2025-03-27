@@ -37,26 +37,7 @@ public class AuthController {
     private final UserDetailsService userDetailsService;
     public final UserRegistrationMapper userRegistrationMapper;
 
-    @PostMapping("/register")
-    public ResponseEntity<?> checkAndRegisterUser(@Valid @RequestBody UserRegistrationDTO userRegistrationDTO, BindingResult bindingResult) {
 
-        // Collect validation errors
-        if (bindingResult.hasErrors()) {
-            Map<String, List<String>> errors = new HashMap<>();
-
-            for (FieldError error : bindingResult.getFieldErrors()) {
-                errors.computeIfAbsent(error.getField(), key -> new ArrayList<>()).add(error.getDefaultMessage());
-            }
-
-            return ResponseEntity.badRequest().body(errors);
-        }
-
-        // Convert DTO to Entity and save
-        User user = userRegistrationMapper.userRegistrationDtoToUserMapper(userRegistrationDTO);
-        userRepository.save(user);
-
-        return ResponseEntity.ok(Map.of("message", "Success"));
-    }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody UserLoginDTO userLoginDTO, HttpServletRequest request) {

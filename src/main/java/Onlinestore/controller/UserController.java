@@ -1,13 +1,9 @@
 package Onlinestore.controller;
 
-import Onlinestore.dto.user.UpdateUserDTO;
-import Onlinestore.dto.user.UserRegistrationDTO;
-import Onlinestore.dto.user.UserResponseDTO;
 import Onlinestore.dto.user.GetUserDTO;
 import Onlinestore.dto.user.PostUserDTO;
+import Onlinestore.dto.user.PutUserDTO;
 import Onlinestore.entity.User;
-import Onlinestore.mapper.user.UserRegistrationMapper;
-import Onlinestore.mapper.user.UserResponseMapper;
 import Onlinestore.mapper.user.PostUserMapper;
 import Onlinestore.mapper.user.GetUserMapper;
 import Onlinestore.repository.UserRepository;
@@ -62,4 +58,32 @@ public class UserController {
         return ResponseEntity.ok(Map.of("message", "Success"));
     }
 
+    @PutMapping
+    public ResponseEntity<?> putUser(@Valid @RequestBody PutUserDTO putUserDTO, BindingResult bindingResult) {
+
+        // Collect validation errors
+        if (bindingResult.hasErrors()) {
+            Map<String, List<String>> errors = new HashMap<>();
+
+            for (FieldError error : bindingResult.getFieldErrors()) {
+                errors.computeIfAbsent(error.getField(), key -> new ArrayList<>()).add(error.getDefaultMessage());
+            }
+
+            return ResponseEntity.badRequest().body(errors);
+        }
+
+        User currentUser = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+
+        currentUser.setName(putUserDTO.getName());
+        currentUser.setSurname(putUserDTO.getSurname());
+        currentUser.setEmail(putUserDTO.getEmail());
+        currentUser.setPassword(putUserDTO.getPassword());
+        currentUser.setTelephoneNumber(putUserDTO.getTelephoneNumber());
+        currentUser.setCountry(putUserDTO.getCountry());
+        currentUser.setAddress(putUserDTO.getAddress());
+
+        userRepository.save(currentUser);
+
+        return ResponseEntity.ok("Success");
+    }
 }

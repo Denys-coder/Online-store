@@ -4,14 +4,16 @@ import Onlinestore.repository.UserRepository;
 import Onlinestore.validation.annotation.UniqueTelephoneNumber;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class UniqueTelephoneNumberValidator implements ConstraintValidator<UniqueTelephoneNumber, String> {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    public UniqueTelephoneNumberValidator(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Override
     public boolean isValid(String telephoneNumber, ConstraintValidatorContext context) {

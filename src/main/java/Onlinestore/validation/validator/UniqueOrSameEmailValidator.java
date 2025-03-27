@@ -6,15 +6,17 @@ import Onlinestore.security.UserPrincipal;
 import Onlinestore.validation.annotation.UniqueOrSameEmail;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 @Component
 public class UniqueOrSameEmailValidator implements ConstraintValidator<UniqueOrSameEmail, String> {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    public UniqueOrSameEmailValidator(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Override
     public boolean isValid(String email, ConstraintValidatorContext context) {

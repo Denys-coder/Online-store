@@ -1,9 +1,7 @@
 package Onlinestore.controller;
 
 import Onlinestore.dto.user.UserLoginDTO;
-import Onlinestore.dto.user.UserRegistrationDTO;
-import Onlinestore.entity.User;
-import Onlinestore.mapper.user.UserRegistrationMapper;
+import Onlinestore.mapper.user.PostUserMapper;
 import Onlinestore.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
@@ -13,8 +11,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,9 +18,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -35,7 +28,7 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
-    public final UserRegistrationMapper userRegistrationMapper;
+    public final PostUserMapper postUserMapper;
 
 
 

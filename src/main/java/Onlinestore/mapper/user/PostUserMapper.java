@@ -1,6 +1,6 @@
 package Onlinestore.mapper.user;
 
-import Onlinestore.dto.user.UserRegistrationDTO;
+import Onlinestore.dto.user.PostUserDTO;
 import Onlinestore.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -14,13 +14,13 @@ import Onlinestore.entity.RoleName;
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
 @Mapper(componentModel = "spring")
-public abstract class UserRegistrationMapper {
+public abstract class PostUserMapper {
 
     @Setter(onMethod_ = @Autowired)
     public PasswordEncoder passwordEncoder;
     public final RoleName userRole = RoleName.ROLE_USER;
 
-    @Mapping(target = "password", expression = "java(passwordEncoder.encode(userRegistrationDTO.getPassword()))")
+    @Mapping(target = "password", expression = "java(passwordEncoder.encode(postUserDTO.getPassword()))")
     @Mapping(target = "roleName", expression = "java(userRole)")
-    public abstract User userRegistrationDtoToUserMapper(UserRegistrationDTO userRegistrationDTO);
+    public abstract User postUserDTOToUserMapper(PostUserDTO postUserDTO);
 }

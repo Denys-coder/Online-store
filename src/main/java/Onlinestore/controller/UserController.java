@@ -3,9 +3,13 @@ package Onlinestore.controller;
 import Onlinestore.dto.user.UpdateUserDTO;
 import Onlinestore.dto.user.UserRegistrationDTO;
 import Onlinestore.dto.user.UserResponseDTO;
+import Onlinestore.dto.user.GetUserDTO;
+import Onlinestore.dto.user.PostUserDTO;
 import Onlinestore.entity.User;
 import Onlinestore.mapper.user.UserRegistrationMapper;
 import Onlinestore.mapper.user.UserResponseMapper;
+import Onlinestore.mapper.user.PostUserMapper;
+import Onlinestore.mapper.user.GetUserMapper;
 import Onlinestore.repository.UserRepository;
 import Onlinestore.security.UserPrincipal;
 import jakarta.validation.Valid;
@@ -26,19 +30,19 @@ import java.util.Map;
 @AllArgsConstructor
 public class UserController {
 
-    private final UserResponseMapper userResponseMapper;
+    private final GetUserMapper getUserMapper;
     private final UserRepository userRepository;
-    public final UserRegistrationMapper userRegistrationMapper;
+    public final PostUserMapper postUserMapper;
 
     @GetMapping
     public ResponseEntity<?> getUser() {
         User user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
-        UserResponseDTO userResponseDTO = userResponseMapper.userToUserResponseDTO(user);
-        return ResponseEntity.ok(userResponseDTO);
+        GetUserDTO getUserDTO = getUserMapper.userToGetUserDTO(user);
+        return ResponseEntity.ok(getUserDTO);
     }
 
     @PostMapping
-    public ResponseEntity<?> postUser(@Valid @RequestBody UserRegistrationDTO userRegistrationDTO, BindingResult bindingResult) {
+    public ResponseEntity<?> postUser(@Valid @RequestBody PostUserDTO postUserDTO, BindingResult bindingResult) {
 
         // Collect validation errors
         if (bindingResult.hasErrors()) {
@@ -52,7 +56,7 @@ public class UserController {
         }
 
         // Convert DTO to Entity and save
-        User user = userRegistrationMapper.userRegistrationDtoToUserMapper(userRegistrationDTO);
+        User user = postUserMapper.postUserDTOToUserMapper(postUserDTO);
         userRepository.save(user);
 
         return ResponseEntity.ok(Map.of("message", "Success"));

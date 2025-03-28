@@ -55,7 +55,7 @@ public class UserController {
         User user = postUserMapper.postUserDTOToUserMapper(postUserDTO);
         userRepository.save(user);
 
-        return ResponseEntity.ok(Map.of("message", "Success"));
+        return ResponseEntity.ok("User created");
     }
 
     @PutMapping
@@ -84,6 +84,6 @@ public class UserController {
 
         userRepository.save(currentUser);
 
-        return ResponseEntity.ok("Success");
+        return ResponseEntity.ok("User updated");
     }
 }

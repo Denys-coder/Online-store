@@ -56,9 +56,9 @@ public class AuthController {
             // create session
             request.getSession(true).setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
 
-            return ResponseEntity.ok(Map.of("message", "Success"));
+            return ResponseEntity.ok("User logged in");
         } catch (UsernameNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "No such user"));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No such user");
         }
     }
 

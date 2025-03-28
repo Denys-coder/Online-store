@@ -8,10 +8,13 @@ import Onlinestore.mapper.user.PostUserMapper;
 import Onlinestore.mapper.user.GetUserMapper;
 import Onlinestore.repository.UserRepository;
 import Onlinestore.security.UserPrincipal;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -85,5 +88,15 @@ public class UserController {
         userRepository.save(currentUser);
 
         return ResponseEntity.ok("User updated");
+    }
+
+    @DeleteMapping
+    public ResponseEntity<?> deleteUser(HttpServletRequest request, HttpServletResponse response) {
+
+        User user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+        userRepository.delete(user);
+
+        new SecurityContextLogoutHandler().logout(request, response, SecurityContextHolder.getContext().getAuthentication());
+        return ResponseEntity.ok("User deleted");
     }
 }

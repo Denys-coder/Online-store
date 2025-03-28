@@ -1,9 +1,11 @@
 package Onlinestore.controller;
 
 import Onlinestore.dto.user.GetUserDTO;
+import Onlinestore.dto.user.PatchUserDTO;
 import Onlinestore.dto.user.PostUserDTO;
 import Onlinestore.dto.user.PutUserDTO;
 import Onlinestore.entity.User;
+import Onlinestore.mapper.user.PatchUserMapper;
 import Onlinestore.mapper.user.PostUserMapper;
 import Onlinestore.mapper.user.GetUserMapper;
 import Onlinestore.repository.UserRepository;
@@ -32,6 +34,7 @@ public class UserController {
     private final GetUserMapper getUserMapper;
     private final UserRepository userRepository;
     public final PostUserMapper postUserMapper;
+    public final PatchUserMapper patchUserMapper;
 
     @GetMapping
     public ResponseEntity<?> getUser() {
@@ -88,6 +91,27 @@ public class UserController {
         userRepository.save(currentUser);
 
         return ResponseEntity.ok("User updated");
+    }
+
+    @PatchMapping
+    public ResponseEntity<?> patchUser(@Valid @RequestBody PatchUserDTO patchUserDTO, BindingResult bindingResult) {
+
+        // Collect validation errors
+        if (bindingResult.hasErrors()) {
+            Map<String, List<String>> errors = new HashMap<>();
+
+            for (FieldError error : bindingResult.getFieldErrors()) {
+                errors.computeIfAbsent(error.getField(), key -> new ArrayList<>()).add(error.getDefaultMessage());
+            }
+
+            return ResponseEntity.badRequest().body(errors);
+        }
+
+        User currentUser = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+        patchUserMapper.mergePatchUserDTOIntoUser(patchUserDTO, currentUser);
+        userRepository.save(currentUser);
+
+        return ResponseEntity.ok("User fields updated");
     }
 
     @DeleteMapping

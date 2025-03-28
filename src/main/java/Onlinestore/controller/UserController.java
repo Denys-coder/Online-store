@@ -8,6 +8,7 @@ import Onlinestore.entity.User;
 import Onlinestore.mapper.user.PatchUserMapper;
 import Onlinestore.mapper.user.PostUserMapper;
 import Onlinestore.mapper.user.GetUserMapper;
+import Onlinestore.mapper.user.PutUserMapper;
 import Onlinestore.repository.UserRepository;
 import Onlinestore.security.UserPrincipal;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,6 +36,7 @@ public class UserController {
     private final UserRepository userRepository;
     public final PostUserMapper postUserMapper;
     public final PatchUserMapper patchUserMapper;
+    public final PutUserMapper putUserMapper;
 
     @GetMapping
     public ResponseEntity<?> getUser() {
@@ -79,15 +81,7 @@ public class UserController {
         }
 
         User currentUser = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
-
-        currentUser.setName(putUserDTO.getName());
-        currentUser.setSurname(putUserDTO.getSurname());
-        currentUser.setEmail(putUserDTO.getEmail());
-        currentUser.setPassword(putUserDTO.getPassword());
-        currentUser.setTelephoneNumber(putUserDTO.getTelephoneNumber());
-        currentUser.setCountry(putUserDTO.getCountry());
-        currentUser.setAddress(putUserDTO.getAddress());
-
+        putUserMapper.mergePutUserDTOIntoUser(putUserDTO, currentUser);
         userRepository.save(currentUser);
 
         return ResponseEntity.ok("User updated");

@@ -2,13 +2,18 @@ package Onlinestore.mapper.user;
 
 import Onlinestore.dto.user.PatchUserDTO;
 import Onlinestore.entity.User;
-import org.mapstruct.BeanMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.NullValuePropertyMappingStrategy;
+import lombok.Setter;
+import org.mapstruct.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Mapper(componentModel = "spring")
 public abstract class PatchUserMapper {
+
+    @Setter(onMethod_ = @Autowired)
+    public PasswordEncoder passwordEncoder;
+
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "password", expression = "java(passwordEncoder.encode(patchUserDTO.getPassword()))")
     public abstract void mergePatchUserDTOIntoUser(PatchUserDTO patchUserDTO, @MappingTarget User user);
 }

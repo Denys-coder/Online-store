@@ -1,5 +1,5 @@
 ````
-rest-api branch when migration is ongoing for rest api
+thymeleaf branch is where fully working version on Thymeleaf is stays
 ````
 
 Simple online store where you can add, update and delete products if you an admin and

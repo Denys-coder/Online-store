@@ -1,7 +1,6 @@
 package Onlinestore.controller;
 
 import Onlinestore.dto.user.UserLoginDTO;
-import Onlinestore.mapper.user.PostUserMapper;
 import Onlinestore.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
@@ -28,9 +27,6 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
-    public final PostUserMapper postUserMapper;
-
-
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody UserLoginDTO userLoginDTO, HttpServletRequest request) {

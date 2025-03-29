@@ -18,14 +18,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
@@ -46,20 +39,8 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<?> postUser(@Valid @RequestBody PostUserDTO postUserDTO, BindingResult bindingResult) {
+    public ResponseEntity<?> postUser(@Valid @RequestBody PostUserDTO postUserDTO) {
 
-        // Collect validation errors
-        if (bindingResult.hasErrors()) {
-            Map<String, List<String>> errors = new HashMap<>();
-
-            for (FieldError error : bindingResult.getFieldErrors()) {
-                errors.computeIfAbsent(error.getField(), key -> new ArrayList<>()).add(error.getDefaultMessage());
-            }
-
-            return ResponseEntity.badRequest().body(errors);
-        }
-
-        // Convert DTO to Entity and save
         User user = postUserMapper.postUserDTOToUserMapper(postUserDTO);
         userRepository.save(user);
 
@@ -67,18 +48,7 @@ public class UserController {
     }
 
     @PutMapping
-    public ResponseEntity<?> putUser(@Valid @RequestBody PutUserDTO putUserDTO, BindingResult bindingResult) {
-
-        // Collect validation errors
-        if (bindingResult.hasErrors()) {
-            Map<String, List<String>> errors = new HashMap<>();
-
-            for (FieldError error : bindingResult.getFieldErrors()) {
-                errors.computeIfAbsent(error.getField(), key -> new ArrayList<>()).add(error.getDefaultMessage());
-            }
-
-            return ResponseEntity.badRequest().body(errors);
-        }
+    public ResponseEntity<?> putUser(@Valid @RequestBody PutUserDTO putUserDTO) {
 
         User currentUser = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
         putUserMapper.mergePutUserDTOIntoUser(putUserDTO, currentUser);
@@ -88,18 +58,7 @@ public class UserController {
     }
 
     @PatchMapping
-    public ResponseEntity<?> patchUser(@Valid @RequestBody PatchUserDTO patchUserDTO, BindingResult bindingResult) {
-
-        // Collect validation errors
-        if (bindingResult.hasErrors()) {
-            Map<String, List<String>> errors = new HashMap<>();
-
-            for (FieldError error : bindingResult.getFieldErrors()) {
-                errors.computeIfAbsent(error.getField(), key -> new ArrayList<>()).add(error.getDefaultMessage());
-            }
-
-            return ResponseEntity.badRequest().body(errors);
-        }
+    public ResponseEntity<?> patchUser(@Valid @RequestBody PatchUserDTO patchUserDTO) {
 
         User currentUser = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
         patchUserMapper.mergePatchUserDTOIntoUser(patchUserDTO, currentUser);

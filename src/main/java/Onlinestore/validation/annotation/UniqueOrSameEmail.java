@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 @Constraint(validatedBy = UniqueOrSameEmailValidator.class)
 @Documented
 public @interface UniqueOrSameEmail {
-    String message() default "Email address already in use";
+    String message() default "Email address should be unique or the same";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

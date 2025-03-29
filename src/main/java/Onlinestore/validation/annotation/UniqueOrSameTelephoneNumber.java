@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 @Constraint(validatedBy = UniqueOrSameTelephoneNumberValidator.class)
 @Documented
 public @interface UniqueOrSameTelephoneNumber {
-    String message() default "Telephone number already in use";
+    String message() default "Telephone number should be unique or the same";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

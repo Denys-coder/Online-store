@@ -27,14 +27,16 @@ public class UserController {
 
     private final GetUserMapper getUserMapper;
     private final UserRepository userRepository;
-    public final PostUserMapper postUserMapper;
-    public final PatchUserMapper patchUserMapper;
-    public final PutUserMapper putUserMapper;
+    private final PostUserMapper postUserMapper;
+    private final PatchUserMapper patchUserMapper;
+    private final PutUserMapper putUserMapper;
 
     @GetMapping
     public ResponseEntity<?> getUser() {
-        User user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+
+        User user = getCurrentUser();
         GetUserDTO getUserDTO = getUserMapper.userToGetUserDTO(user);
+
         return ResponseEntity.ok(getUserDTO);
     }
 
@@ -50,7 +52,7 @@ public class UserController {
     @PutMapping
     public ResponseEntity<?> putUser(@Valid @RequestBody PutUserDTO putUserDTO) {
 
-        User currentUser = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+        User currentUser = getCurrentUser();
         putUserMapper.mergePutUserDTOIntoUser(putUserDTO, currentUser);
         userRepository.save(currentUser);
 
@@ -60,7 +62,7 @@ public class UserController {
     @PatchMapping
     public ResponseEntity<?> patchUser(@Valid @RequestBody PatchUserDTO patchUserDTO) {
 
-        User currentUser = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+        User currentUser = getCurrentUser();
         patchUserMapper.mergePatchUserDTOIntoUser(patchUserDTO, currentUser);
         userRepository.save(currentUser);
 
@@ -70,10 +72,15 @@ public class UserController {
     @DeleteMapping
     public ResponseEntity<?> deleteUser(HttpServletRequest request, HttpServletResponse response) {
 
-        User user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+        User user = getCurrentUser();
         userRepository.delete(user);
 
         new SecurityContextLogoutHandler().logout(request, response, SecurityContextHolder.getContext().getAuthentication());
         return ResponseEntity.ok("User deleted");
+    }
+
+    private User getCurrentUser() {
+        UserPrincipal userPrincipal = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        return userPrincipal.getUser();
     }
 }

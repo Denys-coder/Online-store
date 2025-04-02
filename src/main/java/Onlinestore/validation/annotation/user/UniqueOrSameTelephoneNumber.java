@@ -1,6 +1,6 @@
-package Onlinestore.validation.annotation;
+package Onlinestore.validation.annotation.user;
 
-import Onlinestore.validation.validator.UniqueOrSameTelephoneNumberValidator;
+import Onlinestore.validation.validator.user.UniqueOrSameTelephoneNumberValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 

@@ -1,7 +1,7 @@
 package Onlinestore.dto.user;
 
-import Onlinestore.validation.annotation.UniqueOrSameOrNullEmail;
-import Onlinestore.validation.annotation.UniqueOrSameOrNullTelephoneNumber;
+import Onlinestore.validation.annotation.user.UniqueOrSameOrNullEmail;
+import Onlinestore.validation.annotation.user.UniqueOrSameOrNullTelephoneNumber;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;

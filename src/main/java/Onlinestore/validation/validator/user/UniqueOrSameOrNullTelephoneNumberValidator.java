@@ -1,9 +1,9 @@
-package Onlinestore.validation.validator;
+package Onlinestore.validation.validator.user;
 
 import Onlinestore.entity.User;
 import Onlinestore.repository.UserRepository;
 import Onlinestore.security.UserPrincipal;
-import Onlinestore.validation.annotation.UniqueOrSameOrNullTelephoneNumber;
+import Onlinestore.validation.annotation.user.UniqueOrSameOrNullTelephoneNumber;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.security.core.context.SecurityContextHolder;

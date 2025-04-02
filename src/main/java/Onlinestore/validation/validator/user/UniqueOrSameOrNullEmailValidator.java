@@ -1,20 +1,20 @@
-package Onlinestore.validation.validator;
+package Onlinestore.validation.validator.user;
 
 import Onlinestore.entity.User;
 import Onlinestore.repository.UserRepository;
 import Onlinestore.security.UserPrincipal;
-import Onlinestore.validation.annotation.UniqueOrSameEmail;
+import Onlinestore.validation.annotation.user.UniqueOrSameOrNullEmail;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UniqueOrSameEmailValidator implements ConstraintValidator<UniqueOrSameEmail, String> {
+public class UniqueOrSameOrNullEmailValidator implements ConstraintValidator<UniqueOrSameOrNullEmail, String> {
 
     private final UserRepository userRepository;
 
-    public UniqueOrSameEmailValidator(UserRepository userRepository) {
+    public UniqueOrSameOrNullEmailValidator(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -22,6 +22,10 @@ public class UniqueOrSameEmailValidator implements ConstraintValidator<UniqueOrS
     public boolean isValid(String email, ConstraintValidatorContext context) {
         User currentUser = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
 
-        return email != null && (!userRepository.existsByEmail(email) || email.equals(currentUser.getEmail()));
+        if (email == null) {
+            return true;
+        }
+
+        return (!userRepository.existsByEmail(email)) || email.equals(currentUser.getEmail());
     }
 }

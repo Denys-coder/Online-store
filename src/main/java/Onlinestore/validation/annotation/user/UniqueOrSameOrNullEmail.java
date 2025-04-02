@@ -1,6 +1,6 @@
-package Onlinestore.validation.annotation;
+package Onlinestore.validation.annotation.user;
 
-import Onlinestore.validation.validator.UniqueOrSameOrNullEmailValidator;
+import Onlinestore.validation.validator.user.UniqueOrSameOrNullEmailValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 

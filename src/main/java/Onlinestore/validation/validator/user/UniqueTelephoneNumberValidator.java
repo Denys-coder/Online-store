@@ -1,7 +1,7 @@
-package Onlinestore.validation.validator;
+package Onlinestore.validation.validator.user;
 
 import Onlinestore.repository.UserRepository;
-import Onlinestore.validation.annotation.UniqueTelephoneNumber;
+import Onlinestore.validation.annotation.user.UniqueTelephoneNumber;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.stereotype.Component;

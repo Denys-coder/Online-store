@@ -1,15 +1,16 @@
 package Onlinestore.exception;
 
+import Onlinestore.validation.exception.item.MaxFileCountExceededException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -23,5 +24,34 @@ public class GlobalExceptionHandler {
         }
 
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<String> handleMaxUploadSizeException(MaxUploadSizeExceededException ex) {
+        return ResponseEntity
+                .status(HttpStatus.PAYLOAD_TOO_LARGE)
+                .body("One or more file exceed the maximum allowed size limit");
+    }
+
+    @ExceptionHandler(MaxFileCountExceededException.class)
+    public ResponseEntity<String> handleMaxFileCountExceededException(MaxFileCountExceededException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
+    }
+
+    @ExceptionHandler(HandlerMethodValidationException.class)
+    public ResponseEntity<Map<String, List<String>>> handleMethodValidationException(HandlerMethodValidationException ex) {
+        Map<String, List<String>> errors = new HashMap<>();
+
+        ex.getParameterValidationResults().forEach(result -> {
+            String fieldName = Optional.ofNullable(result.getMethodParameter().getParameterName())
+                    .orElse("unknown");
+
+            result.getResolvableErrors().forEach(error -> {
+                String message = error.getDefaultMessage();
+                errors.computeIfAbsent(fieldName, key -> new ArrayList<>()).add(message);
+            });
+        });
+
+        return ResponseEntity.badRequest().body(errors);
     }
 }

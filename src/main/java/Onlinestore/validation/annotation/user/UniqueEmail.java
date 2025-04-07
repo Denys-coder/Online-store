@@ -1,6 +1,5 @@
 package Onlinestore.validation.annotation.user;
 
-
 import Onlinestore.validation.validator.user.UniqueEmailValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;

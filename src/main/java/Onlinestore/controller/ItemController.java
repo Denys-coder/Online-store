@@ -8,7 +8,6 @@ import Onlinestore.service.ItemService;
 import Onlinestore.validation.annotation.item.MaxFileCount;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,7 +21,6 @@ import java.net.URISyntaxException;
 public class ItemController {
 
     private final ItemRepository itemRepository;
-    private final Environment environment;
     private final PostItemMapper postItemMapper;
     private final ItemService itemService;
 

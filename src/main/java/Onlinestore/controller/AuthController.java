@@ -1,7 +1,6 @@
 package Onlinestore.controller;
 
 import Onlinestore.dto.user.UserLoginDTO;
-import Onlinestore.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,7 +22,6 @@ import java.util.Map;
 @RequestMapping("/auth")
 @AllArgsConstructor
 public class AuthController {
-    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;

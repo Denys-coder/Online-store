@@ -1,19 +1,28 @@
 package Onlinestore.controller;
 
+import Onlinestore.dto.item.GetItemDTO;
 import Onlinestore.dto.item.PostItemDTO;
 import Onlinestore.entity.Item;
+import Onlinestore.entity.Order;
+import Onlinestore.entity.User;
+import Onlinestore.mapper.item.GetItemMapper;
 import Onlinestore.mapper.item.PostItemMapper;
 import Onlinestore.repository.ItemRepository;
+import Onlinestore.security.UserPrincipal;
 import Onlinestore.service.ItemService;
 import Onlinestore.validation.annotation.item.MaxFileCount;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/item")
@@ -23,6 +32,34 @@ public class ItemController {
     private final ItemRepository itemRepository;
     private final PostItemMapper postItemMapper;
     private final ItemService itemService;
+    private final GetItemMapper getItemMapper;
+
+    @GetMapping({"/{id}"})
+    public ResponseEntity<?> getItem(@PathVariable int id) {
+
+        Optional<Item> itemOptional = itemRepository.findById(id);
+        if (itemOptional.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Resource not found");
+        }
+        Item item = itemRepository.findById(id).get();
+
+        boolean ordered = false;
+        if (SecurityContextHolder.getContext().getAuthentication() != null
+                && !"anonymousUser".equals(SecurityContextHolder.getContext().getAuthentication().getName())) {
+            User user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+
+            // check if user already bought it
+            for (Order order : user.getOrders()) {
+                if (order.getItem().getId() == item.getId()) {
+                    ordered = true;
+                    break;
+                }
+            }
+        }
+
+        GetItemDTO getItemDTO = getItemMapper.itemToGetItemDTO(item, ordered);
+        return ResponseEntity.ok(getItemDTO);
+    }
 
     @PostMapping
     public ResponseEntity<?> postItem(@RequestPart("logo") MultipartFile logo,

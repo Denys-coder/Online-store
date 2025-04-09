@@ -22,7 +22,7 @@ public class ItemService {
 
     public void saveLogoToFolder(MultipartFile logo, String logoName) {
 
-        Path logosDirectory = Paths.get(environment.getProperty("item.logos.directory"));
+        Path logosDirectory = Paths.get(environment.getProperty("images.directory"));
 
         try {
             Files.createDirectories(logosDirectory);
@@ -37,7 +37,7 @@ public class ItemService {
     }
 
     public void saveImagesToFolder(MultipartFile[] images, Set<String> imageNames) {
-        Path imagesDirectory = Paths.get(environment.getProperty("item.images.directory"));
+        Path imagesDirectory = Paths.get(environment.getProperty("images.directory"));
 
         try {
             Files.createDirectories(imagesDirectory);

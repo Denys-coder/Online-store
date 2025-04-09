@@ -10,6 +10,8 @@ import Onlinestore.mapper.item.PostItemMapper;
 import Onlinestore.repository.ItemRepository;
 import Onlinestore.security.UserPrincipal;
 import Onlinestore.service.ItemService;
+import Onlinestore.validation.annotation.item.Image;
+import Onlinestore.validation.annotation.item.ImageArray;
 import Onlinestore.validation.annotation.item.MaxFileCount;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -62,8 +64,8 @@ public class ItemController {
     }
 
     @PostMapping
-    public ResponseEntity<?> postItem(@RequestPart("logo") MultipartFile logo,
-                                      @RequestPart("images") @MaxFileCount(max = 10) MultipartFile[] images,
+    public ResponseEntity<?> postItem(@RequestPart("logo") @Image MultipartFile logo,
+                                      @RequestPart("images") @ImageArray @MaxFileCount(max = 10) MultipartFile[] images,
                                       @RequestPart("item") @Valid PostItemDTO postItemDTO) throws URISyntaxException {
 
         Item item = postItemMapper.postItemDTOToItem(postItemDTO, images.length);

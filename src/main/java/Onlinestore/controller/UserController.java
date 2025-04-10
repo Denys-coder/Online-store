@@ -76,7 +76,7 @@ public class UserController {
         userRepository.delete(user);
 
         new SecurityContextLogoutHandler().logout(request, response, SecurityContextHolder.getContext().getAuthentication());
-        return ResponseEntity.ok("User deleted");
+        return ResponseEntity.noContent().build();
     }
 
     private User getCurrentUser() {

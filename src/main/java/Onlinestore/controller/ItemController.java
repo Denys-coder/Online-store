@@ -77,4 +77,16 @@ public class ItemController {
 
         return ResponseEntity.created(new URI("http://localhost:8080/item/" + item.getId())).build();
     }
+
+    @DeleteMapping({"/{itemId}"})
+    public ResponseEntity<?> deleteItem(@PathVariable int itemId) {
+
+        Item itemToDelete = itemRepository.getReferenceById(itemId);
+        itemService.deleteImageFromFolder(itemToDelete.getLogoName());
+        itemService.deleteImagesFromFolder(itemToDelete.getImageNames());
+
+        itemRepository.deleteById(itemId);
+
+        return ResponseEntity.noContent().build();
+    }
 }

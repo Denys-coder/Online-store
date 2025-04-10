@@ -41,4 +41,16 @@ public class ItemService {
             throw new UncheckedIOException("Failed to save images to folder", e);
         }
     }
+
+    public void deleteImageFromFolder(String imageName) {
+        deleteImagesFromFolder(Set.of(imageName));
+    }
+
+    public void deleteImagesFromFolder(Set<String> imageNames) {
+        for (String imageName : imageNames) {
+            Path imagesDirectory = Paths.get(environment.getProperty("images.directory"));
+            File imageFile = imagesDirectory.resolve(imageName).toFile();
+            imageFile.delete();
+        }
+    }
 }

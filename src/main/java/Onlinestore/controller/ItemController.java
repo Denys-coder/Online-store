@@ -36,14 +36,14 @@ public class ItemController {
     private final ItemService itemService;
     private final GetItemMapper getItemMapper;
 
-    @GetMapping({"/{id}"})
-    public ResponseEntity<?> getItem(@PathVariable int id) {
+    @GetMapping({"/{itemId}"})
+    public ResponseEntity<?> getItem(@PathVariable int itemId) {
 
-        Optional<Item> itemOptional = itemRepository.findById(id);
+        Optional<Item> itemOptional = itemRepository.findById(itemId);
         if (itemOptional.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Resource not found");
         }
-        Item item = itemRepository.findById(id).get();
+        Item item = itemRepository.findById(itemId).get();
 
         boolean ordered = false;
         if (SecurityContextHolder.getContext().getAuthentication() != null
@@ -70,7 +70,7 @@ public class ItemController {
 
         Item item = postItemMapper.postItemDTOToItem(postItemDTO, images.length);
 
-        itemService.saveLogoToFolder(logo, item.getLogoName());
+        itemService.saveImageToFolder(logo, item.getLogoName());
         itemService.saveImagesToFolder(images, item.getImageNames());
 
         itemRepository.save(item);

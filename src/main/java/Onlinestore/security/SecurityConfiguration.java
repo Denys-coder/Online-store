@@ -33,6 +33,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/user/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/item/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/item/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/item/**").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/item/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/image/**").permitAll()
                 )

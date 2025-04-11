@@ -13,7 +13,7 @@ public class PostItemDTO {
 
     @NotBlank(message = "should not be blank or null")
     @Size(min = 2, max = 30, message = "name should be from 2 to 30 symbols")
-    @UniqueItemName(message = "name should be unique")
+    @UniqueItemName
     private String name;
 
     @DecimalMin(value = "0.1", message = "price should be larger than 0.1")

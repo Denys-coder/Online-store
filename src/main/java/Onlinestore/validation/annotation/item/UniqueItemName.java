@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 @Constraint(validatedBy = UniqueItemNameValidator.class)
 @Documented
 public @interface UniqueItemName {
-    String message() default "There is already an item with this name";
+    String message() default "Item name should be unique";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

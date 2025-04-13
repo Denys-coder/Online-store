@@ -32,10 +32,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.POST, "/user/**").permitAll()
                         .requestMatchers("/user/**").authenticated()
                         .requestMatchers(HttpMethod.GET, "/item/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/item/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/item/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PATCH, "/item/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/item/**").hasRole("ADMIN")
+                        .requestMatchers("/item/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/image/**").permitAll()
                 )
                 .sessionManagement(session -> session

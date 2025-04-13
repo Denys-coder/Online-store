@@ -81,7 +81,7 @@ public class ItemController {
 
         itemRepository.save(item);
 
-        return ResponseEntity.created(new URI("http://localhost:8080/item/" + item.getId())).build();
+        return ResponseEntity.created(new URI("/items/" + item.getId())).build();
     }
 
     @PutMapping("/{itemId}")

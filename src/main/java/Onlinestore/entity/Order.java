@@ -13,7 +13,7 @@ import jakarta.persistence.*;
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", nullable = false)
@@ -24,7 +24,7 @@ public class Order {
     private Item item;
 
     @Column(nullable = false)
-    private int amount;
+    private Integer amount;
 
     public Order(Item item, int amount, User user) {
         this.item = item;

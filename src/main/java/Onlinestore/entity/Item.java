@@ -13,16 +13,16 @@ import java.util.*;
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @Column(nullable = false, unique = true, length = 100)
     private String name;
 
     @Column(nullable = false)
-    private double price;
+    private Double price;
 
     @Column(nullable = false)
-    private int amount;
+    private Integer amount;
 
     @Column(nullable = false, length = 500)
     private String description;

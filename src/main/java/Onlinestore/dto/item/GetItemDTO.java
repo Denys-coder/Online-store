@@ -11,9 +11,9 @@ import java.util.Set;
 public class GetItemDTO {
     private String name;
 
-    private double price;
+    private Double price;
 
-    private int amount;
+    private Integer amount;
 
     private String description;
 
@@ -23,5 +23,5 @@ public class GetItemDTO {
 
     private Map<String, String> specs;
 
-    private boolean ordered;
+    private Boolean ordered;
 }

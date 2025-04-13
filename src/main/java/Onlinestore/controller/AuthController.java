@@ -16,6 +16,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
+import java.util.Collections;
 import java.util.Map;
 
 @RestController
@@ -56,12 +57,14 @@ public class AuthController {
         }
     }
 
-    @GetMapping("/is-authenticated")
+    @GetMapping("/status")
     public ResponseEntity<?> checkAuthentication() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getPrincipal())) {
-            return ResponseEntity.ok("true");
+            Map<String, Boolean> response = Collections.singletonMap("authenticated", true);
+            return ResponseEntity.ok(response);
         }
-        return ResponseEntity.ok("false");
+        Map<String, Boolean> response = Collections.singletonMap("authenticated", false);
+        return ResponseEntity.ok(response);
     }
 }

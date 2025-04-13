@@ -17,7 +17,7 @@ public class MaxFileCountValidator implements ConstraintValidator<MaxFileCount, 
 
     @Override
     public boolean isValid(MultipartFile[] files, ConstraintValidatorContext context) {
-        if (files == null) {
+        if (files == null || files.length == 0) {
             return true; // No files uploaded, valid case
         }
 

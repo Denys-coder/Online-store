@@ -17,6 +17,11 @@ public class UniqueTelephoneNumberValidator implements ConstraintValidator<Uniqu
 
     @Override
     public boolean isValid(String telephoneNumber, ConstraintValidatorContext context) {
-        return telephoneNumber != null && !userRepository.existsByTelephoneNumber(telephoneNumber);
+
+        if (telephoneNumber == null || telephoneNumber.isEmpty()) {
+            return true;
+        }
+
+        return !userRepository.existsByTelephoneNumber(telephoneNumber);
     }
 }

@@ -20,8 +20,13 @@ public class UniqueOrSameTelephoneNumberValidator implements ConstraintValidator
 
     @Override
     public boolean isValid(String telephoneNumber, ConstraintValidatorContext context) {
+
+        if (telephoneNumber == null || telephoneNumber.isEmpty()) {
+            return true;
+        }
+
         User currentUser = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
 
-        return telephoneNumber != null && (!userRepository.existsByTelephoneNumber(telephoneNumber) || telephoneNumber.equals(currentUser.getTelephoneNumber()));
+        return !userRepository.existsByTelephoneNumber(telephoneNumber) || telephoneNumber.equals(currentUser.getTelephoneNumber());
     }
 }

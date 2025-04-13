@@ -20,8 +20,13 @@ public class UniqueOrSameEmailValidator implements ConstraintValidator<UniqueOrS
 
     @Override
     public boolean isValid(String email, ConstraintValidatorContext context) {
+
+        if (email == null || email.isEmpty()) {
+            return true;
+        }
+
         User currentUser = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
 
-        return email != null && (!userRepository.existsByEmail(email) || email.equals(currentUser.getEmail()));
+        return !userRepository.existsByEmail(email) || email.equals(currentUser.getEmail());
     }
 }

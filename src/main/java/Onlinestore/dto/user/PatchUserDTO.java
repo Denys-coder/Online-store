@@ -1,7 +1,7 @@
 package Onlinestore.dto.user;
 
-import Onlinestore.validation.annotation.user.UniqueOrSameOrNullEmail;
-import Onlinestore.validation.annotation.user.UniqueOrSameOrNullTelephoneNumber;
+import Onlinestore.validation.annotation.user.UniqueOrSameEmail;
+import Onlinestore.validation.annotation.user.UniqueOrSameTelephoneNumber;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
@@ -26,7 +26,7 @@ public class PatchUserDTO {
     @Nullable
     @Size(max = 100)
     @Email
-    @UniqueOrSameOrNullEmail
+    @UniqueOrSameEmail
     private String email;
 
     @Nullable
@@ -36,7 +36,7 @@ public class PatchUserDTO {
     @Nullable
     @Size(min = 6, max = 12)
     @Pattern(regexp = "\\d*")
-    @UniqueOrSameOrNullTelephoneNumber
+    @UniqueOrSameTelephoneNumber
     private String telephoneNumber;
 
     @Nullable

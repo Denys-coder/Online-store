@@ -21,6 +21,11 @@ public class UniqueOrSameItemNameValidator implements ConstraintValidator<Unique
 
     @Override
     public boolean isValid(PutItemDTO putItemDTO, ConstraintValidatorContext context) {
+
+        if (putItemDTO.getName() == null || putItemDTO.getName().isEmpty()) {
+            return true;
+        }
+
         Optional<Item> itemOptional = itemRepository.findById(putItemDTO.getId());
         if (itemOptional.isEmpty()) {
             return false;
@@ -29,6 +34,6 @@ public class UniqueOrSameItemNameValidator implements ConstraintValidator<Unique
         Item item = itemOptional.get();
         String putItemDTOName = putItemDTO.getName();
         String currentItemName = item.getName();
-        return putItemDTOName != null && (!itemRepository.existsByName(putItemDTOName) || putItemDTOName.equals(currentItemName));
+        return !itemRepository.existsByName(putItemDTOName) || putItemDTOName.equals(currentItemName);
     }
 }

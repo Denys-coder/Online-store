@@ -11,6 +11,11 @@ import java.io.IOException;
 public class IsImageArrayValidator implements ConstraintValidator<ImageArray, MultipartFile[]> {
     @Override
     public boolean isValid(MultipartFile[] files, ConstraintValidatorContext context) {
+
+        if (files == null || files.length == 0) {
+            return true;
+        }
+
         try {
 
             for (MultipartFile file : files) {

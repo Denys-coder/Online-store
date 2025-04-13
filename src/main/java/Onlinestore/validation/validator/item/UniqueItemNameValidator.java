@@ -17,6 +17,11 @@ public class UniqueItemNameValidator implements ConstraintValidator<UniqueItemNa
 
     @Override
     public boolean isValid(String itemName, ConstraintValidatorContext context) {
-        return itemName != null && !itemRepository.existsByName(itemName);
+
+        if (itemName == null || itemName.isEmpty()) {
+            return true;
+        }
+
+        return !itemRepository.existsByName(itemName);
     }
 }

@@ -13,6 +13,10 @@ public class IsImageValidator implements ConstraintValidator<Image, MultipartFil
     @Override
     public boolean isValid(MultipartFile file, ConstraintValidatorContext context) {
 
+        if (file == null) {
+            return true;
+        }
+
         try {
 
             // First layer: check declared Content-Type from the request

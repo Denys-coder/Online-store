@@ -29,11 +29,12 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/user/**").permitAll()
-                        .requestMatchers("/user/**").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/item/**").permitAll()
-                        .requestMatchers("/item/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/image/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/users/me/orders").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/users/**").permitAll()
+                        .requestMatchers("/users/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/items/**").permitAll()
+                        .requestMatchers("/items/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/images/**").permitAll()
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // Allow session creation

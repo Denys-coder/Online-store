@@ -1,12 +1,14 @@
 package Onlinestore.controller;
 
 import Onlinestore.dto.item.GetItemDTO;
+import Onlinestore.dto.item.PatchItemDTO;
 import Onlinestore.dto.item.PostItemDTO;
 import Onlinestore.dto.item.PutItemDTO;
 import Onlinestore.entity.Item;
 import Onlinestore.entity.Order;
 import Onlinestore.entity.User;
 import Onlinestore.mapper.item.GetItemMapper;
+import Onlinestore.mapper.item.PatchItemMapper;
 import Onlinestore.mapper.item.PostItemMapper;
 import Onlinestore.mapper.item.PutItemMapper;
 import Onlinestore.repository.ItemRepository;
@@ -26,7 +28,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/item")
@@ -38,6 +40,7 @@ public class ItemController {
     private final ItemService itemService;
     private final GetItemMapper getItemMapper;
     private final PutItemMapper putItemMapper;
+    private final PatchItemMapper patchItemMapper;
 
     @GetMapping({"/{itemId}"})
     public ResponseEntity<?> getItem(@PathVariable int itemId) {
@@ -55,7 +58,7 @@ public class ItemController {
 
             // check if user already bought it
             for (Order order : user.getOrders()) {
-                if (order.getItem().getId() == item.getId()) {
+                if (Objects.equals(order.getItem().getId(), item.getId())) {
                     ordered = true;
                     break;
                 }
@@ -109,6 +112,48 @@ public class ItemController {
         itemRepository.save(item);
 
         return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/{itemId}")
+    public ResponseEntity<?> patchMapping(@PathVariable int itemId,
+                                          @RequestPart(name = "logo", required = false) @Image MultipartFile logo,
+                                          @RequestPart(name = "images", required = false) @ImageArray @MaxFileCount(max = 10) MultipartFile[] images,
+                                          @RequestPart(name = "item", required = false) @Valid PatchItemDTO patchItemDTO) {
+
+        if (itemId != patchItemDTO.getId()) {
+            return ResponseEntity.badRequest().body("Item id in the path and in the body should match");
+        }
+
+        Optional<Item> optionalItem = itemRepository.findById(itemId);
+        if (optionalItem.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Item item = optionalItem.get();
+        patchItemMapper.patchItemDTOToItem(patchItemDTO, item);
+
+        if (logo != null) {
+            itemService.deleteImageFromFolder(item.getLogoName());
+            UUID uuid = UUID.randomUUID();
+            item.setLogoName(uuid.toString());
+            itemService.saveImageToFolder(logo, item.getLogoName());
+        }
+
+        if (images != null) {
+            itemService.deleteImagesFromFolder(item.getImageNames());
+            Set<String> imageNames = new HashSet<>();
+            while (imageNames.size() < images.length) {
+                imageNames.add(UUID.randomUUID().toString());
+            }
+            item.setImageNames(imageNames);
+            itemService.saveImagesToFolder(images, imageNames);
+
+        }
+
+        itemRepository.save(item);
+
+        return ResponseEntity.ok().build();
+
     }
 
     @DeleteMapping({"/{itemId}"})

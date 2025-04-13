@@ -17,7 +17,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @RestController
-@RequestMapping("/image")
+@RequestMapping("/images")
 @AllArgsConstructor
 public class ImageController {
 

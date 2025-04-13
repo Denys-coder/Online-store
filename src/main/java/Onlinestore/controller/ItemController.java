@@ -31,7 +31,7 @@ import java.net.URISyntaxException;
 import java.util.*;
 
 @RestController
-@RequestMapping("/item")
+@RequestMapping("/items")
 @AllArgsConstructor
 public class ItemController {
 

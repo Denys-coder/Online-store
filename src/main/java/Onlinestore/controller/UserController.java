@@ -21,7 +21,7 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/users")
 @AllArgsConstructor
 public class UserController {
 
@@ -31,7 +31,7 @@ public class UserController {
     private final PatchUserMapper patchUserMapper;
     private final PutUserMapper putUserMapper;
 
-    @GetMapping
+    @GetMapping("/me")
     public ResponseEntity<?> getUser() {
 
         User user = getCurrentUser();
@@ -49,7 +49,7 @@ public class UserController {
         return ResponseEntity.ok("User created");
     }
 
-    @PutMapping
+    @PutMapping("/me")
     public ResponseEntity<?> putUser(@Valid @RequestBody PutUserDTO putUserDTO) {
 
         User currentUser = getCurrentUser();
@@ -59,7 +59,7 @@ public class UserController {
         return ResponseEntity.ok("User updated");
     }
 
-    @PatchMapping
+    @PatchMapping("/me")
     public ResponseEntity<?> patchUser(@Valid @RequestBody PatchUserDTO patchUserDTO) {
 
         User currentUser = getCurrentUser();
@@ -69,7 +69,7 @@ public class UserController {
         return ResponseEntity.ok("User fields updated");
     }
 
-    @DeleteMapping
+    @DeleteMapping("/me")
     public ResponseEntity<?> deleteUser(HttpServletRequest request, HttpServletResponse response) {
 
         User user = getCurrentUser();

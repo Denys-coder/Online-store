@@ -12,6 +12,7 @@ import Onlinestore.mapper.item.PatchItemMapper;
 import Onlinestore.mapper.item.PostItemMapper;
 import Onlinestore.mapper.item.PutItemMapper;
 import Onlinestore.repository.ItemRepository;
+import Onlinestore.repository.OrderRepository;
 import Onlinestore.security.UserPrincipal;
 import Onlinestore.service.ItemService;
 import Onlinestore.validation.annotation.item.Image;
@@ -36,6 +37,7 @@ import java.util.*;
 public class ItemController {
 
     private final ItemRepository itemRepository;
+    private final OrderRepository orderRepository;
     private final PostItemMapper postItemMapper;
     private final ItemService itemService;
     private final GetItemMapper getItemMapper;
@@ -55,9 +57,10 @@ public class ItemController {
         if (SecurityContextHolder.getContext().getAuthentication() != null
                 && !"anonymousUser".equals(SecurityContextHolder.getContext().getAuthentication().getName())) {
             User user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+            List<Order> orders = orderRepository.findByUser(user);
 
             // check if user already bought it
-            for (Order order : user.getOrders()) {
+            for (Order order : orders) {
                 if (Objects.equals(order.getItem().getId(), item.getId())) {
                     ordered = true;
                     break;

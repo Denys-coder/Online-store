@@ -1,15 +1,15 @@
 package Onlinestore.entity;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import jakarta.persistence.*;
-
-import java.util.*;
 
 @Setter
 @Getter
 @Entity
 @Table(name = "users")
+@NoArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,18 +36,11 @@ public class User {
     @Column(nullable = false, length = 100)
     private String address;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
-    private Set<Order> orders;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "role_name", nullable = false, length = 20)
     private RoleName roleName;
 
-    public User() {
-        orders = new HashSet<>();
-    }
-
-    public User(String name, String surname, String email, String password, String telephoneNumber, String country, String address, Set<Order> orders, RoleName roleName) {
+    public User(String name, String surname, String email, String password, String telephoneNumber, String country, String address, RoleName roleName) {
         this.name = name;
         this.surname = surname;
         this.email = email;
@@ -55,7 +48,6 @@ public class User {
         this.telephoneNumber = telephoneNumber;
         this.country = country;
         this.address = address;
-        this.orders = orders;
         this.roleName = roleName;
     }
 }

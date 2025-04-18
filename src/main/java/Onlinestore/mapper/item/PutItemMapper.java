@@ -18,7 +18,7 @@ public abstract class PutItemMapper {
 
     @Mapping(target = "logoName", expression = "java(generateUUID())")
     @Mapping(target = "imageNames", source = "imageLength", qualifiedByName = "populateImageNames")
-    public abstract void putItemDTOToItem(PutItemDTO dto, @MappingTarget Item item, int imageLength);
+    public abstract void putItemDTOToItem(PutItemDTO putItemDTO, @MappingTarget Item item, int imageLength);
 
     @Named("populateImageNames")
     protected Set<String> populateImageNames(int imageLength) {

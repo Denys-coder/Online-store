@@ -1,13 +1,16 @@
 package Onlinestore.controller;
 
+import Onlinestore.dto.order.GetOrderDTO;
 import Onlinestore.dto.order.PostOrderDTO;
 import Onlinestore.entity.Item;
 import Onlinestore.entity.Order;
 import Onlinestore.entity.User;
+import Onlinestore.mapper.order.GetOrderMapper;
 import Onlinestore.repository.ItemRepository;
 import Onlinestore.repository.OrderRepository;
 import Onlinestore.repository.UserRepository;
 import Onlinestore.security.UserPrincipal;
+import Onlinestore.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/users/me/orders")
@@ -25,12 +29,34 @@ public class OrderController {
     ItemRepository itemRepository;
     OrderRepository orderRepository;
     UserRepository userRepository;
+    UserService userService;
+    GetOrderMapper getOrderMapper;
+
+    @GetMapping("/{orderId}")
+    public ResponseEntity<?> getOrder(@PathVariable int orderId) {
+
+        Optional<Order> orderOptional = orderRepository.findById(orderId);
+
+        if (orderOptional.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Order order = orderOptional.get();
+        if (!order.getUser().getId().equals(userService.getCurrentUser().getId())) {
+            return ResponseEntity.notFound().build();
+        }
+
+        GetOrderDTO getOrderDTO = getOrderMapper.orderToGetOrderDTO(order);
+
+        return ResponseEntity.ok(getOrderDTO);
+
+    }
 
     @PostMapping
     public ResponseEntity<?> postOrder(@Valid @RequestBody PostOrderDTO postOrderDTO) throws URISyntaxException {
 
         int userId = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser().getId();
-        User user = userRepository.getById(userId);
+        User user = userRepository.findById(userId).get();
         Item itemToOrder = itemRepository.getReferenceById(postOrderDTO.getItemId());
 
         Order newOrder = new Order(itemToOrder, postOrderDTO.getAmount(), user);

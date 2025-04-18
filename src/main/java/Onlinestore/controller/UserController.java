@@ -10,7 +10,7 @@ import Onlinestore.mapper.user.PostUserMapper;
 import Onlinestore.mapper.user.GetUserMapper;
 import Onlinestore.mapper.user.PutUserMapper;
 import Onlinestore.repository.UserRepository;
-import Onlinestore.security.UserPrincipal;
+import Onlinestore.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -30,11 +30,12 @@ public class UserController {
     private final PostUserMapper postUserMapper;
     private final PatchUserMapper patchUserMapper;
     private final PutUserMapper putUserMapper;
+    private final UserService userService;
 
     @GetMapping("/me")
     public ResponseEntity<?> getUser() {
 
-        User user = getCurrentUser();
+        User user = userService.getCurrentUser();
         GetUserDTO getUserDTO = getUserMapper.userToGetUserDTO(user);
 
         return ResponseEntity.ok(getUserDTO);
@@ -52,7 +53,7 @@ public class UserController {
     @PutMapping("/me")
     public ResponseEntity<?> putUser(@Valid @RequestBody PutUserDTO putUserDTO) {
 
-        User currentUser = getCurrentUser();
+        User currentUser = userService.getCurrentUser();
         putUserMapper.mergePutUserDTOIntoUser(putUserDTO, currentUser);
         userRepository.save(currentUser);
 
@@ -62,7 +63,7 @@ public class UserController {
     @PatchMapping("/me")
     public ResponseEntity<?> patchUser(@Valid @RequestBody PatchUserDTO patchUserDTO) {
 
-        User currentUser = getCurrentUser();
+        User currentUser = userService.getCurrentUser();
         patchUserMapper.mergePatchUserDTOIntoUser(patchUserDTO, currentUser);
         userRepository.save(currentUser);
 
@@ -72,15 +73,10 @@ public class UserController {
     @DeleteMapping("/me")
     public ResponseEntity<?> deleteUser(HttpServletRequest request, HttpServletResponse response) {
 
-        User user = getCurrentUser();
+        User user = userService.getCurrentUser();
         userRepository.delete(user);
 
         new SecurityContextLogoutHandler().logout(request, response, SecurityContextHolder.getContext().getAuthentication());
         return ResponseEntity.noContent().build();
-    }
-
-    private User getCurrentUser() {
-        UserPrincipal userPrincipal = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-        return userPrincipal.getUser();
     }
 }

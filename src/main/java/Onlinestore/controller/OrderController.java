@@ -7,6 +7,8 @@ import Onlinestore.entity.Item;
 import Onlinestore.entity.Order;
 import Onlinestore.entity.User;
 import Onlinestore.mapper.order.GetOrderMapper;
+import Onlinestore.dto.order.PatchOrderDTO;
+import Onlinestore.mapper.order.PatchOrderMapper;
 import Onlinestore.mapper.order.PutOrderMapper;
 import Onlinestore.repository.ItemRepository;
 import Onlinestore.repository.OrderRepository;
@@ -34,6 +36,7 @@ public class OrderController {
     UserService userService;
     GetOrderMapper getOrderMapper;
     PutOrderMapper putOrderMapper;
+    PatchOrderMapper patchOrderMapper;
 
     @GetMapping("/{orderId}")
     public ResponseEntity<?> getOrder(@PathVariable int orderId) {
@@ -83,6 +86,28 @@ public class OrderController {
         }
 
         putOrderMapper.mergePutOrderDTOIntoOrder(putOrderDTO, order);
+
+        orderRepository.save(order);
+
+        return ResponseEntity.ok("Order fields updated");
+
+    }
+
+    @PatchMapping("/{orderId}")
+    public ResponseEntity<?> putOrder(@PathVariable int orderId, @Valid @RequestBody PatchOrderDTO patchOrderDTO) {
+
+        Optional<Order> orderOptional = orderRepository.findById(orderId);
+
+        if (orderOptional.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Order order = orderOptional.get();
+        if (!order.getUser().getId().equals(userService.getCurrentUser().getId())) {
+            return ResponseEntity.notFound().build();
+        }
+
+        patchOrderMapper.mergePatchOrderDTOIntoOrder(patchOrderDTO, order);
 
         orderRepository.save(order);
 

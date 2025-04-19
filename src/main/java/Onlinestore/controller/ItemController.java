@@ -72,6 +72,35 @@ public class ItemController {
         return ResponseEntity.ok(getItemDTO);
     }
 
+
+    @GetMapping
+    public ResponseEntity<?> getItems() {
+
+        List<Item> items = itemRepository.findAll();
+        List<GetItemDTO> getItemDTOList = new ArrayList<>();
+
+        for (Item item : items) {
+            boolean ordered = false;
+            if (SecurityContextHolder.getContext().getAuthentication() != null
+                    && !"anonymousUser".equals(SecurityContextHolder.getContext().getAuthentication().getName())) {
+                User user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+                List<Order> orders = orderRepository.findByUser(user);
+
+                // check if user already bought it
+                for (Order order : orders) {
+                    if (Objects.equals(order.getItem().getId(), item.getId())) {
+                        ordered = true;
+                        break;
+                    }
+                }
+            }
+            getItemDTOList.add(getItemMapper.itemToGetItemDTO(item, ordered));
+        }
+
+        return ResponseEntity.ok(getItemDTOList);
+
+    }
+
     @PostMapping
     public ResponseEntity<?> postItem(@RequestPart("logo") @Image MultipartFile logo,
                                       @RequestPart("images") @ImageArray @MaxFileCount(max = 10) MultipartFile[] images,

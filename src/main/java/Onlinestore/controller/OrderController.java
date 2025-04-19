@@ -115,4 +115,23 @@ public class OrderController {
 
     }
 
+    @DeleteMapping("/{orderId}")
+    public ResponseEntity<?> deleteOrder(@PathVariable int orderId) {
+
+        Optional<Order> orderOptional = orderRepository.findById(orderId);
+
+        if (orderOptional.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Order order = orderOptional.get();
+        if (!order.getUser().getId().equals(userService.getCurrentUser().getId())) {
+            return ResponseEntity.notFound().build();
+        }
+
+        orderRepository.delete(order);
+
+        return ResponseEntity.noContent().build();
+    }
+
 }

@@ -32,6 +32,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.POST, "/users/me/orders").authenticated()
                         .requestMatchers(HttpMethod.GET, "/users/me/orders/**").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/users/me/orders/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/users/me/orders/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/users/**").permitAll()
                         .requestMatchers("/users/**").authenticated()
                         .requestMatchers(HttpMethod.GET, "/items/**").permitAll()

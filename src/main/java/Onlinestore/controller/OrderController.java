@@ -1,13 +1,10 @@
 package Onlinestore.controller;
 
-import Onlinestore.dto.order.GetOrderDTO;
-import Onlinestore.dto.order.PostOrderDTO;
-import Onlinestore.dto.order.PutOrderDTO;
+import Onlinestore.dto.order.*;
 import Onlinestore.entity.Item;
 import Onlinestore.entity.Order;
 import Onlinestore.entity.User;
 import Onlinestore.mapper.order.GetOrderMapper;
-import Onlinestore.dto.order.PatchOrderDTO;
 import Onlinestore.mapper.order.PatchOrderMapper;
 import Onlinestore.mapper.order.PutOrderMapper;
 import Onlinestore.repository.ItemRepository;
@@ -23,7 +20,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/users/me/orders")
@@ -55,6 +54,20 @@ public class OrderController {
         GetOrderDTO getOrderDTO = getOrderMapper.orderToGetOrderDTO(order);
 
         return ResponseEntity.ok(getOrderDTO);
+
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getOrders() {
+
+        User user = userService.getCurrentUser();
+        List<Order> orders = orderRepository.findByUser(user);
+
+        List<GetOrderDTO> getOrderDTOList = orders.stream()
+                .map(getOrderMapper::orderToGetOrderDTO)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(getOrderDTOList);
 
     }
 

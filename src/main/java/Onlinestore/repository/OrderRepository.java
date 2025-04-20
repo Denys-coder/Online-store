@@ -16,4 +16,7 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
     void deleteOrdersByItem(Item item);
 
     List<Order> findByUser(User user);
+
+    @Transactional
+    void deleteOrdersByUser(User user);
 }

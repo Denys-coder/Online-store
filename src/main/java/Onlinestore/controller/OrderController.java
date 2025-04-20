@@ -147,4 +147,12 @@ public class OrderController {
         return ResponseEntity.noContent().build();
     }
 
+    @DeleteMapping
+    public ResponseEntity<?> deleteOrders() {
+
+        orderRepository.deleteOrdersByUser(userService.getCurrentUser());
+        return ResponseEntity.noContent().build();
+
+    }
+
 }

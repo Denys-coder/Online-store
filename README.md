@@ -11,6 +11,7 @@ Used technologies:
 • Java
 • Spring Boot
   - Core
+  - MVC
   - Data JPA
   - Security (session based)
   - Validation

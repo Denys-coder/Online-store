@@ -1,13 +1,36 @@
-// TODO
-• make apis:
-    - user -> create, get, update, delete
-    - item -> create, get, update, delete
-    - user/cart -> get, delete
-    - user/cart/item -> create, get, update, delete
-• update readme
+// FIX
+• update user in security context when user fields are updated
+• make operations that depend on each other or put database into inconsistent state transactional
+• always send user from a database, using user id from security context
+• prevent adding order with the same item
+• prevent adding order with order.amount > item.amount
+• check that each endpoint processes any data normally
+• name each variable normally
+• group mappers by entity class
+• extract similar logic from GET, POST, PUT, PATCH, DELETE endpoints
 
-• make microservice that works as warehouse for items
-• add all kinds of tests
-• save session before restarting server
-• add email confirmation feature
+
+// REFACTOR
+• move code from controllers into service methods
+• optimise security configuration of url
+• swap all deprecated methods (getReference(), etc)
+• migrate from anemic domain to rich domain model
+• refactor usage of Optional class
+• use PostOrderMapper
+• make obtaining of the user using getCurrentUser() everywhere
+
+
+// IMPLEMENT
+• add all kinds of tests (at least JUnit and Mockito)
+• add logging
+• use Spring Boot AOP
+• make Order == cart, add boolean order.fulfilled, add CartItem
+• add pagination for all endpoints that can return a lot of data
+• share and add Postman collection
+• use 3-party apis: Stripe, SendGrid API, EasyPost, Shippo, CurrencyLayer, Open Exchange Rates
+• rename everywhere Online-store -> Online-store-rest-api
 • add reset password feature
+• add email confirmation feature
+• save session before restarting server
+• write technology stack in readme and in GitHub description
+• add creation date field in the order class

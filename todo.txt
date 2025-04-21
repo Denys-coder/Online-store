@@ -1,5 +1,4 @@
 // FIX
-• update user in security context when user fields are updated
 • make operations that depend on each other or put database into inconsistent state transactional
 • always send user from a database, using user id from security context
 • prevent adding order with the same item

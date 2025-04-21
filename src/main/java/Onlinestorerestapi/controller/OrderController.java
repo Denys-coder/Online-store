@@ -9,14 +9,11 @@ import Onlinestorerestapi.mapper.order.PatchOrderMapper;
 import Onlinestorerestapi.mapper.order.PutOrderMapper;
 import Onlinestorerestapi.repository.ItemRepository;
 import Onlinestorerestapi.repository.OrderRepository;
-import Onlinestorerestapi.repository.UserRepository;
-import Onlinestorerestapi.security.UserPrincipal;
 import Onlinestorerestapi.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -37,7 +34,6 @@ public class OrderController {
 
     ItemRepository itemRepository;
     OrderRepository orderRepository;
-    UserRepository userRepository;
     UserService userService;
     GetOrderMapper getOrderMapper;
     PutOrderMapper putOrderMapper;
@@ -80,8 +76,7 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<?> postOrder(@Valid @RequestBody PostOrderDTO postOrderDTO) throws URISyntaxException {
 
-        int userId = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser().getId();
-        User user = userRepository.findById(userId).get();
+        User user = userService.getCurrentUser();
         Item itemToOrder = itemRepository.getReferenceById(postOrderDTO.getItemId());
 
         Order newOrder = new Order(itemToOrder, postOrderDTO.getAmount(), user);
@@ -167,7 +162,7 @@ public class OrderController {
         // take all user's orders
         List<Order> orders = orderRepository.findByUser(userService.getCurrentUser());
 
-        //
+        // check if order.amount <= item.amount, otherwise put error in BindingResult
         BindingResult bindingResult = new BeanPropertyBindingResult(orders, "order");
         for (Order order : orders) {
             if (order.getAmount() > order.getItem().getAmount()) {
@@ -181,6 +176,7 @@ public class OrderController {
             int itemAmount = order.getItem().getAmount();
             order.getItem().setAmount(itemAmount - order.getAmount());
         }
+
         if (bindingResult.hasErrors()) {
             Method method = this.getClass().getMethod("fulfillOrders");
             MethodParameter methodParameter = new MethodParameter(method, -1);

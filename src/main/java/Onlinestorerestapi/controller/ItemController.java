@@ -195,6 +195,7 @@ public class ItemController {
         itemService.deleteImageFromFolder(itemToDelete.getLogoName());
         itemService.deleteImagesFromFolder(itemToDelete.getImageNames());
 
+        orderRepository.deleteOrdersByItem(itemToDelete);
         itemRepository.deleteById(itemId);
 
         return ResponseEntity.noContent().build();

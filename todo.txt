@@ -14,7 +14,6 @@
 • move code from controllers into service methods
 • optimise security configuration of url
 • swap all deprecated methods (getReference(), etc)
-• migrate from anemic domain to rich domain model
 • refactor usage of Optional class
 • use PostOrderMapper
 • make obtaining of the user using getCurrentUser() everywhere

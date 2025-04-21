@@ -23,7 +23,6 @@ public class ImageController {
 
     private final Environment environment;
 
-
     @GetMapping("/{imageName}")
     public ResponseEntity<Resource> getImage(@PathVariable String imageName) {
         try {

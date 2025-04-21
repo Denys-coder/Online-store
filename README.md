@@ -8,18 +8,18 @@ You can buy, delete, update orders if you are user or admin.
 You can update your profile data, change your password and delete your profile (both for admins and users).
 
 Used technologies:
-• Java
-• Spring Boot
-  - Core
-  - MVC
-  - Data JPA
-  - Security (session based)
-  - Validation
-• SQL (Postgres)
-• git 
-• Maven
-• Docker, Docker-compose
-• Liquibase
-• Lombok
-• MapStruct
-• Apache Tika (validate that received file is an image)
+* Java
+* Spring Boot
+* - Core
+* - MVC
+* - Data JPA
+* - Security (session based)
+* - Validation
+* SQL (Postgres)
+* git 
+* Maven
+* Docker, Docker-compose
+* Liquibase
+* Lombok
+* MapStruct
+* Apache Tika (validate that received file is an image)

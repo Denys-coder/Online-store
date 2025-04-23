@@ -79,6 +79,16 @@ public class OrderController {
         User user = userService.getCurrentUser();
         Item itemToOrder = itemRepository.getReferenceById(postOrderDTO.getItemId());
 
+        // prevent adding order with the same item
+        List<Order> userOrders = orderRepository.findByUser(user);
+        List<Item> itemsInOrders = userOrders.stream()
+                .map(Order::getItem)
+                .toList();
+        if (itemsInOrders.contains(itemToOrder)) {
+            return ResponseEntity.badRequest().body("This item was already ordered");
+        }
+
+
         Order newOrder = new Order(itemToOrder, postOrderDTO.getAmount(), user);
         orderRepository.save(newOrder);
 

@@ -1,4 +1,4 @@
-package Onlinestorerestapi.service;
+package Onlinestorerestapi.util;
 
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
@@ -13,10 +13,10 @@ import java.util.Iterator;
 import java.util.Set;
 
 @Service
-public class ItemService {
+public class ItemUtil {
     private final Environment environment;
 
-    public ItemService(Environment environment) {
+    public ItemUtil(Environment environment) {
         this.environment = environment;
     }
 

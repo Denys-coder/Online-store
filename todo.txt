@@ -2,7 +2,6 @@
 • make operations that depend on each other or put database into inconsistent state transactional
 • always send user from a database, using user id from security context
 • check that each endpoint processes any data normally
-• name each variable normally
 • group mappers by entity class
 • extract similar logic from GET, POST, PUT, PATCH, DELETE endpoints
 

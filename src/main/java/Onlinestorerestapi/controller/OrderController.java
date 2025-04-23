@@ -88,6 +88,10 @@ public class OrderController {
             return ResponseEntity.badRequest().body("This item was already ordered");
         }
 
+        // prevent adding order with order.amount > item.amount
+        if (postOrderDTO.getAmount() > itemToOrder.getAmount()) {
+            return ResponseEntity.badRequest().body("You try to order more than is available in stock");
+        }
 
         Order newOrder = new Order(itemToOrder, postOrderDTO.getAmount(), user);
         orderRepository.save(newOrder);

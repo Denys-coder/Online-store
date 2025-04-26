@@ -2,17 +2,16 @@
 • make operations that depend on each other or put database into inconsistent state transactional
 • always send user from a database, using user id from security context
 • check that each endpoint processes any data normally
-• extract similar logic from GET, POST, PUT, PATCH, DELETE endpoints
-• move code from controllers into serve or util classes
 
 
 // REFACTOR
-• move code from controllers into service methods
+• move code from controllers into service or util methods
+• extract similar logic from GET, POST, PUT, PATCH, DELETE endpoints
 • optimise security configuration of url
 • swap all deprecated methods (getReference(), etc)
 • refactor usage of Optional class
-• use PostOrderMapper
 • make obtaining of the user using getCurrentUser() everywhere
+• make validation with annotations only where it's needed (use proper validation type for each case)
 
 
 // IMPLEMENT

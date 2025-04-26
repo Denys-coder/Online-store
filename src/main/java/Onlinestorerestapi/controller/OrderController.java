@@ -6,6 +6,7 @@ import Onlinestorerestapi.entity.Order;
 import Onlinestorerestapi.entity.User;
 import Onlinestorerestapi.mapper.order.GetOrderMapper;
 import Onlinestorerestapi.mapper.order.PatchOrderMapper;
+import Onlinestorerestapi.mapper.order.PostOrderMapper;
 import Onlinestorerestapi.mapper.order.PutOrderMapper;
 import Onlinestorerestapi.repository.ItemRepository;
 import Onlinestorerestapi.repository.OrderRepository;
@@ -36,6 +37,7 @@ public class OrderController {
     OrderRepository orderRepository;
     UserService userService;
     GetOrderMapper getOrderMapper;
+    PostOrderMapper postOrderMapper;
     PutOrderMapper putOrderMapper;
     PatchOrderMapper patchOrderMapper;
 
@@ -93,7 +95,7 @@ public class OrderController {
             return ResponseEntity.badRequest().body("You try to order more than is available in stock");
         }
 
-        Order newOrder = new Order(itemToOrder, postOrderDTO.getAmount(), user);
+        Order newOrder = postOrderMapper.postOrderDTOToOrder(postOrderDTO, itemToOrder, user);
         orderRepository.save(newOrder);
 
         return ResponseEntity.created(new URI("/users/me/orders/" + newOrder.getId())).build();

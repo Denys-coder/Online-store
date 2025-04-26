@@ -72,7 +72,6 @@ public class ItemController {
         return ResponseEntity.ok(getItemDTO);
     }
 
-
     @GetMapping
     public ResponseEntity<?> getItems() {
 
@@ -147,7 +146,7 @@ public class ItemController {
     }
 
     @PatchMapping("/{itemId}")
-    public ResponseEntity<?> patchMapping(@PathVariable int itemId,
+    public ResponseEntity<?> patchItem(@PathVariable int itemId,
                                           @RequestPart(name = "logo", required = false) @Image MultipartFile logo,
                                           @RequestPart(name = "images", required = false) @ImageArray @MaxFileCount(max = 10) MultipartFile[] images,
                                           @RequestPart(name = "item", required = false) @Valid PatchItemDTO patchItemDTO) {
@@ -185,7 +184,6 @@ public class ItemController {
         itemRepository.save(item);
 
         return ResponseEntity.ok().build();
-
     }
 
     @DeleteMapping({"/{itemId}"})

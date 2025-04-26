@@ -129,6 +129,12 @@ public class ItemController {
             return ResponseEntity.badRequest().body("Item id in the path and in the body should match");
         }
 
+        String itemName = putItemDTO.getName();
+        if (itemRepository.existsByName(itemName)
+                && !itemName.equals(itemRepository.findById(itemId).get().getName())) {
+            return ResponseEntity.badRequest().body("Item name number should be unique or the same");
+        }
+
         Optional<Item> optionalItem = itemRepository.findById(itemId);
         if (optionalItem.isEmpty()) {
             return ResponseEntity.notFound().build();
@@ -157,6 +163,13 @@ public class ItemController {
 
         if (itemId != patchItemDTO.getId()) {
             return ResponseEntity.badRequest().body("Item id in the path and in the body should match");
+        }
+
+        String itemName = patchItemDTO.getName();
+        if (itemName != null
+                && itemRepository.existsByName(itemName)
+                && !itemName.equals(itemRepository.findById(itemId).get().getName())) {
+            return ResponseEntity.badRequest().body("Item name number should be unique or the same");
         }
 
         Optional<Item> optionalItem = itemRepository.findById(itemId);

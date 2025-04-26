@@ -1,6 +1,5 @@
 package Onlinestorerestapi.dto.item;
 
-import Onlinestorerestapi.validation.annotation.item.UniqueOrSameItemName;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,7 +8,6 @@ import java.util.Map;
 
 @Getter
 @Setter
-@UniqueOrSameItemName
 public class PutItemDTO {
 
     @NotNull

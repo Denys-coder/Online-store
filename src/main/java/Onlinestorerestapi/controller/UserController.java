@@ -62,8 +62,7 @@ public class UserController {
     public ResponseEntity<?> putUser(@Valid @RequestBody PutUserDTO putUserDTO) {
 
         String email = putUserDTO.getEmail();
-        if (email != null
-                && userRepository.existsByEmail(email)
+        if (userRepository.existsByEmail(email)
                 && !email.equals(userService.getCurrentUser().getEmail())) {
             return ResponseEntity.badRequest().body("Email address should be unique or the same");
         }

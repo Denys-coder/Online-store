@@ -1,6 +1,5 @@
 package Onlinestorerestapi.dto.item;
 
-import Onlinestorerestapi.validation.annotation.item.UniqueItemName;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
@@ -17,7 +16,6 @@ public class PatchItemDTO {
 
     @Nullable
     @Size(min = 2, max = 30, message = "name should be from 2 to 30 symbols")
-    @UniqueItemName
     private String name;
 
     @Nullable

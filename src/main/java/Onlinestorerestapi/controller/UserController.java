@@ -48,6 +48,10 @@ public class UserController {
             return ResponseEntity.badRequest().body("Email address already in use");
         }
 
+        if (userRepository.existsByTelephoneNumber(postUserDTO.getTelephoneNumber())) {
+            return ResponseEntity.badRequest().body("Telephone number already in use");
+        }
+
         User user = postUserMapper.postUserDTOToUserMapper(postUserDTO);
         userRepository.save(user);
 

@@ -193,7 +193,7 @@ public class OrderController {
         // take all user's orders
         List<Order> orders = orderRepository.findByUser(userService.getCurrentUser());
 
-        // check if order.amount <= item.amount, otherwise put error in BindingResult
+        // check if order.amount <= item.amount, otherwise put an error in BindingResult
         BindingResult bindingResult = new BeanPropertyBindingResult(orders, "order");
         for (Order order : orders) {
             if (order.getAmount() > order.getItem().getAmount()) {

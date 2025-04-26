@@ -1,5 +1,5 @@
 // FIX
-• make operations that depend on each other or put database into inconsistent state transactional
+• make operations that depend on each other or put a database into inconsistent state transactional
 • always send user from a database, using user id from security context
 • check that each endpoint processes any data normally
 
@@ -7,11 +7,9 @@
 // REFACTOR
 • move code from controllers into service or util methods
 • extract similar logic from GET, POST, PUT, PATCH, DELETE endpoints
-• optimise security configuration of url
 • swap all deprecated methods (getReference(), etc)
 • refactor usage of Optional class
 • make obtaining of the user using getCurrentUser() everywhere
-• make validation with annotations only where it's needed (use proper validation type for each case)
 
 
 // IMPLEMENT

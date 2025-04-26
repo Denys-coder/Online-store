@@ -28,21 +28,28 @@ public class SecurityConfiguration {
                 }))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
+                        // Public endpoints
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/users/me/orders").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/users/me/orders/**").authenticated()
-                        .requestMatchers(HttpMethod.PUT, "/users/me/orders/**").authenticated()
-                        .requestMatchers(HttpMethod.DELETE, "/users/me/orders/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/users/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/items/**", "/images/**").permitAll()
+
+                        // Authenticated user endpoints
+                        .requestMatchers("/users/me/orders/**").authenticated()
                         .requestMatchers("/users/**").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/items/**").permitAll()
+
+                        // Admin-only endpoints
                         .requestMatchers("/items/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/images/**").permitAll()
+
+                        // Catch-all: deny everything else unless specified (fail closed pattern)
+                        .anyRequest().denyAll()
+                )
+                .exceptionHandling(exception -> exception
+                        .accessDeniedHandler((request, response, accessDeniedException) -> response.setStatus(HttpServletResponse.SC_NOT_FOUND))
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // Allow session creation
                         .maximumSessions(-1) // Allow any number of sessions per user
-                        .expiredUrl("/auth/login") // Redirect when session expires
+                        .expiredUrl("/auth/login") // Redirect when the session expires
                 )
                 .logout(logout -> logout
                         .logoutUrl("/auth/logout") // Enable logout on /auth/logout
@@ -52,10 +59,11 @@ public class SecurityConfiguration {
                             response.getWriter().flush();
                         })
                         .invalidateHttpSession(true)
-                        .deleteCookies("JSESSIONID") // Ensure session cookie is removed
+                        .deleteCookies("JSESSIONID") // Ensure the session cookie is removed
                 )
-                .formLogin(AbstractHttpConfigurer::disable) // Disable default form-based login
-                .httpBasic(AbstractHttpConfigurer::disable);
+                .formLogin(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .anonymous(AbstractHttpConfigurer::disable);
 
         return http.build();
     }

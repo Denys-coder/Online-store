@@ -85,7 +85,7 @@ public class ItemController {
                 User user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
                 List<Order> orders = orderRepository.findByUser(user);
 
-                // check if user already bought it
+                // check if the user already bought it
                 for (Order order : orders) {
                     if (Objects.equals(order.getItem().getId(), item.getId())) {
                         ordered = true;

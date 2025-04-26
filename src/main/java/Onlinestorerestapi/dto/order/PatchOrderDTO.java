@@ -1,6 +1,5 @@
 package Onlinestorerestapi.dto.order;
 
-import Onlinestorerestapi.validation.annotation.order.ExistingItemId;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import lombok.Getter;
@@ -10,7 +9,6 @@ import lombok.Setter;
 @Setter
 public class PatchOrderDTO {
 
-    @ExistingItemId
     private Integer itemId;
 
     @DecimalMin(value = "1", message = "amount should be larger than 1")

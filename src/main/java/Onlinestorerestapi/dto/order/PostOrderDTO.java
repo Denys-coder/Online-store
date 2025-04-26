@@ -1,16 +1,16 @@
 package Onlinestorerestapi.dto.order;
 
-import Onlinestorerestapi.validation.annotation.order.ExistingItemId;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 
 @Getter
 @Setter
 public class PostOrderDTO {
 
-    @ExistingItemId
+    @NonNull
     private Integer itemId;
 
     @DecimalMin(value = "1", message = "amount should be larger than 1")

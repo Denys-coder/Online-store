@@ -78,6 +78,11 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<?> postOrder(@Valid @RequestBody PostOrderDTO postOrderDTO) throws URISyntaxException {
 
+        // validate that postOrderDTO has existing item id
+        if (!itemRepository.existsById(postOrderDTO.getItemId())) {
+            return ResponseEntity.badRequest().body("There is no item with the specified id");
+        }
+
         User user = userService.getCurrentUser();
         Item itemToOrder = itemRepository.getReferenceById(postOrderDTO.getItemId());
 
@@ -104,6 +109,11 @@ public class OrderController {
     @PutMapping("/{orderId}")
     public ResponseEntity<?> putOrder(@PathVariable int orderId, @Valid @RequestBody PutOrderDTO putOrderDTO) {
 
+        // validate that postOrderDTO has existing item id
+        if (!itemRepository.existsById(putOrderDTO.getItemId())) {
+            return ResponseEntity.badRequest().body("There is no item with the specified id");
+        }
+
         Optional<Order> orderOptional = orderRepository.findById(orderId);
 
         if (orderOptional.isEmpty()) {
@@ -125,6 +135,11 @@ public class OrderController {
 
     @PatchMapping("/{orderId}")
     public ResponseEntity<?> patchOrder(@PathVariable int orderId, @Valid @RequestBody PatchOrderDTO patchOrderDTO) {
+
+        // validate that postOrderDTO has existing item id
+        if (!itemRepository.existsById(patchOrderDTO.getItemId())) {
+            return ResponseEntity.badRequest().body("There is no item with the specified id");
+        }
 
         Optional<Order> orderOptional = orderRepository.findById(orderId);
 

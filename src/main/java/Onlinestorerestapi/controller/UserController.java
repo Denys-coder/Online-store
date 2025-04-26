@@ -57,6 +57,11 @@ public class UserController {
     @PutMapping("/me")
     public ResponseEntity<?> putUser(@Valid @RequestBody PutUserDTO putUserDTO) {
 
+        String email = putUserDTO.getEmail();
+        if (email != null && userRepository.existsByEmail(email) && !email.equals(userService.getCurrentUser().getEmail())) {
+            return ResponseEntity.badRequest().body("Email address should be unique or the same");
+        }
+
         User currentUser = userService.getCurrentUser();
         putUserMapper.mergePutUserDTOIntoUser(putUserDTO, currentUser);
         userRepository.save(currentUser);
@@ -66,6 +71,11 @@ public class UserController {
 
     @PatchMapping("/me")
     public ResponseEntity<?> patchUser(@Valid @RequestBody PatchUserDTO patchUserDTO) {
+
+        String email = patchUserDTO.getEmail();
+        if (email != null && userRepository.existsByEmail(email) && !email.equals(userService.getCurrentUser().getEmail())) {
+            return ResponseEntity.badRequest().body("Email address should be unique or the same");
+        }
 
         User currentUser = userService.getCurrentUser();
         patchUserMapper.mergePatchUserDTOIntoUser(patchUserDTO, currentUser);

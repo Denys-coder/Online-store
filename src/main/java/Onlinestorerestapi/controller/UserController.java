@@ -62,8 +62,17 @@ public class UserController {
     public ResponseEntity<?> putUser(@Valid @RequestBody PutUserDTO putUserDTO) {
 
         String email = putUserDTO.getEmail();
-        if (email != null && userRepository.existsByEmail(email) && !email.equals(userService.getCurrentUser().getEmail())) {
+        if (email != null
+                && userRepository.existsByEmail(email)
+                && !email.equals(userService.getCurrentUser().getEmail())) {
             return ResponseEntity.badRequest().body("Email address should be unique or the same");
+        }
+
+        String telephoneNumber = putUserDTO.getTelephoneNumber();
+        if (telephoneNumber != null
+                && userRepository.existsByTelephoneNumber(telephoneNumber)
+                && !telephoneNumber.equals(userService.getCurrentUser().getTelephoneNumber())) {
+            return ResponseEntity.badRequest().body("Telephone number should be unique or the same");
         }
 
         User currentUser = userService.getCurrentUser();
@@ -79,6 +88,13 @@ public class UserController {
         String email = patchUserDTO.getEmail();
         if (email != null && userRepository.existsByEmail(email) && !email.equals(userService.getCurrentUser().getEmail())) {
             return ResponseEntity.badRequest().body("Email address should be unique or the same");
+        }
+
+        String telephoneNumber = patchUserDTO.getTelephoneNumber();
+        if (telephoneNumber != null
+                && userRepository.existsByTelephoneNumber(telephoneNumber)
+                && !telephoneNumber.equals(userService.getCurrentUser().getTelephoneNumber())) {
+            return ResponseEntity.badRequest().body("Telephone number should be unique or the same");
         }
 
         User currentUser = userService.getCurrentUser();

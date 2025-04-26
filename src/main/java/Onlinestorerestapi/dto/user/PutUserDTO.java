@@ -1,6 +1,5 @@
 package Onlinestorerestapi.dto.user;
 
-import Onlinestorerestapi.validation.annotation.user.UniqueOrSameTelephoneNumber;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -33,7 +32,6 @@ public class PutUserDTO {
     @NotBlank
     @Size(min = 6, max = 12)
     @Pattern(regexp = "\\d*")
-    @UniqueOrSameTelephoneNumber
     private String telephoneNumber;
 
     @NotBlank

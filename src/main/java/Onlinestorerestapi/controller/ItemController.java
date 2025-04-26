@@ -59,7 +59,7 @@ public class ItemController {
             User user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
             List<Order> orders = orderRepository.findByUser(user);
 
-            // check if user already bought it
+            // check if the user already bought it
             for (Order order : orders) {
                 if (Objects.equals(order.getItem().getId(), item.getId())) {
                     ordered = true;
@@ -104,6 +104,10 @@ public class ItemController {
     public ResponseEntity<?> postItem(@RequestPart("logo") @Image MultipartFile logo,
                                       @RequestPart("images") @ImageArray @MaxFileCount(max = 10) MultipartFile[] images,
                                       @RequestPart("item") @Valid PostItemDTO postItemDTO) throws URISyntaxException {
+
+        if (itemRepository.existsByName(postItemDTO.getName())) {
+            return ResponseEntity.badRequest().body("Item name should be unique");
+        }
 
         Item item = postItemMapper.postItemDTOToItem(postItemDTO, images.length);
 

@@ -44,6 +44,10 @@ public class UserController {
     @PostMapping
     public ResponseEntity<?> postUser(@Valid @RequestBody PostUserDTO postUserDTO) {
 
+        if (userRepository.existsByEmail(postUserDTO.getEmail())) {
+            return ResponseEntity.badRequest().body("Email address already in use");
+        }
+
         User user = postUserMapper.postUserDTOToUserMapper(postUserDTO);
         userRepository.save(user);
 

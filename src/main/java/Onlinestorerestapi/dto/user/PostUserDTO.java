@@ -1,6 +1,5 @@
 package Onlinestorerestapi.dto.user;
 
-import Onlinestorerestapi.validation.annotation.user.UniqueEmail;
 import Onlinestorerestapi.validation.annotation.user.UniqueTelephoneNumber;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -26,7 +25,6 @@ public class PostUserDTO {
     @NotBlank
     @Size(max = 100)
     @Email
-    @UniqueEmail
     private String email;
 
     @NotBlank

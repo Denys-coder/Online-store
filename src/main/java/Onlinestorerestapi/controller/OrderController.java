@@ -109,6 +109,10 @@ public class OrderController {
     @PutMapping("/{orderId}")
     public ResponseEntity<?> putOrder(@PathVariable int orderId, @Valid @RequestBody PutOrderDTO putOrderDTO) {
 
+        if (orderId != putOrderDTO.getId()) {
+            return ResponseEntity.badRequest().body("Order id in the path and in the body should match");
+        }
+
         // validate that postOrderDTO has existing item id
         if (!itemRepository.existsById(putOrderDTO.getItemId())) {
             return ResponseEntity.badRequest().body("There is no item with the specified id");
@@ -135,6 +139,10 @@ public class OrderController {
 
     @PatchMapping("/{orderId}")
     public ResponseEntity<?> patchOrder(@PathVariable int orderId, @Valid @RequestBody PatchOrderDTO patchOrderDTO) {
+
+        if (orderId != patchOrderDTO.getId()) {
+            return ResponseEntity.badRequest().body("Order id in the path and in the body should match");
+        }
 
         // validate that postOrderDTO has existing item id
         if (!itemRepository.existsById(patchOrderDTO.getItemId())) {

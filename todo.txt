@@ -10,8 +10,8 @@
 • swap all deprecated methods (getReference(), etc)
 • refactor usage of Optional class
 • make obtaining of the user using getCurrentUser() everywhere
-• correct grammar rules
 • create and use everywhere isAuthenticated()
+• make proper variable naming
 
 
 // IMPLEMENT

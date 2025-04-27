@@ -28,7 +28,7 @@ public class Item {
     private String description;
 
     @Column(nullable = false, unique = true, length = 10)
-    private String logoName; // only filename without directory
+    private String logoName; // only filename without a directory
 
     @ElementCollection
     @CollectionTable(name = "item_image_names", joinColumns = @JoinColumn(name = "item_id"))

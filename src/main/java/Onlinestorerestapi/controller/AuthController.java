@@ -38,7 +38,7 @@ public class AuthController {
             // load user details
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-            // check if password is valid
+            // check if the password is valid
             if (!passwordEncoder.matches(password, userDetails.getPassword())) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Invalid username or password"));
             }

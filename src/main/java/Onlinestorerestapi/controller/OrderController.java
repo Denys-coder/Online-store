@@ -145,7 +145,7 @@ public class OrderController {
         }
 
         // validate that postOrderDTO has existing item id
-        if (!itemRepository.existsById(patchOrderDTO.getItemId())) {
+        if (patchOrderDTO.getItemId() != null && !itemRepository.existsById(patchOrderDTO.getItemId())) {
             return ResponseEntity.badRequest().body("There is no item with the specified id");
         }
 

@@ -9,8 +9,7 @@
 • extract similar logic from GET, POST, PUT, PATCH, DELETE endpoints
 • swap all deprecated methods (getReference(), etc)
 • refactor usage of Optional class
-• make obtaining of the user using getCurrentUser() everywhere
-• create and use everywhere isAuthenticated()
+• refactor annotations (try to use @Image login inside @Images)
 • refactor GlobalExceptionHandler
 • delete unnecessary annotation on mapper classes
 

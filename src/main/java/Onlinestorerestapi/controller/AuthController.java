@@ -1,6 +1,7 @@
 package Onlinestorerestapi.controller;
 
 import Onlinestorerestapi.dto.user.UserLoginDTO;
+import Onlinestorerestapi.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,7 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
+    private final UserService userService;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody UserLoginDTO userLoginDTO, HttpServletRequest request) {
@@ -59,12 +61,7 @@ public class AuthController {
 
     @GetMapping("/status")
     public ResponseEntity<?> checkAuthentication() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getPrincipal())) {
-            Map<String, Boolean> response = Collections.singletonMap("authenticated", true);
-            return ResponseEntity.ok(response);
-        }
-        Map<String, Boolean> response = Collections.singletonMap("authenticated", false);
+        Map<String, Boolean> response = Collections.singletonMap("authenticated", userService.isAuthenticated() );
         return ResponseEntity.ok(response);
     }
 }

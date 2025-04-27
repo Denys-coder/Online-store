@@ -13,7 +13,7 @@ import Onlinestorerestapi.mapper.item.PostItemMapper;
 import Onlinestorerestapi.mapper.item.PutItemMapper;
 import Onlinestorerestapi.repository.ItemRepository;
 import Onlinestorerestapi.repository.OrderRepository;
-import Onlinestorerestapi.security.UserPrincipal;
+import Onlinestorerestapi.service.UserService;
 import Onlinestorerestapi.util.ItemUtil;
 import Onlinestorerestapi.validation.annotation.item.Image;
 import Onlinestorerestapi.validation.annotation.item.ImageArray;
@@ -22,7 +22,6 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -43,6 +42,7 @@ public class ItemController {
     private final GetItemMapper getItemMapper;
     private final PutItemMapper putItemMapper;
     private final PatchItemMapper patchItemMapper;
+    private final UserService userService;
 
     @GetMapping({"/{itemId}"})
     public ResponseEntity<?> getItem(@PathVariable int itemId) {
@@ -54,9 +54,8 @@ public class ItemController {
         Item item = itemOptional.get();
 
         boolean ordered = false;
-        if (SecurityContextHolder.getContext().getAuthentication() != null
-                && !"anonymousUser".equals(SecurityContextHolder.getContext().getAuthentication().getName())) {
-            User user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+        if (userService.isAuthenticated()) {
+            User user = userService.getCurrentUser();
             List<Order> orders = orderRepository.findByUser(user);
 
             // check if the user already bought it
@@ -80,9 +79,8 @@ public class ItemController {
 
         for (Item item : items) {
             boolean ordered = false;
-            if (SecurityContextHolder.getContext().getAuthentication() != null
-                    && !"anonymousUser".equals(SecurityContextHolder.getContext().getAuthentication().getName())) {
-                User user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+            if (userService.isAuthenticated()) {
+                User user = userService.getCurrentUser();
                 List<Order> orders = orderRepository.findByUser(user);
 
                 // check if the user already bought it

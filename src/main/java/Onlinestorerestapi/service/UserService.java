@@ -2,6 +2,7 @@ package Onlinestorerestapi.service;
 
 import Onlinestorerestapi.entity.User;
 import Onlinestorerestapi.security.UserPrincipal;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -9,8 +10,15 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     public User getCurrentUser() {
-        UserPrincipal userPrincipal = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-        return userPrincipal.getUser();
+        if (!isAuthenticated()) {
+            return ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+        }
+        throw new IllegalStateException("User is not authenticated");
+    }
+
+    public boolean isAuthenticated() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getPrincipal());
     }
 
 }

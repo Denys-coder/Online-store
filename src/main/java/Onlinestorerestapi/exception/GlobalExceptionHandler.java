@@ -1,6 +1,5 @@
 package Onlinestorerestapi.exception;
 
-import Onlinestorerestapi.validation.exception.item.MaxFileCountExceededException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -32,11 +31,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.PAYLOAD_TOO_LARGE)
                 .body("One or more file exceed the maximum allowed size limit");
-    }
-
-    @ExceptionHandler(MaxFileCountExceededException.class)
-    public ResponseEntity<String> handleMaxFileCountExceededException(MaxFileCountExceededException ex) {
-        return ResponseEntity.badRequest().body(ex.getMessage());
     }
 
     @ExceptionHandler(HandlerMethodValidationException.class)

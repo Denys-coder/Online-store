@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 @Target({ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface MaxFileCount {
-    String message() default "";
+    String message() default ""; // message specified in validator as it needs to be dynamic
 
     Class<?>[] groups() default {};
 

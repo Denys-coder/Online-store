@@ -1,7 +1,6 @@
 package Onlinestorerestapi.validation.validator.item;
 
 import Onlinestorerestapi.validation.annotation.item.MaxFileCount;
-import Onlinestorerestapi.validation.exception.item.MaxFileCountExceededException;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,10 +20,16 @@ public class MaxFileCountValidator implements ConstraintValidator<MaxFileCount, 
             return true; // No files uploaded, valid case
         }
 
-        if (files.length > maxFiles) {
-            throw new MaxFileCountExceededException("Max upload file number limit is " + maxFiles);
+        if (files.length <= maxFiles) {
+            return true;
         }
 
-        return true;
+        // Dynamic error message
+        context.disableDefaultConstraintViolation();
+        context.buildConstraintViolationWithTemplate(
+                String.format("You uploaded %d files, but the maximum allowed is %d", files.length, maxFiles)
+        ).addConstraintViolation();
+
+        return false;
     }
 }

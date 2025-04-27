@@ -17,5 +17,5 @@ public @interface MaxFileCount {
 
     Class<? extends Payload>[] payload() default {};
 
-    int max(); // Maximum allowed files
+    int maxFileAmount(); // Maximum allowed files
 }

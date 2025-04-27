@@ -16,11 +16,11 @@ import java.util.Set;
 public abstract class PutItemMapper {
 
     @Mapping(target = "logoName", expression = "java(Onlinestorerestapi.mapper.item.util.ItemMapperUtil.generateUUID())")
-    @Mapping(target = "imageNames", source = "imageLength", qualifiedByName = "populateImageNames")
-    public abstract void putItemDTOToItem(PutItemDTO putItemDTO, @MappingTarget Item item, int imageLength);
+    @Mapping(target = "imageNames", source = "imageAmount", qualifiedByName = "populateImageNames")
+    public abstract void putItemDTOToItem(PutItemDTO putItemDTO, @MappingTarget Item item, int imageAmount);
 
     @Named("populateImageNames")
-    protected Set<String> populateImageNames(int imageLength) {
-        return ItemMapperUtil.populateImageNames(imageLength);
+    protected Set<String> populateImageNames(int imageAmount) {
+        return ItemMapperUtil.populateImageNames(imageAmount);
     }
 }

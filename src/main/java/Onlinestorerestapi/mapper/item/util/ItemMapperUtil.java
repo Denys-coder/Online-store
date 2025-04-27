@@ -10,9 +10,9 @@ public class ItemMapperUtil {
         return UUID.randomUUID().toString();
     }
 
-    public static Set<String> populateImageNames(int imageLength) {
+    public static Set<String> populateImageNames(int imageAmount) {
         Set<String> imageNames = new HashSet<>();
-        while (imageNames.size() < imageLength) {
+        while (imageNames.size() < imageAmount) {
             imageNames.add(UUID.randomUUID().toString());
         }
         return imageNames;

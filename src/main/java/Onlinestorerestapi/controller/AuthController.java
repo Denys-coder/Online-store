@@ -44,15 +44,15 @@ public class AuthController {
             }
 
             // authenticate user
-            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(username, password, userDetails.getAuthorities());
-            Authentication authentication = authenticationManager.authenticate(authToken);
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password, userDetails.getAuthorities());
+            Authentication authentication = authenticationManager.authenticate(authenticationToken);
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
             // create session
             request.getSession(true).setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
 
             return ResponseEntity.ok("User logged in");
-        } catch (UsernameNotFoundException e) {
+        } catch (UsernameNotFoundException exception) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No such user");
         }
     }

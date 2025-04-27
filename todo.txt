@@ -11,7 +11,8 @@
 • refactor usage of Optional class
 • make obtaining of the user using getCurrentUser() everywhere
 • create and use everywhere isAuthenticated()
-• make proper variable naming
+• refactor GlobalExceptionHandler
+• delete unnecessary annotation on mapper classes
 
 
 // IMPLEMENT

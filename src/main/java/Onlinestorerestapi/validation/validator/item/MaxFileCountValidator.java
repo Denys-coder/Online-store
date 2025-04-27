@@ -7,11 +7,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 public class MaxFileCountValidator implements ConstraintValidator<MaxFileCount, MultipartFile[]> {
 
-    private int maxFiles;
+    private int maxFilesAmount;
 
     @Override
     public void initialize(MaxFileCount constraintAnnotation) {
-        this.maxFiles = constraintAnnotation.max();
+        this.maxFilesAmount = constraintAnnotation.maxFileAmount();
     }
 
     @Override
@@ -20,14 +20,14 @@ public class MaxFileCountValidator implements ConstraintValidator<MaxFileCount, 
             return true; // No files uploaded, valid case
         }
 
-        if (files.length <= maxFiles) {
+        if (files.length <= maxFilesAmount) {
             return true;
         }
 
         // Dynamic error message
         context.disableDefaultConstraintViolation();
         context.buildConstraintViolationWithTemplate(
-                String.format("You uploaded %d files, but the maximum allowed is %d", files.length, maxFiles)
+                String.format("You uploaded %d files, but the maximum allowed is %d", files.length, maxFilesAmount)
         ).addConstraintViolation();
 
         return false;

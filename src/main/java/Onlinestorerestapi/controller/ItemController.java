@@ -102,7 +102,7 @@ public class ItemController {
 
     @PostMapping
     public ResponseEntity<?> postItem(@RequestPart("logo") @Image MultipartFile logo,
-                                      @RequestPart("images") @ImageArray @MaxFileCount(max = 10) MultipartFile[] images,
+                                      @RequestPart("images") @ImageArray @MaxFileCount(maxFileAmount = 10) MultipartFile[] images,
                                       @RequestPart("item") @Valid PostItemDTO postItemDTO) throws URISyntaxException {
 
         if (itemRepository.existsByName(postItemDTO.getName())) {
@@ -122,7 +122,7 @@ public class ItemController {
     @PutMapping("/{itemId}")
     public ResponseEntity<?> putItem(@PathVariable int itemId,
                                      @RequestPart("logo") @Image MultipartFile logo,
-                                     @RequestPart("images") @ImageArray @MaxFileCount(max = 10) MultipartFile[] images,
+                                     @RequestPart("images") @ImageArray @MaxFileCount(maxFileAmount = 10) MultipartFile[] images,
                                      @RequestPart("item") @Valid PutItemDTO putItemDTO) {
 
         if (itemId != putItemDTO.getId()) {
@@ -158,7 +158,7 @@ public class ItemController {
     @PatchMapping("/{itemId}")
     public ResponseEntity<?> patchItem(@PathVariable int itemId,
                                           @RequestPart(name = "logo", required = false) @Image MultipartFile logo,
-                                          @RequestPart(name = "images", required = false) @ImageArray @MaxFileCount(max = 10) MultipartFile[] images,
+                                          @RequestPart(name = "images", required = false) @ImageArray @MaxFileCount(maxFileAmount = 10) MultipartFile[] images,
                                           @RequestPart(name = "item", required = false) @Valid PatchItemDTO patchItemDTO) {
 
         if (itemId != patchItemDTO.getId()) {

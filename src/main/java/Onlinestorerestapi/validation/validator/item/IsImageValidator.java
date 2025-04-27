@@ -28,13 +28,9 @@ public class IsImageValidator implements ConstraintValidator<Image, MultipartFil
             // Second layer: verify actual content (magic bytes)
             InputStream inputStream = file.getInputStream();
             String detectedType = new Tika().detect(inputStream);
-            if (detectedType == null || !detectedType.startsWith("image/")) {
-                return false;
-            }
+            return detectedType != null && detectedType.startsWith("image/");
 
-            return true;
-
-        } catch (IOException e) {
+        } catch (IOException exception) {
             return false;
         }
 

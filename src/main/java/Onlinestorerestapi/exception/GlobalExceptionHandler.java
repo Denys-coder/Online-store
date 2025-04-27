@@ -16,10 +16,10 @@ import java.util.*;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, List<String>>> handleValidationException(MethodArgumentNotValidException ex) {
+    public ResponseEntity<Map<String, List<String>>> handleValidationException(MethodArgumentNotValidException exception) {
         Map<String, List<String>> errors = new HashMap<>();
 
-        for (FieldError error : ex.getBindingResult().getFieldErrors()) {
+        for (FieldError error : exception.getBindingResult().getFieldErrors()) {
             errors.computeIfAbsent(error.getField(), key -> new java.util.ArrayList<>()).add(error.getDefaultMessage());
         }
 
@@ -27,17 +27,17 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)
-    public ResponseEntity<String> handleMaxUploadSizeException(MaxUploadSizeExceededException ex) {
+    public ResponseEntity<String> handleMaxUploadSizeException(MaxUploadSizeExceededException exception) {
         return ResponseEntity
                 .status(HttpStatus.PAYLOAD_TOO_LARGE)
                 .body("One or more file exceed the maximum allowed size limit");
     }
 
     @ExceptionHandler(HandlerMethodValidationException.class)
-    public ResponseEntity<Map<String, List<String>>> handleMethodValidationException(HandlerMethodValidationException ex) {
+    public ResponseEntity<Map<String, List<String>>> handleMethodValidationException(HandlerMethodValidationException exception) {
         Map<String, List<String>> errors = new HashMap<>();
 
-        ex.getParameterValidationResults().forEach(result -> {
+        exception.getParameterValidationResults().forEach(result -> {
             String fieldName = Optional.ofNullable(result.getMethodParameter().getParameterName())
                     .orElse("unknown");
 
@@ -51,7 +51,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<?> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+    public ResponseEntity<?> handleHttpMessageNotReadableException(HttpMessageNotReadableException exception) {
         return ResponseEntity.badRequest().body("invalid json");
     }
 }

@@ -36,7 +36,7 @@ public class IsImageArrayValidator implements ConstraintValidator<ImageArray, Mu
             // all passed
             return true;
 
-        } catch (IOException e) {
+        } catch (IOException exception) {
             return false;
         }
     }

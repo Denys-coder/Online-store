@@ -26,11 +26,11 @@ public class ImageController {
     @GetMapping("/{imageName}")
     public ResponseEntity<Resource> getImage(@PathVariable String imageName) {
         try {
-            Path imagesDir = Paths.get(environment.getProperty("images.directory")).normalize();
-            Path imagePath = imagesDir.resolve(imageName).normalize();
+            Path imagesDirectory = Paths.get(environment.getProperty("images.directory")).normalize();
+            Path imagePath = imagesDirectory.resolve(imageName).normalize();
 
             // Prevent path traversal
-            if (!imagePath.startsWith(imagesDir)) {
+            if (!imagePath.startsWith(imagesDirectory)) {
                 return ResponseEntity.badRequest().body(null);
             }
 
@@ -49,7 +49,7 @@ public class ImageController {
                     .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
                     .body(resource);
 
-        } catch (Exception e) {
+        } catch (Exception exception) {
             return ResponseEntity.internalServerError().build();
         }
     }

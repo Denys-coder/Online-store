@@ -20,8 +20,8 @@ public class ItemUtil {
         this.environment = environment;
     }
 
-    public void saveImageToFolder(MultipartFile logo, String name) {
-        saveImagesToFolder(new MultipartFile[]{logo}, Set.of(name));
+    public void saveImageToFolder(MultipartFile logo, String imageName) {
+        saveImagesToFolder(new MultipartFile[]{logo}, Set.of(imageName));
     }
 
     public void saveImagesToFolder(MultipartFile[] images, Set<String> imageNames) {
@@ -37,8 +37,8 @@ public class ItemUtil {
                 Path imagePath = imagesDirectory.resolve(imageName);
                 Files.write(imagePath, image.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
             }
-        } catch (IOException e) {
-            throw new UncheckedIOException("Failed to save images to folder", e);
+        } catch (IOException exception) {
+            throw new UncheckedIOException("Failed to save images to folder", exception);
         }
     }
 

@@ -13,7 +13,7 @@ import java.util.Set;
 @Mapper(componentModel = "spring")
 public abstract class PutItemMapper {
 
-    @Mapping(target = "logoName", expression = "java(Onlinestorerestapi.mapper.item.util.ItemMapperUtil.generateUUID())")
+    @Mapping(target = "logoName", expression = "java(Onlinestorerestapi.mapper.item.util.ItemMapperUtils.generateUUID())")
     @Mapping(target = "imageNames", source = "imageAmount", qualifiedByName = "populateImageNames")
     public abstract void putItemDTOToItem(PutItemDTO putItemDTO, @MappingTarget Item item, int imageAmount);
 

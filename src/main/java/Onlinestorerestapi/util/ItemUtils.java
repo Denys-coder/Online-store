@@ -13,10 +13,10 @@ import java.util.Iterator;
 import java.util.Set;
 
 @Service
-public class ItemUtil {
+public class ItemUtils {
     private final Environment environment;
 
-    public ItemUtil(Environment environment) {
+    public ItemUtils(Environment environment) {
         this.environment = environment;
     }
 

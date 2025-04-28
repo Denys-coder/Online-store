@@ -14,7 +14,7 @@ import Onlinestorerestapi.mapper.item.PutItemMapper;
 import Onlinestorerestapi.repository.ItemRepository;
 import Onlinestorerestapi.repository.OrderRepository;
 import Onlinestorerestapi.service.UserService;
-import Onlinestorerestapi.util.ItemUtil;
+import Onlinestorerestapi.util.ItemUtils;
 import Onlinestorerestapi.validation.annotation.item.Image;
 import Onlinestorerestapi.validation.annotation.item.ImageArray;
 import Onlinestorerestapi.validation.annotation.item.MaxFileCount;
@@ -38,7 +38,7 @@ public class ItemController {
     private final ItemRepository itemRepository;
     private final OrderRepository orderRepository;
     private final PostItemMapper postItemMapper;
-    private final ItemUtil itemUtil;
+    private final ItemUtils itemUtils;
     private final GetItemMapper getItemMapper;
     private final PutItemMapper putItemMapper;
     private final PatchItemMapper patchItemMapper;
@@ -109,8 +109,8 @@ public class ItemController {
 
         Item item = postItemMapper.postItemDTOToItem(postItemDTO, images.length);
 
-        itemUtil.saveImageToFolder(logo, item.getLogoName());
-        itemUtil.saveImagesToFolder(images, item.getImageNames());
+        itemUtils.saveImageToFolder(logo, item.getLogoName());
+        itemUtils.saveImagesToFolder(images, item.getImageNames());
 
         itemRepository.save(item);
 
@@ -140,13 +140,13 @@ public class ItemController {
 
         Item item = optionalItem.get();
 
-        itemUtil.deleteImageFromFolder(item.getLogoName());
-        itemUtil.deleteImagesFromFolder(item.getImageNames());
+        itemUtils.deleteImageFromFolder(item.getLogoName());
+        itemUtils.deleteImagesFromFolder(item.getImageNames());
 
         putItemMapper.putItemDTOToItem(putItemDTO, item, images.length);
 
-        itemUtil.saveImageToFolder(logo, item.getLogoName());
-        itemUtil.saveImagesToFolder(images, item.getImageNames());
+        itemUtils.saveImageToFolder(logo, item.getLogoName());
+        itemUtils.saveImagesToFolder(images, item.getImageNames());
 
         itemRepository.save(item);
 
@@ -179,20 +179,20 @@ public class ItemController {
         patchItemMapper.patchItemDTOToItem(patchItemDTO, item);
 
         if (logo != null) {
-            itemUtil.deleteImageFromFolder(item.getLogoName());
+            itemUtils.deleteImageFromFolder(item.getLogoName());
             UUID uuid = UUID.randomUUID();
             item.setLogoName(uuid.toString());
-            itemUtil.saveImageToFolder(logo, item.getLogoName());
+            itemUtils.saveImageToFolder(logo, item.getLogoName());
         }
 
         if (images != null) {
-            itemUtil.deleteImagesFromFolder(item.getImageNames());
+            itemUtils.deleteImagesFromFolder(item.getImageNames());
             Set<String> imageNames = new HashSet<>();
             while (imageNames.size() < images.length) {
                 imageNames.add(UUID.randomUUID().toString());
             }
             item.setImageNames(imageNames);
-            itemUtil.saveImagesToFolder(images, imageNames);
+            itemUtils.saveImagesToFolder(images, imageNames);
 
         }
 
@@ -205,8 +205,8 @@ public class ItemController {
     public ResponseEntity<?> deleteItem(@PathVariable int itemId) {
 
         Item itemToDelete = itemRepository.getReferenceById(itemId);
-        itemUtil.deleteImageFromFolder(itemToDelete.getLogoName());
-        itemUtil.deleteImagesFromFolder(itemToDelete.getImageNames());
+        itemUtils.deleteImageFromFolder(itemToDelete.getLogoName());
+        itemUtils.deleteImagesFromFolder(itemToDelete.getImageNames());
 
         orderRepository.deleteOrdersByItem(itemToDelete);
         itemRepository.deleteById(itemId);

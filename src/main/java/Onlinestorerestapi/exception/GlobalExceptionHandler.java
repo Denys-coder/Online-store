@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
 import java.util.*;
 
@@ -22,6 +23,15 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.PAYLOAD_TOO_LARGE)
                 .body("One or more file exceed the maximum allowed size limit");
+    }
+
+    // missing RequestPart
+    @ExceptionHandler(MissingServletRequestPartException.class)
+    public ResponseEntity<String> handleMissingServletRequestPartException(MissingServletRequestPartException ex) {
+        String errorMessage = String.format("Required part '%s' is missing", ex.getRequestPartName());
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(errorMessage);
     }
 
     // Spring Boot fails to parse or map json

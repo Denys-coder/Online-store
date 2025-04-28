@@ -1,7 +1,6 @@
 // FIX
 • make operations that depend on each other or put a database into inconsistent state transactional
 • always send user from a database, using user id from security context
-• check that each endpoint processes any data normally
 
 
 // REFACTOR

@@ -2,7 +2,7 @@ package Onlinestorerestapi.mapper.item;
 
 import Onlinestorerestapi.dto.item.PutItemDTO;
 import Onlinestorerestapi.entity.Item;
-import Onlinestorerestapi.mapper.item.util.ItemMapperUtil;
+import Onlinestorerestapi.mapper.item.util.ItemMapperUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -19,6 +19,6 @@ public abstract class PutItemMapper {
 
     @Named("populateImageNames")
     protected Set<String> populateImageNames(int imageAmount) {
-        return ItemMapperUtil.populateImageNames(imageAmount);
+        return ItemMapperUtils.populateImageNames(imageAmount);
     }
 }

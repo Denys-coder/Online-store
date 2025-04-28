@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-public class ItemMapperUtil {
+public class ItemMapperUtils {
 
     public static String generateUUID() {
         return UUID.randomUUID().toString();

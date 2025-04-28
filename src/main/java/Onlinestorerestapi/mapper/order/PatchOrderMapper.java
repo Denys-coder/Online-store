@@ -2,13 +2,11 @@ package Onlinestorerestapi.mapper.order;
 
 import Onlinestorerestapi.dto.order.PatchOrderDTO;
 import Onlinestorerestapi.entity.Order;
-import lombok.NoArgsConstructor;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
-@NoArgsConstructor(force = true)
 @Mapper(componentModel = "spring")
 public abstract class PatchOrderMapper {
 

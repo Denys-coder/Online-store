@@ -4,11 +4,9 @@ import Onlinestorerestapi.dto.order.PostOrderDTO;
 import Onlinestorerestapi.entity.Item;
 import Onlinestorerestapi.entity.Order;
 import Onlinestorerestapi.entity.User;
-import lombok.NoArgsConstructor;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@NoArgsConstructor(force = true)
 @Mapper(componentModel = "spring")
 public abstract class PostOrderMapper {
 

@@ -2,8 +2,6 @@ package Onlinestorerestapi.mapper.user;
 
 import Onlinestorerestapi.dto.user.PostUserDTO;
 import Onlinestorerestapi.entity.User;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -11,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import Onlinestorerestapi.entity.RoleName;
 
-@NoArgsConstructor(force = true)
-@AllArgsConstructor
 @Mapper(componentModel = "spring")
 public abstract class PostUserMapper {
 

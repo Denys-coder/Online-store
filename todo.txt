@@ -5,12 +5,12 @@
 
 
 // REFACTOR
+• delegate controller parameter validation to service/util class methods
 • move code from controllers into service or util methods
 • extract similar logic from GET, POST, PUT, PATCH, DELETE endpoints
 • swap all deprecated methods (getReference(), etc)
 • refactor usage of Optional class
 • refactor annotations (try to use @Image login inside @Images)
-• delete unnecessary annotation on mapper classes
 
 
 // IMPLEMENT

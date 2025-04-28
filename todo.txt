@@ -10,7 +10,6 @@
 • extract similar logic from GET, POST, PUT, PATCH, DELETE endpoints
 • swap all deprecated methods (getReference(), etc)
 • refactor usage of Optional class
-• refactor annotations (try to use @Image login inside @Images)
 
 
 // IMPLEMENT

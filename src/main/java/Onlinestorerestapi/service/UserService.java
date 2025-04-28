@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     public User getCurrentUser() {
-        if (!isAuthenticated()) {
+        if (isAuthenticated()) {
             return ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
         }
         throw new IllegalStateException("User is not authenticated");

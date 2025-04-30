@@ -1,10 +1,8 @@
 package Onlinestorerestapi.controller;
 
+import Onlinestorerestapi.service.ImageService;
 import lombok.AllArgsConstructor;
-import org.apache.tika.Tika;
-import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,45 +11,26 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 @RestController
 @RequestMapping("/images")
 @AllArgsConstructor
 public class ImageController {
 
-    private final Environment environment;
+    private final ImageService imageService;
 
     @GetMapping("/{imageName}")
     public ResponseEntity<Resource> getImage(@PathVariable String imageName) {
-        try {
-            Path imagesDirectory = Paths.get(environment.getProperty("images.directory")).normalize();
-            Path imagePath = imagesDirectory.resolve(imageName).normalize();
 
-            // Prevent path traversal
-            if (!imagePath.startsWith(imagesDirectory)) {
-                return ResponseEntity.badRequest().body(null);
-            }
+        Resource image = imageService.getImage(imageName);
 
-            // Load resource
-            Resource resource = new UrlResource(imagePath.toUri());
-            if (!resource.exists() || !resource.isReadable()) {
-                return ResponseEntity.notFound().build();
-            }
+        // Detect MIME type
+        String contentType = imageService.getImageType(image);
 
-            // Detect MIME type using Tika
-            Tika tika = new Tika();
-            String contentType = tika.detect(imagePath.toFile());
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + image.getFilename() + "\"")
+                .body(image);
 
-            return ResponseEntity.ok()
-                    .contentType(MediaType.parseMediaType(contentType))
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
-                    .body(resource);
-
-        } catch (Exception exception) {
-            return ResponseEntity.internalServerError().build();
-        }
     }
 
 }

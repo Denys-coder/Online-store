@@ -1,5 +1,6 @@
 package Onlinestorerestapi.exception;
 
+import Onlinestorerestapi.validation.exception.ApiException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -83,6 +84,13 @@ public class GlobalExceptionHandler {
         });
 
         return ResponseEntity.badRequest().body(errors);
+    }
+
+    @ExceptionHandler(ApiException.class)
+    public ResponseEntity<?> handleApiException(ApiException exception) {
+        return ResponseEntity
+                .status(exception.getStatus())
+                .body(Map.of("errors", exception.getErrors()));
     }
 
 }

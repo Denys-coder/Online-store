@@ -49,8 +49,7 @@ public class ImageService {
         try {
             imageType = tika.detect(image.getInputStream());
         } catch (IOException e) {
-            // Fallback to default if detection fails
-            imageType = "application/octet-stream";
+            throw new RuntimeException("Failed to detect image type", e);
         }
         return imageType;
     }

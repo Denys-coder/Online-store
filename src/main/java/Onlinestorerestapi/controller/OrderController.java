@@ -67,11 +67,11 @@ public class OrderController {
         User user = userService.getCurrentUser();
         List<Order> orders = orderRepository.findByUser(user);
 
-        List<GetOrderDTO> getOrderDTOList = orders.stream()
+        List<GetOrderDTO> getOrderDTOs = orders.stream()
                 .map(getOrderMapper::orderToGetOrderDTO)
                 .collect(Collectors.toList());
 
-        return ResponseEntity.ok(getOrderDTOList);
+        return ResponseEntity.ok(getOrderDTOs);
 
     }
 

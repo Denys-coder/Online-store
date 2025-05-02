@@ -13,6 +13,7 @@ import Onlinestorerestapi.mapper.item.PostItemMapper;
 import Onlinestorerestapi.mapper.item.PutItemMapper;
 import Onlinestorerestapi.repository.ItemRepository;
 import Onlinestorerestapi.repository.OrderRepository;
+import Onlinestorerestapi.service.ItemService;
 import Onlinestorerestapi.service.UserService;
 import Onlinestorerestapi.util.ItemUtils;
 import Onlinestorerestapi.validation.annotation.item.Image;
@@ -20,11 +21,9 @@ import Onlinestorerestapi.validation.annotation.item.ImageArray;
 import Onlinestorerestapi.validation.annotation.item.MaxFileCount;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -43,29 +42,14 @@ public class ItemController {
     private final PutItemMapper putItemMapper;
     private final PatchItemMapper patchItemMapper;
     private final UserService userService;
+    private final ItemService itemService;
 
     @GetMapping({"/{itemId}"})
     public ResponseEntity<?> getItem(@PathVariable int itemId) {
 
-        Optional<Item> itemOptional = itemRepository.findById(itemId);
-        if (itemOptional.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Resource not found");
-        }
-        Item item = itemOptional.get();
+        Item item = itemService.getItem(itemId);
 
-        boolean ordered = false;
-        if (userService.isAuthenticated()) {
-            User user = userService.getCurrentUser();
-            List<Order> orders = orderRepository.findByUser(user);
-
-            // check if the user already bought it
-            for (Order order : orders) {
-                if (Objects.equals(order.getItem().getId(), item.getId())) {
-                    ordered = true;
-                    break;
-                }
-            }
-        }
+        boolean ordered = itemService.itemOrdered(item);
 
         GetItemDTO getItemDTO = getItemMapper.itemToGetItemDTO(item, ordered);
         return ResponseEntity.ok(getItemDTO);
@@ -155,9 +139,9 @@ public class ItemController {
 
     @PatchMapping("/{itemId}")
     public ResponseEntity<?> patchItem(@PathVariable int itemId,
-                                          @RequestPart(name = "logo", required = false) @Image MultipartFile logo,
-                                          @RequestPart(name = "images", required = false) @ImageArray @MaxFileCount(maxFileAmount = 10) MultipartFile[] images,
-                                          @RequestPart(name = "item", required = false) @Valid PatchItemDTO patchItemDTO) {
+                                       @RequestPart(name = "logo", required = false) @Image MultipartFile logo,
+                                       @RequestPart(name = "images", required = false) @ImageArray @MaxFileCount(maxFileAmount = 10) MultipartFile[] images,
+                                       @RequestPart(name = "item", required = false) @Valid PatchItemDTO patchItemDTO) {
 
         if (itemId != patchItemDTO.getId()) {
             return ResponseEntity.badRequest().body("Item id in the path and in the body should match");

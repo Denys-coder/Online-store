@@ -9,6 +9,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AuthenticatedDTO {
-    boolean authenticated;
-    RoleName roleName;
+    private boolean authenticated;
+    private RoleName roleName;
 }

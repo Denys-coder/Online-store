@@ -1,5 +1,6 @@
 package Onlinestorerestapi.service;
 
+import Onlinestorerestapi.dto.user.UserLoginDTO;
 import Onlinestorerestapi.entity.User;
 import Onlinestorerestapi.security.UserPrincipal;
 import Onlinestorerestapi.validation.exception.ApiException;
@@ -20,7 +21,10 @@ public class UserService {
 
     private final AuthenticationManager authenticationManager;
 
-    public void login(String username, String password, HttpServletRequest request) {
+    public void login(UserLoginDTO userLoginDTO, HttpServletRequest request) {
+        String username = userLoginDTO.getEmail();
+        String password = userLoginDTO.getPassword();
+
         try {
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
             Authentication authentication = authenticationManager.authenticate(authenticationToken);

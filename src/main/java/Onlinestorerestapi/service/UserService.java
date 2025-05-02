@@ -1,6 +1,8 @@
 package Onlinestorerestapi.service;
 
+import Onlinestorerestapi.dto.user.AuthenticatedDTO;
 import Onlinestorerestapi.dto.user.UserLoginDTO;
+import Onlinestorerestapi.entity.RoleName;
 import Onlinestorerestapi.entity.User;
 import Onlinestorerestapi.security.UserPrincipal;
 import Onlinestorerestapi.validation.exception.ApiException;
@@ -48,6 +50,12 @@ public class UserService {
     public boolean isAuthenticated() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getPrincipal());
+    }
+
+    public AuthenticatedDTO checkAuthentication() {
+        boolean authenticated = isAuthenticated();
+        RoleName roleName = authenticated ? getCurrentUser().getRoleName() : null;
+        return new AuthenticatedDTO(authenticated, roleName);
     }
 
 }

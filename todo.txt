@@ -9,6 +9,10 @@
 • extract similar logic from GET, POST, PUT, PATCH, DELETE endpoints
 • swap all deprecated methods (getReference(), etc)
 • refactor usage of Optional class
+• in controller always call a single service method to get dto and then display it
+• always return Optional when method can throw null
+• throw ApiException only from service method invoked directly by controller
+• use String.format() wherever possible
 
 
 // IMPLEMENT

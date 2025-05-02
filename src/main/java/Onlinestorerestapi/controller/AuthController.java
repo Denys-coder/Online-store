@@ -1,5 +1,6 @@
 package Onlinestorerestapi.controller;
 
+import Onlinestorerestapi.dto.user.AuthenticatedDTO;
 import Onlinestorerestapi.dto.user.UserLoginDTO;
 import Onlinestorerestapi.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -7,9 +8,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
-
-import java.util.Collections;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
@@ -27,7 +25,9 @@ public class AuthController {
 
     @GetMapping("/status")
     public ResponseEntity<?> checkAuthentication() {
-        Map<String, Boolean> response = Collections.singletonMap("authenticated", userService.isAuthenticated());
-        return ResponseEntity.ok(response);
+
+        AuthenticatedDTO authenticatedDTO = userService.checkAuthentication();
+
+        return ResponseEntity.ok(authenticatedDTO);
     }
 }

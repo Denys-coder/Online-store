@@ -1,5 +1,6 @@
 package Onlinestorerestapi.controller;
 
+import Onlinestorerestapi.dto.image.ImageDTO;
 import Onlinestorerestapi.service.ImageService;
 import lombok.AllArgsConstructor;
 import org.springframework.core.io.Resource;
@@ -21,15 +22,12 @@ public class ImageController {
     @GetMapping("/{imageName}")
     public ResponseEntity<Resource> getImage(@PathVariable String imageName) {
 
-        Resource image = imageService.getImage(imageName);
-
-        // Detect MIME type
-        String contentType = imageService.getImageType(image);
+        ImageDTO imageDTO = imageService.getImageDTO(imageName);
 
         return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(contentType))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + image.getFilename() + "\"")
-                .body(image);
+                .contentType(MediaType.parseMediaType(imageDTO.getContentType()))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + imageDTO.getImage().getFilename() + "\"")
+                .body(imageDTO.getImage());
 
     }
 

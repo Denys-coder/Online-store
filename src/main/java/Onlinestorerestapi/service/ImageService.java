@@ -1,5 +1,6 @@
 package Onlinestorerestapi.service;
 
+import Onlinestorerestapi.dto.image.ImageDTO;
 import Onlinestorerestapi.validation.exception.ApiException;
 import lombok.AllArgsConstructor;
 import org.apache.tika.Tika;
@@ -52,5 +53,15 @@ public class ImageService {
             throw new RuntimeException("Failed to detect image type", e);
         }
         return imageType;
+    }
+
+    public ImageDTO getImageDTO(String imageName) {
+
+        Resource image = getImage(imageName);
+
+        // Detect MIME type
+        String contentType = getImageType(image);
+
+        return new ImageDTO(image, contentType);
     }
 }

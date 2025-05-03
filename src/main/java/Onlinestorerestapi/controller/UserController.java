@@ -5,10 +5,10 @@ import Onlinestorerestapi.dto.user.UserPatchDTO;
 import Onlinestorerestapi.dto.user.UserResponseDTO;
 import Onlinestorerestapi.dto.user.UserUpdateDTO;
 import Onlinestorerestapi.entity.User;
-import Onlinestorerestapi.mapper.user.PatchUserMapper;
-import Onlinestorerestapi.mapper.user.PostUserMapper;
-import Onlinestorerestapi.mapper.user.GetUserMapper;
-import Onlinestorerestapi.mapper.user.PutUserMapper;
+import Onlinestorerestapi.mapper.user.UserCreateMapper;
+import Onlinestorerestapi.mapper.user.UserPatchMapper;
+import Onlinestorerestapi.mapper.user.UserResponseMapper;
+import Onlinestorerestapi.mapper.user.UserUpdateMapper;
 import Onlinestorerestapi.repository.UserRepository;
 import Onlinestorerestapi.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,18 +25,18 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 public class UserController {
 
-    private final GetUserMapper getUserMapper;
+    private final UserResponseMapper userResponseMapper;
     private final UserRepository userRepository;
-    private final PostUserMapper postUserMapper;
-    private final PatchUserMapper patchUserMapper;
-    private final PutUserMapper putUserMapper;
+    private final UserCreateMapper userCreateMapper;
+    private final UserPatchMapper userPatchMapper;
+    private final UserUpdateMapper userUpdateMapper;
     private final UserService userService;
 
     @GetMapping("/me")
     public ResponseEntity<?> getUser() {
 
         User user = userService.getCurrentUser();
-        UserResponseDTO userResponseDTO = getUserMapper.userToUserResponseDTO(user);
+        UserResponseDTO userResponseDTO = userResponseMapper.userToUserResponseDTO(user);
 
         return ResponseEntity.ok(userResponseDTO);
     }
@@ -52,7 +52,7 @@ public class UserController {
             return ResponseEntity.badRequest().body("Telephone number already in use");
         }
 
-        User user = postUserMapper.userCreateDTOToUserMapper(userCreateDTO);
+        User user = userCreateMapper.userCreateDTOToUserMapper(userCreateDTO);
         userRepository.save(user);
 
         return ResponseEntity.ok("User created");
@@ -75,7 +75,7 @@ public class UserController {
         }
 
         User currentUser = userService.getCurrentUser();
-        putUserMapper.mergeUserUpdateDTOIntoUser(userUpdateDTO, currentUser);
+        userUpdateMapper.mergeUserUpdateDTOIntoUser(userUpdateDTO, currentUser);
         userRepository.save(currentUser);
 
         return ResponseEntity.ok("User updated");
@@ -97,7 +97,7 @@ public class UserController {
         }
 
         User currentUser = userService.getCurrentUser();
-        patchUserMapper.mergeUserPatchDTOIntoUser(userPatchDTO, currentUser);
+        userPatchMapper.mergeUserPatchDTOIntoUser(userPatchDTO, currentUser);
         userRepository.save(currentUser);
 
         return ResponseEntity.ok("User fields updated");

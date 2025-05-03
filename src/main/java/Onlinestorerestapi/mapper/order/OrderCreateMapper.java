@@ -8,7 +8,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
-public abstract class PostOrderMapper {
+public abstract class OrderCreateMapper {
 
     @Mapping(target = "amount", source = "orderCreateDTO.amount")
     @Mapping(target = "item", source = "item")

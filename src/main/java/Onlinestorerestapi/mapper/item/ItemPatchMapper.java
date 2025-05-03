@@ -8,7 +8,7 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring")
-public abstract class PatchItemMapper {
+public abstract class ItemPatchMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     public abstract void itemPatchDTOToItem(ItemPatchDTO itemPatchDTO, @MappingTarget Item item);
 }

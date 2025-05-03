@@ -10,7 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import Onlinestorerestapi.entity.RoleName;
 
 @Mapper(componentModel = "spring")
-public abstract class PostUserMapper {
+public abstract class UserCreateMapper {
 
     @Setter(onMethod_ = @Autowired)
     public PasswordEncoder passwordEncoder;

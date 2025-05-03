@@ -7,10 +7,10 @@ import Onlinestorerestapi.dto.item.ItemUpdateDTO;
 import Onlinestorerestapi.entity.Item;
 import Onlinestorerestapi.entity.Order;
 import Onlinestorerestapi.entity.User;
-import Onlinestorerestapi.mapper.item.GetItemMapper;
-import Onlinestorerestapi.mapper.item.PatchItemMapper;
-import Onlinestorerestapi.mapper.item.PostItemMapper;
-import Onlinestorerestapi.mapper.item.PutItemMapper;
+import Onlinestorerestapi.mapper.item.ItemPatchMapper;
+import Onlinestorerestapi.mapper.item.ItemResponseMapper;
+import Onlinestorerestapi.mapper.item.ItemCreateMapper;
+import Onlinestorerestapi.mapper.item.ItemUpdateMapper;
 import Onlinestorerestapi.repository.ItemRepository;
 import Onlinestorerestapi.repository.OrderRepository;
 import Onlinestorerestapi.service.ItemService;
@@ -36,11 +36,11 @@ public class ItemController {
 
     private final ItemRepository itemRepository;
     private final OrderRepository orderRepository;
-    private final PostItemMapper postItemMapper;
+    private final ItemCreateMapper itemCreateMapper;
     private final ItemUtils itemUtils;
-    private final GetItemMapper getItemMapper;
-    private final PutItemMapper putItemMapper;
-    private final PatchItemMapper patchItemMapper;
+    private final ItemResponseMapper itemResponseMapper;
+    private final ItemUpdateMapper itemUpdateMapper;
+    private final ItemPatchMapper itemPatchMapper;
     private final UserService userService;
     private final ItemService itemService;
 
@@ -51,7 +51,7 @@ public class ItemController {
 
         boolean ordered = itemService.itemOrdered(item);
 
-        ItemResponseDTO itemResponseDTO = getItemMapper.itemToItemResponseDTO(item, ordered);
+        ItemResponseDTO itemResponseDTO = itemResponseMapper.itemToItemResponseDTO(item, ordered);
         return ResponseEntity.ok(itemResponseDTO);
     }
 
@@ -75,7 +75,7 @@ public class ItemController {
                     }
                 }
             }
-            itemResponseDTOList.add(getItemMapper.itemToItemResponseDTO(item, ordered));
+            itemResponseDTOList.add(itemResponseMapper.itemToItemResponseDTO(item, ordered));
         }
 
         return ResponseEntity.ok(itemResponseDTOList);
@@ -91,7 +91,7 @@ public class ItemController {
             return ResponseEntity.badRequest().body("Item name should be unique");
         }
 
-        Item item = postItemMapper.itemCreateDTOToItem(itemCreateDTO, images.length);
+        Item item = itemCreateMapper.itemCreateDTOToItem(itemCreateDTO, images.length);
 
         itemUtils.saveImageToFolder(logo, item.getLogoName());
         itemUtils.saveImagesToFolder(images, item.getImageNames());
@@ -127,7 +127,7 @@ public class ItemController {
         itemUtils.deleteImageFromFolder(item.getLogoName());
         itemUtils.deleteImagesFromFolder(item.getImageNames());
 
-        putItemMapper.itemUpdateDTOToItem(itemUpdateDTO, item, images.length);
+        itemUpdateMapper.itemUpdateDTOToItem(itemUpdateDTO, item, images.length);
 
         itemUtils.saveImageToFolder(logo, item.getLogoName());
         itemUtils.saveImagesToFolder(images, item.getImageNames());
@@ -160,7 +160,7 @@ public class ItemController {
         }
 
         Item item = optionalItem.get();
-        patchItemMapper.itemPatchDTOToItem(itemPatchDTO, item);
+        itemPatchMapper.itemPatchDTOToItem(itemPatchDTO, item);
 
         if (logo != null) {
             itemUtils.deleteImageFromFolder(item.getLogoName());

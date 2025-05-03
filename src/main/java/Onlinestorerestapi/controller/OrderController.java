@@ -4,10 +4,10 @@ import Onlinestorerestapi.dto.order.*;
 import Onlinestorerestapi.entity.Item;
 import Onlinestorerestapi.entity.Order;
 import Onlinestorerestapi.entity.User;
-import Onlinestorerestapi.mapper.order.GetOrderMapper;
-import Onlinestorerestapi.mapper.order.PatchOrderMapper;
-import Onlinestorerestapi.mapper.order.PostOrderMapper;
-import Onlinestorerestapi.mapper.order.PutOrderMapper;
+import Onlinestorerestapi.mapper.order.OrderPatchMapper;
+import Onlinestorerestapi.mapper.order.OrderResponseMapper;
+import Onlinestorerestapi.mapper.order.OrderCreateMapper;
+import Onlinestorerestapi.mapper.order.OrderUpdateMapper;
 import Onlinestorerestapi.repository.ItemRepository;
 import Onlinestorerestapi.repository.OrderRepository;
 import Onlinestorerestapi.service.UserService;
@@ -36,10 +36,10 @@ public class OrderController {
     ItemRepository itemRepository;
     OrderRepository orderRepository;
     UserService userService;
-    GetOrderMapper getOrderMapper;
-    PostOrderMapper postOrderMapper;
-    PutOrderMapper putOrderMapper;
-    PatchOrderMapper patchOrderMapper;
+    OrderResponseMapper orderResponseMapper;
+    OrderCreateMapper orderCreateMapper;
+    OrderUpdateMapper orderUpdateMapper;
+    OrderPatchMapper orderPatchMapper;
 
     @GetMapping("/{orderId}")
     public ResponseEntity<?> getOrder(@PathVariable int orderId) {
@@ -55,7 +55,7 @@ public class OrderController {
             return ResponseEntity.notFound().build();
         }
 
-        OrderResponseDTO orderResponseDTO = getOrderMapper.orderToOrderResponseDTO(order);
+        OrderResponseDTO orderResponseDTO = orderResponseMapper.orderToOrderResponseDTO(order);
 
         return ResponseEntity.ok(orderResponseDTO);
 
@@ -68,7 +68,7 @@ public class OrderController {
         List<Order> orders = orderRepository.findByUser(user);
 
         List<OrderResponseDTO> orderResponseDTOS = orders.stream()
-                .map(getOrderMapper::orderToOrderResponseDTO)
+                .map(orderResponseMapper::orderToOrderResponseDTO)
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(orderResponseDTOS);
@@ -100,7 +100,7 @@ public class OrderController {
             return ResponseEntity.badRequest().body("You try to order more than is available in stock");
         }
 
-        Order newOrder = postOrderMapper.orderCreateDTOToOrder(orderCreateDTO, itemToOrder, user);
+        Order newOrder = orderCreateMapper.orderCreateDTOToOrder(orderCreateDTO, itemToOrder, user);
         orderRepository.save(newOrder);
 
         return ResponseEntity.created(new URI("/users/me/orders/" + newOrder.getId())).build();
@@ -129,7 +129,7 @@ public class OrderController {
             return ResponseEntity.notFound().build();
         }
 
-        putOrderMapper.mergeOrderUpdateDTOIntoOrder(orderUpdateDTO, order);
+        orderUpdateMapper.mergeOrderUpdateDTOIntoOrder(orderUpdateDTO, order);
 
         orderRepository.save(order);
 
@@ -160,7 +160,7 @@ public class OrderController {
             return ResponseEntity.notFound().build();
         }
 
-        patchOrderMapper.mergeOrderPatchDTOIntoOrder(orderPatchDTO, order);
+        orderPatchMapper.mergeOrderPatchDTOIntoOrder(orderPatchDTO, order);
 
         orderRepository.save(order);
 

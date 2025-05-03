@@ -7,7 +7,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
-public abstract class PutItemMapper {
+public abstract class ItemUpdateMapper {
 
     @Mapping(target = "logoName", expression = "java(Onlinestorerestapi.mapper.item.util.ItemMapperUtils.generateUUID())")
     @Mapping(target = "imageNames", expression = "java(Onlinestorerestapi.mapper.item.util.ItemMapperUtils.populateImageNames(imageAmount))")

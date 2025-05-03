@@ -5,7 +5,7 @@ import Onlinestorerestapi.entity.Order;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
-public abstract class GetOrderMapper {
+public abstract class OrderResponseMapper {
 
     public abstract OrderResponseDTO orderToOrderResponseDTO(Order order);
 }

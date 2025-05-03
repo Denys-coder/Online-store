@@ -8,7 +8,7 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring")
-public abstract class PatchOrderMapper {
+public abstract class OrderPatchMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     public abstract void mergeOrderPatchDTOIntoOrder(OrderPatchDTO orderPatchDTO, @MappingTarget Order order);

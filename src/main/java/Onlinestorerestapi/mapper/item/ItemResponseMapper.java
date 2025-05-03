@@ -6,7 +6,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
-public abstract class GetItemMapper {
+public abstract class ItemResponseMapper {
     @Mapping(target = "ordered", source = "ordered")
     public abstract ItemResponseDTO itemToItemResponseDTO(Item item, boolean ordered);
 }

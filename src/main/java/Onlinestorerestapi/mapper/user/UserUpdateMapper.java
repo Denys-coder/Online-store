@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Mapper(componentModel = "spring")
-public abstract class PutUserMapper {
+public abstract class UserUpdateMapper {
 
     @Setter(onMethod_ = @Autowired)
     public PasswordEncoder passwordEncoder;

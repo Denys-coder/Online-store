@@ -5,10 +5,7 @@ import Onlinestorerestapi.dto.user.UserPatchDTO;
 import Onlinestorerestapi.dto.user.UserResponseDTO;
 import Onlinestorerestapi.dto.user.UserUpdateDTO;
 import Onlinestorerestapi.entity.User;
-import Onlinestorerestapi.mapper.user.UserCreateMapper;
-import Onlinestorerestapi.mapper.user.UserPatchMapper;
-import Onlinestorerestapi.mapper.user.UserResponseMapper;
-import Onlinestorerestapi.mapper.user.UserUpdateMapper;
+import Onlinestorerestapi.mapper.UserMapper;
 import Onlinestorerestapi.repository.UserRepository;
 import Onlinestorerestapi.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,18 +22,15 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 public class UserController {
 
-    private final UserResponseMapper userResponseMapper;
     private final UserRepository userRepository;
-    private final UserCreateMapper userCreateMapper;
-    private final UserPatchMapper userPatchMapper;
-    private final UserUpdateMapper userUpdateMapper;
+    private final UserMapper userMapper;
     private final UserService userService;
 
     @GetMapping("/me")
     public ResponseEntity<?> getUser() {
 
         User user = userService.getCurrentUser();
-        UserResponseDTO userResponseDTO = userResponseMapper.userToUserResponseDTO(user);
+        UserResponseDTO userResponseDTO = userMapper.userToUserResponseDTO(user);
 
         return ResponseEntity.ok(userResponseDTO);
     }
@@ -52,7 +46,7 @@ public class UserController {
             return ResponseEntity.badRequest().body("Telephone number already in use");
         }
 
-        User user = userCreateMapper.userCreateDTOToUserMapper(userCreateDTO);
+        User user = userMapper.userCreateDTOToUserMapper(userCreateDTO);
         userRepository.save(user);
 
         return ResponseEntity.ok("User created");
@@ -75,7 +69,7 @@ public class UserController {
         }
 
         User currentUser = userService.getCurrentUser();
-        userUpdateMapper.mergeUserUpdateDTOIntoUser(userUpdateDTO, currentUser);
+        userMapper.mergeUserUpdateDTOIntoUser(userUpdateDTO, currentUser);
         userRepository.save(currentUser);
 
         return ResponseEntity.ok("User updated");
@@ -97,7 +91,7 @@ public class UserController {
         }
 
         User currentUser = userService.getCurrentUser();
-        userPatchMapper.mergeUserPatchDTOIntoUser(userPatchDTO, currentUser);
+        userMapper.mergeUserPatchDTOIntoUser(userPatchDTO, currentUser);
         userRepository.save(currentUser);
 
         return ResponseEntity.ok("User fields updated");

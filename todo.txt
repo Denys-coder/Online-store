@@ -14,6 +14,7 @@
 • throw ApiException only from service method invoked directly by controller
 • use String.format() wherever possible
 • rename all service methods that are used in controllers
+• make proper controller and respective service method names
 
 
 // IMPLEMENT

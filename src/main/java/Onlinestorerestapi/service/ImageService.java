@@ -1,6 +1,6 @@
 package Onlinestorerestapi.service;
 
-import Onlinestorerestapi.dto.image.ImageDTO;
+import Onlinestorerestapi.dto.image.ImageResponseDTO;
 import Onlinestorerestapi.validation.exception.ApiException;
 import lombok.AllArgsConstructor;
 import org.apache.tika.Tika;
@@ -55,13 +55,13 @@ public class ImageService {
         return imageType;
     }
 
-    public ImageDTO getImageDTO(String imageName) {
+    public ImageResponseDTO getImageDTO(String imageName) {
 
         Resource image = getImage(imageName);
 
         // Detect MIME type
         String contentType = getImageType(image);
 
-        return new ImageDTO(image, contentType);
+        return new ImageResponseDTO(image, contentType);
     }
 }

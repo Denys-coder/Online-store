@@ -1,6 +1,6 @@
 package Onlinestorerestapi.mapper.user;
 
-import Onlinestorerestapi.dto.user.PutUserDTO;
+import Onlinestorerestapi.dto.user.UserUpdateDTO;
 import Onlinestorerestapi.entity.User;
 import lombok.Setter;
 import org.mapstruct.Mapper;
@@ -15,6 +15,6 @@ public abstract class PutUserMapper {
     @Setter(onMethod_ = @Autowired)
     public PasswordEncoder passwordEncoder;
 
-    @Mapping(target = "password", expression = "java(passwordEncoder.encode(putUserDTO.getPassword()))")
-    public abstract void mergePutUserDTOIntoUser(PutUserDTO putUserDTO, @MappingTarget User user);
+    @Mapping(target = "password", expression = "java(passwordEncoder.encode(userUpdateDTO.getPassword()))")
+    public abstract void mergeUserUpdateDTOIntoUser(UserUpdateDTO userUpdateDTO, @MappingTarget User user);
 }

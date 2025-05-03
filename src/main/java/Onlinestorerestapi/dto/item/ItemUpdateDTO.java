@@ -8,7 +8,10 @@ import java.util.Map;
 
 @Getter
 @Setter
-public class PostItemDTO {
+public class ItemUpdateDTO {
+
+    @NotNull
+    private Integer id;
 
     @NotBlank(message = "should not be blank or null")
     @Size(min = 2, max = 30, message = "name should be from 2 to 30 symbols")

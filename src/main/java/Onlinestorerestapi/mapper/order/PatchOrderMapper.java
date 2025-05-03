@@ -1,6 +1,6 @@
 package Onlinestorerestapi.mapper.order;
 
-import Onlinestorerestapi.dto.order.PatchOrderDTO;
+import Onlinestorerestapi.dto.order.OrderPatchDTO;
 import Onlinestorerestapi.entity.Order;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
@@ -11,6 +11,5 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 public abstract class PatchOrderMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    public abstract void mergePatchOrderDTOIntoOrder(PatchOrderDTO patchOrderDTO, @MappingTarget Order order);
-
+    public abstract void mergeOrderPatchDTOIntoOrder(OrderPatchDTO orderPatchDTO, @MappingTarget Order order);
 }

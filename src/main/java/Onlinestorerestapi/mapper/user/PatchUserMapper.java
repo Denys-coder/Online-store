@@ -1,6 +1,6 @@
 package Onlinestorerestapi.mapper.user;
 
-import Onlinestorerestapi.dto.user.PatchUserDTO;
+import Onlinestorerestapi.dto.user.UserPatchDTO;
 import Onlinestorerestapi.entity.User;
 import lombok.Setter;
 import org.mapstruct.*;
@@ -14,6 +14,6 @@ public abstract class PatchUserMapper {
     public PasswordEncoder passwordEncoder;
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(target = "password", expression = "java(passwordEncoder.encode(patchUserDTO.getPassword()))")
-    public abstract void mergePatchUserDTOIntoUser(PatchUserDTO patchUserDTO, @MappingTarget User user);
+    @Mapping(target = "password", expression = "java(passwordEncoder.encode(userPatchDTO.getPassword()))")
+    public abstract void mergeUserPatchDTOIntoUser(UserPatchDTO userPatchDTO, @MappingTarget User user);
 }

@@ -1,4 +1,4 @@
-package Onlinestorerestapi.dto.user;
+package Onlinestorerestapi.dto.auth;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -8,7 +8,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UserLoginDTO {
+public class LoginRequestDTO {
 
     @NotBlank
     @Size(max = 100)

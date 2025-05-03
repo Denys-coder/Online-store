@@ -1,9 +1,9 @@
 package Onlinestorerestapi.controller;
 
-import Onlinestorerestapi.dto.user.GetUserDTO;
-import Onlinestorerestapi.dto.user.PatchUserDTO;
-import Onlinestorerestapi.dto.user.PostUserDTO;
-import Onlinestorerestapi.dto.user.PutUserDTO;
+import Onlinestorerestapi.dto.user.UserCreateDTO;
+import Onlinestorerestapi.dto.user.UserPatchDTO;
+import Onlinestorerestapi.dto.user.UserResponseDTO;
+import Onlinestorerestapi.dto.user.UserUpdateDTO;
 import Onlinestorerestapi.entity.User;
 import Onlinestorerestapi.mapper.user.PatchUserMapper;
 import Onlinestorerestapi.mapper.user.PostUserMapper;
@@ -36,38 +36,38 @@ public class UserController {
     public ResponseEntity<?> getUser() {
 
         User user = userService.getCurrentUser();
-        GetUserDTO getUserDTO = getUserMapper.userToGetUserDTO(user);
+        UserResponseDTO userResponseDTO = getUserMapper.userToUserResponseDTO(user);
 
-        return ResponseEntity.ok(getUserDTO);
+        return ResponseEntity.ok(userResponseDTO);
     }
 
     @PostMapping
-    public ResponseEntity<?> postUser(@Valid @RequestBody PostUserDTO postUserDTO) {
+    public ResponseEntity<?> postUser(@Valid @RequestBody UserCreateDTO userCreateDTO) {
 
-        if (userRepository.existsByEmail(postUserDTO.getEmail())) {
+        if (userRepository.existsByEmail(userCreateDTO.getEmail())) {
             return ResponseEntity.badRequest().body("Email address already in use");
         }
 
-        if (userRepository.existsByTelephoneNumber(postUserDTO.getTelephoneNumber())) {
+        if (userRepository.existsByTelephoneNumber(userCreateDTO.getTelephoneNumber())) {
             return ResponseEntity.badRequest().body("Telephone number already in use");
         }
 
-        User user = postUserMapper.postUserDTOToUserMapper(postUserDTO);
+        User user = postUserMapper.userCreateDTOToUserMapper(userCreateDTO);
         userRepository.save(user);
 
         return ResponseEntity.ok("User created");
     }
 
     @PutMapping("/me")
-    public ResponseEntity<?> putUser(@Valid @RequestBody PutUserDTO putUserDTO) {
+    public ResponseEntity<?> putUser(@Valid @RequestBody UserUpdateDTO userUpdateDTO) {
 
-        String email = putUserDTO.getEmail();
+        String email = userUpdateDTO.getEmail();
         if (userRepository.existsByEmail(email)
                 && !email.equals(userService.getCurrentUser().getEmail())) {
             return ResponseEntity.badRequest().body("Email address should be unique or the same");
         }
 
-        String telephoneNumber = putUserDTO.getTelephoneNumber();
+        String telephoneNumber = userUpdateDTO.getTelephoneNumber();
         if (telephoneNumber != null
                 && userRepository.existsByTelephoneNumber(telephoneNumber)
                 && !telephoneNumber.equals(userService.getCurrentUser().getTelephoneNumber())) {
@@ -75,21 +75,21 @@ public class UserController {
         }
 
         User currentUser = userService.getCurrentUser();
-        putUserMapper.mergePutUserDTOIntoUser(putUserDTO, currentUser);
+        putUserMapper.mergeUserUpdateDTOIntoUser(userUpdateDTO, currentUser);
         userRepository.save(currentUser);
 
         return ResponseEntity.ok("User updated");
     }
 
     @PatchMapping("/me")
-    public ResponseEntity<?> patchUser(@Valid @RequestBody PatchUserDTO patchUserDTO) {
+    public ResponseEntity<?> patchUser(@Valid @RequestBody UserPatchDTO userPatchDTO) {
 
-        String email = patchUserDTO.getEmail();
+        String email = userPatchDTO.getEmail();
         if (email != null && userRepository.existsByEmail(email) && !email.equals(userService.getCurrentUser().getEmail())) {
             return ResponseEntity.badRequest().body("Email address should be unique or the same");
         }
 
-        String telephoneNumber = patchUserDTO.getTelephoneNumber();
+        String telephoneNumber = userPatchDTO.getTelephoneNumber();
         if (telephoneNumber != null
                 && userRepository.existsByTelephoneNumber(telephoneNumber)
                 && !telephoneNumber.equals(userService.getCurrentUser().getTelephoneNumber())) {
@@ -97,7 +97,7 @@ public class UserController {
         }
 
         User currentUser = userService.getCurrentUser();
-        patchUserMapper.mergePatchUserDTOIntoUser(patchUserDTO, currentUser);
+        patchUserMapper.mergeUserPatchDTOIntoUser(userPatchDTO, currentUser);
         userRepository.save(currentUser);
 
         return ResponseEntity.ok("User fields updated");

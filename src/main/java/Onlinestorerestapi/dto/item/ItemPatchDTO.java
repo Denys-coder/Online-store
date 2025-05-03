@@ -9,7 +9,7 @@ import java.util.Map;
 
 @Getter
 @Setter
-public class PatchItemDTO {
+public class ItemPatchDTO {
 
     @NotNull
     private Integer id;

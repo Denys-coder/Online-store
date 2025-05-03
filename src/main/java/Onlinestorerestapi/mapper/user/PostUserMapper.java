@@ -1,6 +1,6 @@
 package Onlinestorerestapi.mapper.user;
 
-import Onlinestorerestapi.dto.user.PostUserDTO;
+import Onlinestorerestapi.dto.user.UserCreateDTO;
 import Onlinestorerestapi.entity.User;
 import lombok.Setter;
 import org.mapstruct.Mapper;
@@ -16,7 +16,7 @@ public abstract class PostUserMapper {
     public PasswordEncoder passwordEncoder;
     public final RoleName userRole = RoleName.ROLE_USER;
 
-    @Mapping(target = "password", expression = "java(passwordEncoder.encode(postUserDTO.getPassword()))")
+    @Mapping(target = "password", expression = "java(passwordEncoder.encode(userCreateDTO.getPassword()))")
     @Mapping(target = "roleName", expression = "java(userRole)")
-    public abstract User postUserDTOToUserMapper(PostUserDTO postUserDTO);
+    public abstract User userCreateDTOToUserMapper(UserCreateDTO userCreateDTO);
 }

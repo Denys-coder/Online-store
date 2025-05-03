@@ -9,7 +9,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class PutUserDTO {
+public class UserUpdateDTO {
     @NotBlank
     @Size(min = 2, max = 30)
     @Pattern(regexp = "^(?![- ])([a-zA-Z -]+)(?<![- ])$")

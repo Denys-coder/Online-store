@@ -1,23 +1,15 @@
 package Onlinestorerestapi.mapper.item;
 
-import Onlinestorerestapi.dto.item.PostItemDTO;
+import Onlinestorerestapi.dto.item.ItemCreateDTO;
 import Onlinestorerestapi.entity.Item;
-import Onlinestorerestapi.mapper.item.util.ItemMapperUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Named;
-
-import java.util.Set;
 
 @Mapper(componentModel = "spring")
 public abstract class PostItemMapper {
 
     @Mapping(target = "logoName", expression = "java(Onlinestorerestapi.mapper.item.util.ItemMapperUtils.generateUUID())")
-    @Mapping(target = "imageNames", source = "imageAmount", qualifiedByName = "populateImageNames")
-    public abstract Item postItemDTOToItem(PostItemDTO postItemDTO, int imageAmount);
+    @Mapping(target = "imageNames", expression = "java(Onlinestorerestapi.mapper.item.util.ItemMapperUtils.populateImageNames(imageAmount))")
+    public abstract Item itemCreateDTOToItem(ItemCreateDTO itemCreateDTO, int imageAmount);
 
-    @Named("populateImageNames")
-    protected Set<String> populateImageNames(int imageAmount) {
-        return ItemMapperUtils.populateImageNames(imageAmount);
-    }
 }

@@ -1,9 +1,9 @@
 package Onlinestorerestapi.controller;
 
-import Onlinestorerestapi.dto.item.GetItemDTO;
-import Onlinestorerestapi.dto.item.PatchItemDTO;
-import Onlinestorerestapi.dto.item.PostItemDTO;
-import Onlinestorerestapi.dto.item.PutItemDTO;
+import Onlinestorerestapi.dto.item.ItemCreateDTO;
+import Onlinestorerestapi.dto.item.ItemResponseDTO;
+import Onlinestorerestapi.dto.item.ItemPatchDTO;
+import Onlinestorerestapi.dto.item.ItemUpdateDTO;
 import Onlinestorerestapi.entity.Item;
 import Onlinestorerestapi.entity.Order;
 import Onlinestorerestapi.entity.User;
@@ -51,15 +51,15 @@ public class ItemController {
 
         boolean ordered = itemService.itemOrdered(item);
 
-        GetItemDTO getItemDTO = getItemMapper.itemToGetItemDTO(item, ordered);
-        return ResponseEntity.ok(getItemDTO);
+        ItemResponseDTO itemResponseDTO = getItemMapper.itemToItemResponseDTO(item, ordered);
+        return ResponseEntity.ok(itemResponseDTO);
     }
 
     @GetMapping
     public ResponseEntity<?> getItems() {
 
         List<Item> items = itemRepository.findAll();
-        List<GetItemDTO> getItemDTOList = new ArrayList<>();
+        List<ItemResponseDTO> itemResponseDTOList = new ArrayList<>();
 
         for (Item item : items) {
             boolean ordered = false;
@@ -75,23 +75,23 @@ public class ItemController {
                     }
                 }
             }
-            getItemDTOList.add(getItemMapper.itemToGetItemDTO(item, ordered));
+            itemResponseDTOList.add(getItemMapper.itemToItemResponseDTO(item, ordered));
         }
 
-        return ResponseEntity.ok(getItemDTOList);
+        return ResponseEntity.ok(itemResponseDTOList);
 
     }
 
     @PostMapping
     public ResponseEntity<?> postItem(@RequestPart("logo") @Image MultipartFile logo,
                                       @RequestPart("images") @ImageArray @MaxFileCount(maxFileAmount = 10) MultipartFile[] images,
-                                      @RequestPart("item") @Valid PostItemDTO postItemDTO) throws URISyntaxException {
+                                      @RequestPart("item") @Valid ItemCreateDTO itemCreateDTO) throws URISyntaxException {
 
-        if (itemRepository.existsByName(postItemDTO.getName())) {
+        if (itemRepository.existsByName(itemCreateDTO.getName())) {
             return ResponseEntity.badRequest().body("Item name should be unique");
         }
 
-        Item item = postItemMapper.postItemDTOToItem(postItemDTO, images.length);
+        Item item = postItemMapper.itemCreateDTOToItem(itemCreateDTO, images.length);
 
         itemUtils.saveImageToFolder(logo, item.getLogoName());
         itemUtils.saveImagesToFolder(images, item.getImageNames());
@@ -105,13 +105,13 @@ public class ItemController {
     public ResponseEntity<?> putItem(@PathVariable int itemId,
                                      @RequestPart("logo") @Image MultipartFile logo,
                                      @RequestPart("images") @ImageArray @MaxFileCount(maxFileAmount = 10) MultipartFile[] images,
-                                     @RequestPart("item") @Valid PutItemDTO putItemDTO) {
+                                     @RequestPart("item") @Valid ItemUpdateDTO itemUpdateDTO) {
 
-        if (itemId != putItemDTO.getId()) {
+        if (itemId != itemUpdateDTO.getId()) {
             return ResponseEntity.badRequest().body("Item id in the path and in the body should match");
         }
 
-        String itemName = putItemDTO.getName();
+        String itemName = itemUpdateDTO.getName();
         if (itemRepository.existsByName(itemName)
                 && !itemName.equals(itemRepository.findById(itemId).get().getName())) {
             return ResponseEntity.badRequest().body("Item name number should be unique or the same");
@@ -127,7 +127,7 @@ public class ItemController {
         itemUtils.deleteImageFromFolder(item.getLogoName());
         itemUtils.deleteImagesFromFolder(item.getImageNames());
 
-        putItemMapper.putItemDTOToItem(putItemDTO, item, images.length);
+        putItemMapper.itemUpdateDTOToItem(itemUpdateDTO, item, images.length);
 
         itemUtils.saveImageToFolder(logo, item.getLogoName());
         itemUtils.saveImagesToFolder(images, item.getImageNames());
@@ -141,13 +141,13 @@ public class ItemController {
     public ResponseEntity<?> patchItem(@PathVariable int itemId,
                                        @RequestPart(name = "logo", required = false) @Image MultipartFile logo,
                                        @RequestPart(name = "images", required = false) @ImageArray @MaxFileCount(maxFileAmount = 10) MultipartFile[] images,
-                                       @RequestPart(name = "item", required = false) @Valid PatchItemDTO patchItemDTO) {
+                                       @RequestPart(name = "item", required = false) @Valid ItemPatchDTO itemPatchDTO) {
 
-        if (itemId != patchItemDTO.getId()) {
+        if (itemId != itemPatchDTO.getId()) {
             return ResponseEntity.badRequest().body("Item id in the path and in the body should match");
         }
 
-        String itemName = patchItemDTO.getName();
+        String itemName = itemPatchDTO.getName();
         if (itemName != null
                 && itemRepository.existsByName(itemName)
                 && !itemName.equals(itemRepository.findById(itemId).get().getName())) {
@@ -160,7 +160,7 @@ public class ItemController {
         }
 
         Item item = optionalItem.get();
-        patchItemMapper.patchItemDTOToItem(patchItemDTO, item);
+        patchItemMapper.itemPatchDTOToItem(itemPatchDTO, item);
 
         if (logo != null) {
             itemUtils.deleteImageFromFolder(item.getLogoName());

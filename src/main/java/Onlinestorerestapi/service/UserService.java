@@ -1,7 +1,7 @@
 package Onlinestorerestapi.service;
 
-import Onlinestorerestapi.dto.user.AuthenticatedDTO;
-import Onlinestorerestapi.dto.user.UserLoginDTO;
+import Onlinestorerestapi.dto.auth.AuthStatusDTO;
+import Onlinestorerestapi.dto.auth.LoginRequestDTO;
 import Onlinestorerestapi.entity.RoleName;
 import Onlinestorerestapi.entity.User;
 import Onlinestorerestapi.security.UserPrincipal;
@@ -23,9 +23,9 @@ public class UserService {
 
     private final AuthenticationManager authenticationManager;
 
-    public void login(UserLoginDTO userLoginDTO, HttpServletRequest request) {
-        String username = userLoginDTO.getEmail();
-        String password = userLoginDTO.getPassword();
+    public void login(LoginRequestDTO loginRequestDTO, HttpServletRequest request) {
+        String username = loginRequestDTO.getEmail();
+        String password = loginRequestDTO.getPassword();
 
         try {
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
@@ -52,10 +52,10 @@ public class UserService {
         return authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getPrincipal());
     }
 
-    public AuthenticatedDTO checkAuthentication() {
+    public AuthStatusDTO checkAuthentication() {
         boolean authenticated = isAuthenticated();
         RoleName roleName = authenticated ? getCurrentUser().getRoleName() : null;
-        return new AuthenticatedDTO(authenticated, roleName);
+        return new AuthStatusDTO(authenticated, roleName);
     }
 
 }

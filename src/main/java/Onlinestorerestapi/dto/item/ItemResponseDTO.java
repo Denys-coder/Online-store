@@ -8,7 +8,7 @@ import java.util.Set;
 
 @Getter
 @Setter
-public class GetItemDTO {
+public class ItemResponseDTO {
     private String name;
 
     private Double price;

@@ -1,7 +1,7 @@
 package Onlinestorerestapi.dto.user;
 
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -9,38 +9,38 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class PostUserDTO {
+public class UserPatchDTO {
 
-    @NotBlank
+    @Nullable
     @Size(min = 2, max = 30)
     @Pattern(regexp = "^(?![- ])([a-zA-Z -]+)(?<![- ])$")
     private String name;
 
-    @NotBlank
+    @Nullable
     @Size(min = 2, max = 30)
     @Pattern(regexp = "^(?![- ])([a-zA-Z -]+)(?<![- ])$")
     private String surname;
 
-    @NotBlank
+    @Nullable
     @Size(max = 100)
     @Email
     private String email;
 
-    @NotBlank
+    @Nullable
     @Size(min = 8, max = 64)
     private String password;
 
-    @NotBlank
+    @Nullable
     @Size(min = 6, max = 12)
     @Pattern(regexp = "\\d*")
     private String telephoneNumber;
 
-    @NotBlank
+    @Nullable
     @Size(min = 3, max = 50)
     @Pattern(regexp = "^(?![- ])([a-zA-Z -]+)(?<![- ])$")
     private String country;
 
-    @NotBlank
+    @Nullable
     @Size(min = 10, max = 100)
     private String address;
 }

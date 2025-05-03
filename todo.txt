@@ -13,6 +13,8 @@
 • always return Optional when method can throw null
 • throw ApiException only from service method invoked directly by controller
 • use String.format() wherever possible
+• rename all service methods that are used in controllers
+• rename Mapper classes
 
 
 // IMPLEMENT

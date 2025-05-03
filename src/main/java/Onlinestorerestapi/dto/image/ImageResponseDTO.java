@@ -8,7 +8,7 @@ import org.springframework.core.io.Resource;
 @Getter
 @Setter
 @AllArgsConstructor
-public class ImageDTO {
+public class ImageResponseDTO {
     private Resource image;
     private String contentType;
 }

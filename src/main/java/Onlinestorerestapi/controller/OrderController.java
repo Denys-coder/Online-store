@@ -55,9 +55,9 @@ public class OrderController {
             return ResponseEntity.notFound().build();
         }
 
-        GetOrderDTO getOrderDTO = getOrderMapper.orderToGetOrderDTO(order);
+        OrderResponseDTO orderResponseDTO = getOrderMapper.orderToOrderResponseDTO(order);
 
-        return ResponseEntity.ok(getOrderDTO);
+        return ResponseEntity.ok(orderResponseDTO);
 
     }
 
@@ -67,24 +67,24 @@ public class OrderController {
         User user = userService.getCurrentUser();
         List<Order> orders = orderRepository.findByUser(user);
 
-        List<GetOrderDTO> getOrderDTOs = orders.stream()
-                .map(getOrderMapper::orderToGetOrderDTO)
+        List<OrderResponseDTO> orderResponseDTOS = orders.stream()
+                .map(getOrderMapper::orderToOrderResponseDTO)
                 .collect(Collectors.toList());
 
-        return ResponseEntity.ok(getOrderDTOs);
+        return ResponseEntity.ok(orderResponseDTOS);
 
     }
 
     @PostMapping
-    public ResponseEntity<?> postOrder(@Valid @RequestBody PostOrderDTO postOrderDTO) throws URISyntaxException {
+    public ResponseEntity<?> postOrder(@Valid @RequestBody OrderCreateDTO orderCreateDTO) throws URISyntaxException {
 
         // validate that postOrderDTO has existing item id
-        if (!itemRepository.existsById(postOrderDTO.getItemId())) {
+        if (!itemRepository.existsById(orderCreateDTO.getItemId())) {
             return ResponseEntity.badRequest().body("There is no item with the specified id");
         }
 
         User user = userService.getCurrentUser();
-        Item itemToOrder = itemRepository.getReferenceById(postOrderDTO.getItemId());
+        Item itemToOrder = itemRepository.getReferenceById(orderCreateDTO.getItemId());
 
         // prevent adding order with the same item
         List<Order> userOrders = orderRepository.findByUser(user);
@@ -96,25 +96,25 @@ public class OrderController {
         }
 
         // prevent adding order with order.amount > item.amount
-        if (postOrderDTO.getAmount() > itemToOrder.getAmount()) {
+        if (orderCreateDTO.getAmount() > itemToOrder.getAmount()) {
             return ResponseEntity.badRequest().body("You try to order more than is available in stock");
         }
 
-        Order newOrder = postOrderMapper.postOrderDTOToOrder(postOrderDTO, itemToOrder, user);
+        Order newOrder = postOrderMapper.orderCreateDTOToOrder(orderCreateDTO, itemToOrder, user);
         orderRepository.save(newOrder);
 
         return ResponseEntity.created(new URI("/users/me/orders/" + newOrder.getId())).build();
     }
 
     @PutMapping("/{orderId}")
-    public ResponseEntity<?> putOrder(@PathVariable int orderId, @Valid @RequestBody PutOrderDTO putOrderDTO) {
+    public ResponseEntity<?> putOrder(@PathVariable int orderId, @Valid @RequestBody OrderUpdateDTO orderUpdateDTO) {
 
-        if (orderId != putOrderDTO.getId()) {
+        if (orderId != orderUpdateDTO.getId()) {
             return ResponseEntity.badRequest().body("Order id in the path and in the body should match");
         }
 
         // validate that postOrderDTO has existing item id
-        if (!itemRepository.existsById(putOrderDTO.getItemId())) {
+        if (!itemRepository.existsById(orderUpdateDTO.getItemId())) {
             return ResponseEntity.badRequest().body("There is no item with the specified id");
         }
 
@@ -129,7 +129,7 @@ public class OrderController {
             return ResponseEntity.notFound().build();
         }
 
-        putOrderMapper.mergePutOrderDTOIntoOrder(putOrderDTO, order);
+        putOrderMapper.mergeOrderUpdateDTOIntoOrder(orderUpdateDTO, order);
 
         orderRepository.save(order);
 
@@ -138,14 +138,14 @@ public class OrderController {
     }
 
     @PatchMapping("/{orderId}")
-    public ResponseEntity<?> patchOrder(@PathVariable int orderId, @Valid @RequestBody PatchOrderDTO patchOrderDTO) {
+    public ResponseEntity<?> patchOrder(@PathVariable int orderId, @Valid @RequestBody OrderPatchDTO orderPatchDTO) {
 
-        if (orderId != patchOrderDTO.getId()) {
+        if (orderId != orderPatchDTO.getId()) {
             return ResponseEntity.badRequest().body("Order id in the path and in the body should match");
         }
 
         // validate that postOrderDTO has existing item id
-        if (patchOrderDTO.getItemId() != null && !itemRepository.existsById(patchOrderDTO.getItemId())) {
+        if (orderPatchDTO.getItemId() != null && !itemRepository.existsById(orderPatchDTO.getItemId())) {
             return ResponseEntity.badRequest().body("There is no item with the specified id");
         }
 
@@ -160,7 +160,7 @@ public class OrderController {
             return ResponseEntity.notFound().build();
         }
 
-        patchOrderMapper.mergePatchOrderDTOIntoOrder(patchOrderDTO, order);
+        patchOrderMapper.mergeOrderPatchDTOIntoOrder(orderPatchDTO, order);
 
         orderRepository.save(order);
 

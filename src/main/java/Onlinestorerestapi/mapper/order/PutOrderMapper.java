@@ -1,6 +1,6 @@
 package Onlinestorerestapi.mapper.order;
 
-import Onlinestorerestapi.dto.order.PutOrderDTO;
+import Onlinestorerestapi.dto.order.OrderUpdateDTO;
 import Onlinestorerestapi.entity.Order;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
@@ -8,5 +8,5 @@ import org.mapstruct.MappingTarget;
 @Mapper(componentModel = "spring")
 public abstract class PutOrderMapper {
 
-    public abstract void mergePutOrderDTOIntoOrder(PutOrderDTO putOrderDTO, @MappingTarget Order order);
+    public abstract void mergeOrderUpdateDTOIntoOrder(OrderUpdateDTO orderUpdateDTO, @MappingTarget Order order);
 }

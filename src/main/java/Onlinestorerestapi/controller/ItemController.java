@@ -5,8 +5,6 @@ import Onlinestorerestapi.dto.item.ItemResponseDTO;
 import Onlinestorerestapi.dto.item.ItemPatchDTO;
 import Onlinestorerestapi.dto.item.ItemUpdateDTO;
 import Onlinestorerestapi.entity.Item;
-import Onlinestorerestapi.entity.Order;
-import Onlinestorerestapi.entity.User;
 import Onlinestorerestapi.mapper.ItemMapper;
 import Onlinestorerestapi.repository.ItemRepository;
 import Onlinestorerestapi.repository.OrderRepository;
@@ -41,39 +39,15 @@ public class ItemController {
     @GetMapping({"/{itemId}"})
     public ResponseEntity<?> getItem(@PathVariable int itemId) {
 
-        Item item = itemService.getItem(itemId);
-
-        boolean ordered = itemService.itemOrdered(item);
-
-        ItemResponseDTO itemResponseDTO = itemMapper.itemToItemResponseDTO(item, ordered);
+        ItemResponseDTO itemResponseDTO = itemService.getItemResponseDTO(itemId);
         return ResponseEntity.ok(itemResponseDTO);
     }
 
     @GetMapping
     public ResponseEntity<?> getItems() {
 
-        List<Item> items = itemRepository.findAll();
-        List<ItemResponseDTO> itemResponseDTOList = new ArrayList<>();
-
-        for (Item item : items) {
-            boolean ordered = false;
-            if (userService.isAuthenticated()) {
-                User user = userService.getCurrentUser();
-                List<Order> orders = orderRepository.findByUser(user);
-
-                // check if the user already bought it
-                for (Order order : orders) {
-                    if (Objects.equals(order.getItem().getId(), item.getId())) {
-                        ordered = true;
-                        break;
-                    }
-                }
-            }
-            itemResponseDTOList.add(itemMapper.itemToItemResponseDTO(item, ordered));
-        }
-
-        return ResponseEntity.ok(itemResponseDTOList);
-
+        List<ItemResponseDTO> itemResponseDTOs = itemService.getItemResponseDTOs();
+        return ResponseEntity.ok(itemResponseDTOs);
     }
 
     @PostMapping

@@ -24,9 +24,9 @@ public class AuthController {
     }
 
     @GetMapping("/status")
-    public ResponseEntity<?> checkAuthentication() {
+    public ResponseEntity<?> getAuthStatus() {
 
-        AuthStatusDTO authStatusDTO = userService.checkAuthentication();
+        AuthStatusDTO authStatusDTO = userService.getAuthStatusDTO();
 
         return ResponseEntity.ok(authStatusDTO);
     }

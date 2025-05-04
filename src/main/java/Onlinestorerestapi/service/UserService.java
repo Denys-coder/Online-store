@@ -52,7 +52,7 @@ public class UserService {
         return authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getPrincipal());
     }
 
-    public AuthStatusDTO checkAuthentication() {
+    public AuthStatusDTO getAuthStatusDTO() {
         boolean authenticated = isAuthenticated();
         RoleName roleName = authenticated ? getCurrentUser().getRoleName() : null;
         return new AuthStatusDTO(authenticated, roleName);

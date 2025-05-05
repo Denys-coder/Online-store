@@ -49,10 +49,9 @@ public class ItemController {
     }
 
     @PostMapping
-    public ResponseEntity<?> postItem(@RequestPart("item") @Valid ItemCreateDTO itemCreateDTO,
+    public ResponseEntity<?> createItem(@RequestPart("item") @Valid ItemCreateDTO itemCreateDTO,
                                       @RequestPart("logo") @Image MultipartFile logo,
-                                      @RequestPart("images") @ImageArray @MaxFileCount(maxFileAmount = 10) List<MultipartFile> images
-    ) throws URISyntaxException {
+                                      @RequestPart("images") @ImageArray @MaxFileCount(maxFileAmount = 10) List<MultipartFile> images) throws URISyntaxException {
 
         Item item = itemService.createItem(itemCreateDTO, logo, images);
 
@@ -60,37 +59,12 @@ public class ItemController {
     }
 
     @PutMapping("/{itemId}")
-    public ResponseEntity<?> putItem(@PathVariable int itemId,
-                                     @RequestPart("logo") @Image MultipartFile logo,
-                                     @RequestPart("images") @ImageArray @MaxFileCount(maxFileAmount = 10) List<MultipartFile> images,
-                                     @RequestPart("item") @Valid ItemUpdateDTO itemUpdateDTO) {
+    public ResponseEntity<?> updateItem(@PathVariable int itemId,
+                                        @RequestPart("item") @Valid ItemUpdateDTO itemUpdateDTO,
+                                        @RequestPart("logo") @Image MultipartFile logo,
+                                        @RequestPart("images") @ImageArray @MaxFileCount(maxFileAmount = 10) List<MultipartFile> images) {
 
-        if (itemId != itemUpdateDTO.getId()) {
-            return ResponseEntity.badRequest().body("Item id in the path and in the body should match");
-        }
-
-        String itemName = itemUpdateDTO.getName();
-        if (itemRepository.existsByName(itemName)
-                && !itemName.equals(itemRepository.findById(itemId).get().getName())) {
-            return ResponseEntity.badRequest().body("Item name number should be unique or the same");
-        }
-
-        Optional<Item> optionalItem = itemRepository.findById(itemId);
-        if (optionalItem.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Item item = optionalItem.get();
-
-        itemUtils.deleteImageFromFolder(item.getLogoName());
-        itemUtils.deleteImagesFromFolder(item.getImageNames());
-
-        itemMapper.itemUpdateDTOToItem(itemUpdateDTO, item, images.size());
-
-        itemUtils.saveImageToFolder(logo, item.getLogoName());
-        itemUtils.saveImagesToFolder(images, item.getImageNames());
-
-        itemRepository.save(item);
+        itemService.updateItem(itemId, itemUpdateDTO, logo, images);
 
         return ResponseEntity.ok().build();
     }
@@ -107,7 +81,7 @@ public class ItemController {
 
         String itemName = itemPatchDTO.getName();
         if (itemName != null
-                && itemRepository.existsByName(itemName)
+                && itemRepository.existsByName(itemName) // if it doesn't exist then findById() won't be called
                 && !itemName.equals(itemRepository.findById(itemId).get().getName())) {
             return ResponseEntity.badRequest().body("Item name number should be unique or the same");
         }

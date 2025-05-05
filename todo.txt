@@ -16,6 +16,7 @@
 • rename all service methods that are used in controllers
 • make proper controller and respective service method names
 • prepend all apis with api/v1/
+• rename ItemUtils -> ImageUtils
 
 
 // IMPLEMENT

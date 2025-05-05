@@ -96,15 +96,15 @@ public class ItemService {
 
         itemMapper.itemUpdateDTOToItem(itemUpdateDTO, item, images.size());
 
-        List<MultipartFile> allImages = new ArrayList<>();
-        allImages.add(logo);
-        allImages.addAll(images);
+        List<MultipartFile> allNewImages = new ArrayList<>();
+        allNewImages.add(logo);
+        allNewImages.addAll(images);
 
         List<String> allNewImageNames = new ArrayList<>();
         allNewImageNames.add(item.getLogoName());
         allNewImageNames.addAll(item.getImageNames());
 
-        itemUtils.swapItems(allOldImageNames, allImages, allNewImageNames);
+        itemUtils.swapImages(allOldImageNames, allNewImages, allNewImageNames);
 
         itemRepository.save(item);
 

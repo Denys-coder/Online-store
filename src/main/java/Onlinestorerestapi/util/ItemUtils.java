@@ -51,7 +51,7 @@ public class ItemUtils {
         }
     }
 
-    public void swapItems(List<String> allOldImageNames, List<MultipartFile> allImages, List<String> allNewImageNames) {
+    public void swapImages(List<String> allOldImageNames, List<MultipartFile> allImages, List<String> allNewImageNames) {
         if (allImages.size() != allNewImageNames.size()) {
             throw new IllegalArgumentException("Number of new images must match number of new image names.");
         }

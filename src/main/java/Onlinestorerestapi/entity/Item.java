@@ -33,7 +33,7 @@ public class Item {
     @ElementCollection
     @CollectionTable(name = "item_image_names", joinColumns = @JoinColumn(name = "item_id"))
     @Column(name = "image_name",  nullable = false, unique = true, length = 11)
-    private Set<String> imageNames; // only filenames without directories
+    private List<String> imageNames; // only filenames without directories
 
     @ElementCollection
     @CollectionTable(name = "item_specs", joinColumns = @JoinColumn(name = "item_id"))
@@ -42,11 +42,11 @@ public class Item {
     private Map<String, String> specs;
 
     public Item() {
-        imageNames = new HashSet<>();
+        imageNames = new ArrayList<>();
         specs = new LinkedHashMap<>();
     }
 
-    public Item(String name, double price, int amount, String description, String logoName, Set<String> imageNames, Map<String, String> specs) {
+    public Item(String name, double price, int amount, String description, String logoName, List<String> imageNames, Map<String, String> specs) {
         this.name = name;
         this.price = price;
         this.amount = amount;

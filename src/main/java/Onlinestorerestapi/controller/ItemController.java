@@ -9,7 +9,6 @@ import Onlinestorerestapi.mapper.ItemMapper;
 import Onlinestorerestapi.repository.ItemRepository;
 import Onlinestorerestapi.repository.OrderRepository;
 import Onlinestorerestapi.service.ItemService;
-import Onlinestorerestapi.service.UserService;
 import Onlinestorerestapi.util.ItemUtils;
 import Onlinestorerestapi.validation.annotation.item.Image;
 import Onlinestorerestapi.validation.annotation.item.ImageArray;
@@ -33,7 +32,6 @@ public class ItemController {
     private final OrderRepository orderRepository;
     private final ItemMapper itemMapper;
     private final ItemUtils itemUtils;
-    private final UserService userService;
     private final ItemService itemService;
 
     @GetMapping({"/{itemId}"})
@@ -51,20 +49,12 @@ public class ItemController {
     }
 
     @PostMapping
-    public ResponseEntity<?> postItem(@RequestPart("logo") @Image MultipartFile logo,
-                                      @RequestPart("images") @ImageArray @MaxFileCount(maxFileAmount = 10) MultipartFile[] images,
-                                      @RequestPart("item") @Valid ItemCreateDTO itemCreateDTO) throws URISyntaxException {
+    public ResponseEntity<?> postItem(@RequestPart("item") @Valid ItemCreateDTO itemCreateDTO,
+                                      @RequestPart("logo") @Image MultipartFile logo,
+                                      @RequestPart("images") @ImageArray @MaxFileCount(maxFileAmount = 10) List<MultipartFile> images
+    ) throws URISyntaxException {
 
-        if (itemRepository.existsByName(itemCreateDTO.getName())) {
-            return ResponseEntity.badRequest().body("Item name should be unique");
-        }
-
-        Item item = itemMapper.itemCreateDTOToItem(itemCreateDTO, images.length);
-
-        itemUtils.saveImageToFolder(logo, item.getLogoName());
-        itemUtils.saveImagesToFolder(images, item.getImageNames());
-
-        itemRepository.save(item);
+        Item item = itemService.createItem(itemCreateDTO, logo, images);
 
         return ResponseEntity.created(new URI("/items/" + item.getId())).build();
     }
@@ -72,7 +62,7 @@ public class ItemController {
     @PutMapping("/{itemId}")
     public ResponseEntity<?> putItem(@PathVariable int itemId,
                                      @RequestPart("logo") @Image MultipartFile logo,
-                                     @RequestPart("images") @ImageArray @MaxFileCount(maxFileAmount = 10) MultipartFile[] images,
+                                     @RequestPart("images") @ImageArray @MaxFileCount(maxFileAmount = 10) List<MultipartFile> images,
                                      @RequestPart("item") @Valid ItemUpdateDTO itemUpdateDTO) {
 
         if (itemId != itemUpdateDTO.getId()) {
@@ -95,7 +85,7 @@ public class ItemController {
         itemUtils.deleteImageFromFolder(item.getLogoName());
         itemUtils.deleteImagesFromFolder(item.getImageNames());
 
-        itemMapper.itemUpdateDTOToItem(itemUpdateDTO, item, images.length);
+        itemMapper.itemUpdateDTOToItem(itemUpdateDTO, item, images.size());
 
         itemUtils.saveImageToFolder(logo, item.getLogoName());
         itemUtils.saveImagesToFolder(images, item.getImageNames());
@@ -108,7 +98,7 @@ public class ItemController {
     @PatchMapping("/{itemId}")
     public ResponseEntity<?> patchItem(@PathVariable int itemId,
                                        @RequestPart(name = "logo", required = false) @Image MultipartFile logo,
-                                       @RequestPart(name = "images", required = false) @ImageArray @MaxFileCount(maxFileAmount = 10) MultipartFile[] images,
+                                       @RequestPart(name = "images", required = false) @ImageArray @MaxFileCount(maxFileAmount = 10) List<MultipartFile> images,
                                        @RequestPart(name = "item", required = false) @Valid ItemPatchDTO itemPatchDTO) {
 
         if (itemId != itemPatchDTO.getId()) {
@@ -139,8 +129,8 @@ public class ItemController {
 
         if (images != null) {
             itemUtils.deleteImagesFromFolder(item.getImageNames());
-            Set<String> imageNames = new HashSet<>();
-            while (imageNames.size() < images.length) {
+            List<String> imageNames = new ArrayList<>();
+            while (imageNames.size() < images.size()) {
                 imageNames.add(UUID.randomUUID().toString());
             }
             item.setImageNames(imageNames);

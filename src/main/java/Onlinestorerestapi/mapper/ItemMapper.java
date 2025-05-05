@@ -7,9 +7,7 @@ import Onlinestorerestapi.dto.item.ItemUpdateDTO;
 import Onlinestorerestapi.entity.Item;
 import org.mapstruct.*;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Mapper(componentModel = "spring")
 public abstract class ItemMapper {
@@ -32,8 +30,8 @@ public abstract class ItemMapper {
         return UUID.randomUUID().toString();
     }
 
-    public static Set<String> populateImageNames(int imageAmount) {
-        Set<String> imageNames = new HashSet<>();
+    public static List<String> populateImageNames(int imageAmount) {
+        List<String> imageNames = new ArrayList<>();
         while (imageNames.size() < imageAmount) {
             imageNames.add(UUID.randomUUID().toString());
         }

@@ -15,12 +15,14 @@
 • use String.format() wherever possible
 • rename all service methods that are used in controllers
 • make proper controller and respective service method names
+• prepend all apis with api/v1/
 
 
 // IMPLEMENT
 • add all kinds of tests (at least JUnit and Mockito)
 • add logging
 • use Spring Boot AOP
+• add pagination
 • make Order == cart, add boolean order.fulfilled, add CartItem
 • add pagination for all endpoints that can return a lot of data
 • share and add Postman collection

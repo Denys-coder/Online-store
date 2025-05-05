@@ -6,9 +6,11 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.web.multipart.MultipartFile;
 
-public class IsImageArrayValidator implements ConstraintValidator<ImageArray, MultipartFile[]> {
+import java.util.List;
+
+public class IsImageArrayValidator implements ConstraintValidator<ImageArray, List<MultipartFile>> {
     @Override
-    public boolean isValid(MultipartFile[] files, ConstraintValidatorContext context) {
+    public boolean isValid(List<MultipartFile> files, ConstraintValidatorContext context) {
         if (files == null) {
             return true;
         }

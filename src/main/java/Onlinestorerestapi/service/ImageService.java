@@ -2,7 +2,6 @@ package Onlinestorerestapi.service;
 
 import Onlinestorerestapi.dto.image.ImageResponseDTO;
 import Onlinestorerestapi.validation.exception.ApiException;
-import lombok.AllArgsConstructor;
 import org.apache.tika.Tika;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
@@ -16,15 +15,24 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @Service
-@AllArgsConstructor
 public class ImageService {
 
-    private final Environment environment;
-    private static final Tika tika = new Tika(); // reused instance
+    private final Tika tika;
+    private final Path imagesDirectory;
+
+    public ImageService(Environment environment) {
+
+        String dir = environment.getProperty("images.directory");
+        if (dir == null || dir.isBlank()) {
+            throw new IllegalArgumentException("Property 'images.directory' is not set.");
+        }
+        this.imagesDirectory = Paths.get(dir).toAbsolutePath().normalize();
+
+        tika = new Tika(); // reused instance
+    }
 
     public Resource getImage(String imageName) {
         try {
-            Path imagesDirectory = Paths.get(environment.getProperty("images.directory")).normalize();
             Path imagePath = imagesDirectory.resolve(imageName).normalize();
 
             // Prevent path traversal

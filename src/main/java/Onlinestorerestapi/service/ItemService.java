@@ -2,15 +2,12 @@ package Onlinestorerestapi.service;
 
 import Onlinestorerestapi.dto.item.ItemResponseDTO;
 import Onlinestorerestapi.entity.Item;
-import Onlinestorerestapi.entity.Order;
-import Onlinestorerestapi.entity.User;
-import Onlinestorerestapi.mapper.ItemMapper;
 import Onlinestorerestapi.repository.ItemRepository;
-import Onlinestorerestapi.repository.OrderRepository;
 import Onlinestorerestapi.validation.exception.ApiException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -19,10 +16,9 @@ import java.util.*;
 public class ItemService {
 
     private final ItemRepository itemRepository;
-    private final OrderRepository orderRepository;
-    private final UserService userService;
-    private final ItemMapper itemMapper;
+    private final ItemHelperService itemHelperService;
 
+    @Transactional(readOnly = true)
     public ItemResponseDTO getItemResponseDTO(int itemId) {
 
         Optional<Item> itemOptional = itemRepository.findById(itemId);
@@ -32,50 +28,14 @@ public class ItemService {
         Item item = itemOptional.get();
 
         List<Item> items = List.of(item);
-        List<ItemResponseDTO> itemResponseDTOs = getItemResponseDTOsByItems(items);
+        List<ItemResponseDTO> itemResponseDTOs = itemHelperService.getItemResponseDTOsByItems(items);
 
         return itemResponseDTOs.get(0);
     }
 
+    @Transactional(readOnly = true)
     public List<ItemResponseDTO> getItemResponseDTOs() {
-        return getItemResponseDTOsByItems(itemRepository.findAll());
-    }
-
-    private List<ItemResponseDTO> getItemResponseDTOsByItems(List<Item> items) {
-
-        List<ItemResponseDTO> getItemDTOs = new ArrayList<>();
-        List<Boolean> itemsOrderedFlags = new ArrayList<>(Collections.nCopies(items.size(), false));
-
-        if (userService.isAuthenticated()) {
-
-            User user = userService.getCurrentUser();
-            List<Order> orders = orderRepository.findByUser(user);
-
-            // get boolean ordered for each item
-            for (int i = 0; i < items.size(); i++) {
-                boolean ordered = isOrdered(items.get(i), orders);
-                itemsOrderedFlags.add(i, ordered);
-            }
-
-        }
-
-        // fill getItemDTOs using item and respective boolean ordered
-        for (int i = 0; i < items.size(); i++) {
-            Item item = items.get(i);
-            boolean ordered = itemsOrderedFlags.get(i);
-            getItemDTOs.add(itemMapper.itemToItemResponseDTO(item, ordered));
-        }
-
-        return getItemDTOs;
-    }
-
-    private boolean isOrdered(Item item, List<Order> orders) {
-        for (Order order : orders) {
-            if (Objects.equals(order.getItem().getId(), item.getId())) {
-                return true;
-            }
-        }
-        return false;
+        return itemHelperService.getItemResponseDTOsByItems(itemRepository.findAll());
     }
 
 }

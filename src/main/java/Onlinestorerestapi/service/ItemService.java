@@ -1,6 +1,7 @@
 package Onlinestorerestapi.service;
 
 import Onlinestorerestapi.dto.item.ItemCreateDTO;
+import Onlinestorerestapi.dto.item.ItemPatchDTO;
 import Onlinestorerestapi.dto.item.ItemResponseDTO;
 import Onlinestorerestapi.dto.item.ItemUpdateDTO;
 import Onlinestorerestapi.entity.Item;
@@ -62,9 +63,12 @@ public class ItemService {
         allImageNames.add(item.getLogoName());
         allImageNames.addAll(item.getImageNames());
 
-        itemUtils.saveImagesToFolder(allImages, allImageNames);
-
         itemRepository.save(item);
+
+        // first you need to finish working with item and only then work with pictures because
+        // all actions with the database will be rolled back automatically if there is an error when working with pictures,
+        // but actions with pictures will not be rolled back automatically if there is a problem with the database
+        itemUtils.saveImagesToFolder(allImages, allImageNames);
 
         return item;
     }
@@ -92,7 +96,6 @@ public class ItemService {
         List<String> allOldImageNames = new ArrayList<>();
         allOldImageNames.add(item.getLogoName());
         allOldImageNames.addAll(item.getImageNames());
-        itemUtils.deleteImagesFromFolder(allOldImageNames);
 
         itemMapper.itemUpdateDTOToItem(itemUpdateDTO, item, images.size());
 
@@ -104,10 +107,70 @@ public class ItemService {
         allNewImageNames.add(item.getLogoName());
         allNewImageNames.addAll(item.getImageNames());
 
+        itemRepository.save(item);
+
+        // first you need to finish working with item and only then work with pictures because
+        // all actions with the database will be rolled back automatically if there is an error when working with pictures,
+        // but actions with pictures will not be rolled back automatically if there is a problem with the database
         itemUtils.swapImages(allOldImageNames, allNewImages, allNewImageNames);
+    }
+
+    @Transactional
+    public void patchItem(int itemId, ItemPatchDTO itemPatchDTO, MultipartFile logo, List<MultipartFile> images) {
+
+        if (itemId != itemPatchDTO.getId()) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "Item id in the path and in the body should match");
+        }
+
+        String itemName = itemPatchDTO.getName();
+        if (itemName != null
+                && itemRepository.existsByName(itemName) // if it doesn't exist then findById() won't be called
+                && !itemName.equals(itemRepository.findById(itemId).get().getName())) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "Item name number should be unique or the same");
+        }
+
+        Optional<Item> optionalItem = itemRepository.findById(itemId);
+        if (optionalItem.isEmpty()) {
+            throw new ApiException(HttpStatus.NOT_FOUND, "No such item");
+        }
+
+        Item item = optionalItem.get();
+
+        // save all old file names
+        List<String> allOldImageNames = new ArrayList<>();
+        if (logo != null) {
+            allOldImageNames.add(item.getLogoName());
+        }
+        if (images != null) {
+            allOldImageNames.addAll(item.getImageNames());
+        }
+
+        itemMapper.itemPatchDTOToItem(itemPatchDTO, item, logo, images);
 
         itemRepository.save(item);
 
+        // save all new images
+        List<MultipartFile> allNewImages = new ArrayList<>();
+        if (logo != null) {
+            allNewImages.add(logo);
+        }
+        if (images != null) {
+            allNewImages.addAll(images);
+        }
+
+        // save all new image names
+        List<String> allNewImageNames = new ArrayList<>();
+        if (logo != null) {
+            allNewImageNames.add(item.getLogoName());
+        }
+        if (images != null) {
+            allNewImageNames.addAll(item.getImageNames());
+        }
+
+        // first you need to finish working with item and only then work with pictures because
+        // all actions with the database will be rolled back automatically if there is an error when working with pictures,
+        // but actions with pictures will not be rolled back automatically if there is a problem with the database
+        itemUtils.swapImages(allOldImageNames, allNewImages, allNewImageNames);
     }
 
 }

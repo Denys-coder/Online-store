@@ -17,6 +17,7 @@
 • make proper controller and respective service method names
 • prepend all apis with api/v1/
 • rename ItemUtils -> ImageUtils
+• use @Names + qualifiedBy vs expression in mappers
 
 
 // IMPLEMENT

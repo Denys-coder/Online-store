@@ -5,7 +5,6 @@ import Onlinestorerestapi.dto.item.ItemResponseDTO;
 import Onlinestorerestapi.dto.item.ItemPatchDTO;
 import Onlinestorerestapi.dto.item.ItemUpdateDTO;
 import Onlinestorerestapi.entity.Item;
-import Onlinestorerestapi.mapper.ItemMapper;
 import Onlinestorerestapi.repository.ItemRepository;
 import Onlinestorerestapi.repository.OrderRepository;
 import Onlinestorerestapi.service.ItemService;
@@ -30,7 +29,6 @@ public class ItemController {
 
     private final ItemRepository itemRepository;
     private final OrderRepository orderRepository;
-    private final ItemMapper itemMapper;
     private final ItemUtils itemUtils;
     private final ItemService itemService;
 
@@ -71,48 +69,11 @@ public class ItemController {
 
     @PatchMapping("/{itemId}")
     public ResponseEntity<?> patchItem(@PathVariable int itemId,
+                                       @RequestPart(name = "item", required = false) @Valid ItemPatchDTO itemPatchDTO,
                                        @RequestPart(name = "logo", required = false) @Image MultipartFile logo,
-                                       @RequestPart(name = "images", required = false) @ImageArray @MaxFileCount(maxFileAmount = 10) List<MultipartFile> images,
-                                       @RequestPart(name = "item", required = false) @Valid ItemPatchDTO itemPatchDTO) {
+                                       @RequestPart(name = "images", required = false) @ImageArray @MaxFileCount(maxFileAmount = 10) List<MultipartFile> images) {
 
-        if (itemId != itemPatchDTO.getId()) {
-            return ResponseEntity.badRequest().body("Item id in the path and in the body should match");
-        }
-
-        String itemName = itemPatchDTO.getName();
-        if (itemName != null
-                && itemRepository.existsByName(itemName) // if it doesn't exist then findById() won't be called
-                && !itemName.equals(itemRepository.findById(itemId).get().getName())) {
-            return ResponseEntity.badRequest().body("Item name number should be unique or the same");
-        }
-
-        Optional<Item> optionalItem = itemRepository.findById(itemId);
-        if (optionalItem.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Item item = optionalItem.get();
-        itemMapper.itemPatchDTOToItem(itemPatchDTO, item);
-
-        if (logo != null) {
-            itemUtils.deleteImageFromFolder(item.getLogoName());
-            UUID uuid = UUID.randomUUID();
-            item.setLogoName(uuid.toString());
-            itemUtils.saveImageToFolder(logo, item.getLogoName());
-        }
-
-        if (images != null) {
-            itemUtils.deleteImagesFromFolder(item.getImageNames());
-            List<String> imageNames = new ArrayList<>();
-            while (imageNames.size() < images.size()) {
-                imageNames.add(UUID.randomUUID().toString());
-            }
-            item.setImageNames(imageNames);
-            itemUtils.saveImagesToFolder(images, imageNames);
-
-        }
-
-        itemRepository.save(item);
+        itemService.patchItem(itemId, itemPatchDTO, logo, images);
 
         return ResponseEntity.ok().build();
     }

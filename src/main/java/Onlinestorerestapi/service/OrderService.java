@@ -138,6 +138,21 @@ public class OrderService {
         orderMapper.mergeOrderPatchDTOIntoOrder(orderPatchDTO, order);
 
         orderRepository.save(order);
+    }
 
+    @Transactional
+    public void deleteOrder(int orderId) {
+        Optional<Order> orderOptional = orderRepository.findById(orderId);
+
+        if (orderOptional.isEmpty()) {
+            throw new ApiException(HttpStatus.NOT_FOUND, "You have no such order");
+        }
+
+        Order order = orderOptional.get();
+        if (!order.getUser().getId().equals(userService.getCurrentUser().getId())) {
+            throw new ApiException(HttpStatus.NOT_FOUND, "You have no such order");
+        }
+
+        orderRepository.delete(order);
     }
 }

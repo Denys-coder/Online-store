@@ -2,7 +2,6 @@ package Onlinestorerestapi.controller;
 
 import Onlinestorerestapi.dto.order.*;
 import Onlinestorerestapi.entity.Order;
-import Onlinestorerestapi.mapper.OrderMapper;
 import Onlinestorerestapi.repository.ItemRepository;
 import Onlinestorerestapi.repository.OrderRepository;
 import Onlinestorerestapi.service.OrderService;
@@ -21,7 +20,6 @@ import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/users/me/orders")
@@ -31,32 +29,26 @@ public class OrderController {
     private final ItemRepository itemRepository;
     private final OrderRepository orderRepository;
     private final UserService userService;
-    private final OrderMapper orderMapper;
     private final OrderService orderService;
 
     @GetMapping("/{orderId}")
     public ResponseEntity<?> getOrder(@PathVariable int orderId) {
 
         OrderResponseDTO orderResponseDTO = orderService.getOrderResponseDTO(orderId);
-
         return ResponseEntity.ok(orderResponseDTO);
-
     }
 
     @GetMapping
     public ResponseEntity<?> getOrders() {
 
         List<OrderResponseDTO> orderResponseDTOs = orderService.getOrderResponseDTOs();
-
         return ResponseEntity.ok(orderResponseDTOs);
-
     }
 
     @PostMapping
     public ResponseEntity<?> postOrder(@Valid @RequestBody OrderCreateDTO orderCreateDTO) throws URISyntaxException {
 
         Order newOrder = orderService.createOrder(orderCreateDTO);
-
         return ResponseEntity.created(new URI("/users/me/orders/" + newOrder.getId())).build();
     }
 
@@ -64,36 +56,20 @@ public class OrderController {
     public ResponseEntity<?> putOrder(@PathVariable int orderId, @Valid @RequestBody OrderUpdateDTO orderUpdateDTO) {
 
         orderService.updateOrder(orderId, orderUpdateDTO);
-
         return ResponseEntity.ok().build();
-
     }
 
     @PatchMapping("/{orderId}")
     public ResponseEntity<?> patchOrder(@PathVariable int orderId, @Valid @RequestBody OrderPatchDTO orderPatchDTO) {
 
         orderService.patchOrder(orderId, orderPatchDTO);
-
         return ResponseEntity.ok("Order fields updated");
-
     }
 
     @DeleteMapping("/{orderId}")
     public ResponseEntity<?> deleteOrder(@PathVariable int orderId) {
 
-        Optional<Order> orderOptional = orderRepository.findById(orderId);
-
-        if (orderOptional.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Order order = orderOptional.get();
-        if (!order.getUser().getId().equals(userService.getCurrentUser().getId())) {
-            return ResponseEntity.notFound().build();
-        }
-
-        orderRepository.delete(order);
-
+        orderService.deleteOrder(orderId);
         return ResponseEntity.noContent().build();
     }
 
@@ -102,7 +78,6 @@ public class OrderController {
 
         orderRepository.deleteOrdersByUser(userService.getCurrentUser());
         return ResponseEntity.noContent().build();
-
     }
 
     @PostMapping("/fulfill")

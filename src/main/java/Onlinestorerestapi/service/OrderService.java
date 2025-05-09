@@ -1,6 +1,7 @@
 package Onlinestorerestapi.service;
 
 import Onlinestorerestapi.dto.order.OrderCreateDTO;
+import Onlinestorerestapi.dto.order.OrderPatchDTO;
 import Onlinestorerestapi.dto.order.OrderResponseDTO;
 import Onlinestorerestapi.dto.order.OrderUpdateDTO;
 import Onlinestorerestapi.entity.Item;
@@ -110,5 +111,33 @@ public class OrderService {
         orderMapper.mergeOrderUpdateDTOIntoOrder(orderUpdateDTO, order);
 
         orderRepository.save(order);
+    }
+
+    @Transactional
+    public void patchOrder(int orderId, OrderPatchDTO orderPatchDTO) {
+        if (orderId != orderPatchDTO.getId()) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "Order id in the path and in the body should match");
+        }
+
+        // validate that postOrderDTO has existing item id
+        if (orderPatchDTO.getItemId() != null && !itemRepository.existsById(orderPatchDTO.getItemId())) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "There is no item with the specified id");
+        }
+
+        Optional<Order> orderOptional = orderRepository.findById(orderId);
+
+        if (orderOptional.isEmpty()) {
+            throw new ApiException(HttpStatus.NOT_FOUND, "You have no such order");
+        }
+
+        Order order = orderOptional.get();
+        if (!order.getUser().getId().equals(userService.getCurrentUser().getId())) {
+            throw new ApiException(HttpStatus.NOT_FOUND, "You have no such order");
+        }
+
+        orderMapper.mergeOrderPatchDTOIntoOrder(orderPatchDTO, order);
+
+        orderRepository.save(order);
+
     }
 }

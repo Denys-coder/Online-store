@@ -63,6 +63,8 @@ public class OrderController {
     @PutMapping("/{orderId}")
     public ResponseEntity<?> putOrder(@PathVariable int orderId, @Valid @RequestBody OrderUpdateDTO orderUpdateDTO) {
 
+        orderService.updateOrder(orderId, orderUpdateDTO);
+
         return ResponseEntity.ok().build();
 
     }
@@ -70,29 +72,7 @@ public class OrderController {
     @PatchMapping("/{orderId}")
     public ResponseEntity<?> patchOrder(@PathVariable int orderId, @Valid @RequestBody OrderPatchDTO orderPatchDTO) {
 
-        if (orderId != orderPatchDTO.getId()) {
-            return ResponseEntity.badRequest().body("Order id in the path and in the body should match");
-        }
-
-        // validate that postOrderDTO has existing item id
-        if (orderPatchDTO.getItemId() != null && !itemRepository.existsById(orderPatchDTO.getItemId())) {
-            return ResponseEntity.badRequest().body("There is no item with the specified id");
-        }
-
-        Optional<Order> orderOptional = orderRepository.findById(orderId);
-
-        if (orderOptional.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Order order = orderOptional.get();
-        if (!order.getUser().getId().equals(userService.getCurrentUser().getId())) {
-            return ResponseEntity.notFound().build();
-        }
-
-        orderMapper.mergeOrderPatchDTOIntoOrder(orderPatchDTO, order);
-
-        orderRepository.save(order);
+        orderService.patchOrder(orderId, orderPatchDTO);
 
         return ResponseEntity.ok("Order fields updated");
 

@@ -30,17 +30,8 @@ public class ItemService {
 
     @Transactional(readOnly = true)
     public ItemResponseDTO getItemResponseDTO(int itemId) {
-
-        Optional<Item> itemOptional = itemRepository.findById(itemId);
-        if (itemOptional.isEmpty()) {
-            throw new ApiException(HttpStatus.NOT_FOUND, "Item not found");
-        }
-        Item item = itemOptional.get();
-
-        List<Item> items = List.of(item);
-        List<ItemResponseDTO> itemResponseDTOs = itemHelperService.getItemResponseDTOsByItems(items);
-
-        return itemResponseDTOs.get(0);
+        Item item = getItemByIdOrThrow(itemId);
+        return itemHelperService.getItemResponseDTOsByItems(List.of(item)).get(0);
     }
 
     @Transactional(readOnly = true)
@@ -49,153 +40,122 @@ public class ItemService {
     }
 
     @Transactional
-    public Item createItem(ItemCreateDTO itemCreateDTO, MultipartFile logo, List<MultipartFile> images) {
+    public Item createItem(ItemCreateDTO dto, MultipartFile logo, List<MultipartFile> images) {
+        validateItemNameUniqueness(dto.getName());
 
-        if (itemRepository.existsByName(itemCreateDTO.getName())) {
-            throw new ApiException(HttpStatus.CONFLICT, "Item name should be unique");
-        }
-
-        Item item = itemMapper.itemCreateDTOToItem(itemCreateDTO, images.size());
-
-        List<MultipartFile> allImages = new ArrayList<>();
-        allImages.add(logo);
-        allImages.addAll(images);
-
-        List<String> allImageNames = new ArrayList<>();
-        allImageNames.add(item.getLogoName());
-        allImageNames.addAll(item.getImageNames());
+        Item item = itemMapper.itemCreateDTOToItem(dto, images.size());
+        List<MultipartFile> allImages = combineFiles(logo, images);
+        List<String> allImageNames = combineNames(item.getLogoName(), item.getImageNames());
 
         itemRepository.save(item);
-
-        // first you need to finish working with item and only then work with pictures because
-        // all actions with the database will be rolled back automatically if there is an error when working with pictures,
-        // but actions with pictures will not be rolled back automatically if there is a problem with the database
         itemUtils.saveImagesToFolder(allImages, allImageNames);
 
         return item;
     }
 
     @Transactional
-    public void updateItem(int itemId, ItemUpdateDTO itemUpdateDTO, MultipartFile logo, List<MultipartFile> images) {
+    public void updateItem(int itemId, ItemUpdateDTO dto, MultipartFile logo, List<MultipartFile> images) {
+        validateItemIdMatch(itemId, dto.getId());
+        validateItemNameUniqueOrSame(dto.getName(), itemId);
 
-        if (itemId != itemUpdateDTO.getId()) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "Item id in the path and in the body should match");
-        }
+        Item item = getItemByIdOrThrow(itemId);
 
-        String itemName = itemUpdateDTO.getName();
-        if (itemRepository.existsByName(itemName) // if it doesn't exist then findById() won't be called
-                && !itemName.equals(itemRepository.findById(itemId).get().getName())) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "Item name should be unique or the same");
-        }
+        List<String> oldNames = getExistingImageNames(item, true, true);
 
-        Optional<Item> optionalItem = itemRepository.findById(itemId);
-        if (optionalItem.isEmpty()) {
-            throw new ApiException(HttpStatus.NOT_FOUND, "No such item");
-        }
-
-        Item item = optionalItem.get();
-
-        // save all old file names
-        List<String> allOldImageNames = new ArrayList<>();
-        allOldImageNames.add(item.getLogoName());
-        allOldImageNames.addAll(item.getImageNames());
-
-        itemMapper.itemUpdateDTOToItem(itemUpdateDTO, item, images.size());
-
-        // save all new images
-        List<MultipartFile> allNewImages = new ArrayList<>();
-        allNewImages.add(logo);
-        allNewImages.addAll(images);
-
-        // save all new image names
-        List<String> allNewImageNames = new ArrayList<>();
-        allNewImageNames.add(item.getLogoName());
-        allNewImageNames.addAll(item.getImageNames());
-
+        itemMapper.itemUpdateDTOToItem(dto, item, images.size());
         itemRepository.save(item);
 
-        // first you need to finish working with item and only then work with pictures because
-        // all actions with the database will be rolled back automatically if there is an error when working with pictures,
-        // but actions with pictures will not be rolled back automatically if there is a problem with the database
-        itemUtils.swapImages(allOldImageNames, allNewImages, allNewImageNames);
+        List<MultipartFile> newFiles = combineFiles(logo, images);
+        List<String> newNames = combineNames(item.getLogoName(), item.getImageNames());
+
+        itemUtils.swapImages(oldNames, newFiles, newNames);
     }
 
     @Transactional
-    public void patchItem(int itemId, ItemPatchDTO itemPatchDTO, MultipartFile logo, List<MultipartFile> images) {
+    public void patchItem(int itemId, ItemPatchDTO dto, MultipartFile logo, List<MultipartFile> images) {
+        validateItemIdMatch(itemId, dto.getId());
 
-        if (itemId != itemPatchDTO.getId()) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "Item id in the path and in the body should match");
+        if (dto.getName() != null) {
+            validateItemNameUniqueOrSame(dto.getName(), itemId);
         }
 
-        String itemName = itemPatchDTO.getName();
-        if (itemName != null
-                && itemRepository.existsByName(itemName) // if it doesn't exist then findById() won't be called
-                && !itemName.equals(itemRepository.findById(itemId).get().getName())) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "Item name should be unique or the same");
-        }
+        Item item = getItemByIdOrThrow(itemId);
+        List<String> oldNames = getExistingImageNames(item, logo != null, images != null);
 
-        Optional<Item> optionalItem = itemRepository.findById(itemId);
-        if (optionalItem.isEmpty()) {
-            throw new ApiException(HttpStatus.NOT_FOUND, "No such item");
-        }
-
-        Item item = optionalItem.get();
-
-        // save all old file names
-        List<String> allOldImageNames = new ArrayList<>();
-        if (logo != null) {
-            allOldImageNames.add(item.getLogoName());
-        }
-        if (images != null) {
-            allOldImageNames.addAll(item.getImageNames());
-        }
-
-        itemMapper.itemPatchDTOToItem(itemPatchDTO, item, logo, images);
-
+        itemMapper.itemPatchDTOToItem(dto, item, logo, images);
         itemRepository.save(item);
 
-        // save all new images
-        List<MultipartFile> allNewImages = new ArrayList<>();
-        if (logo != null) {
-            allNewImages.add(logo);
-        }
-        if (images != null) {
-            allNewImages.addAll(images);
-        }
+        List<MultipartFile> newFiles = combineFiles(logo, images);
+        List<String> newNames = combineNames(
+                logo != null ? item.getLogoName() : null,
+                images != null ? item.getImageNames() : Collections.emptyList()
+        );
 
-        // save all new image names
-        List<String> allNewImageNames = new ArrayList<>();
-        if (logo != null) {
-            allNewImageNames.add(item.getLogoName());
-        }
-        if (images != null) {
-            allNewImageNames.addAll(item.getImageNames());
-        }
-
-        // first you need to finish working with item and only then work with pictures because
-        // all actions with the database will be rolled back automatically if there is an error when working with pictures,
-        // but actions with pictures will not be rolled back automatically if there is a problem with the database
-        itemUtils.swapImages(allOldImageNames, allNewImages, allNewImageNames);
+        itemUtils.swapImages(oldNames, newFiles, newNames);
     }
 
     @Transactional
     public void deleteItem(int itemId) {
-
-        Optional<Item> optionalItem = itemRepository.findById(itemId);
-        if (optionalItem.isEmpty()) {
-            throw new ApiException(HttpStatus.NOT_FOUND, "No such item");
-        }
-
-        Item item = optionalItem.get();
-
-        List<String> itemNamesToDelete = new ArrayList<>();
-        itemNamesToDelete.add(item.getLogoName());
-        itemNamesToDelete.addAll(item.getImageNames());
+        Item item = getItemByIdOrThrow(itemId);
+        List<String> namesToDelete = combineNames(item.getLogoName(), item.getImageNames());
 
         orderRepository.deleteOrdersByItem(item);
         itemRepository.deleteById(itemId);
-
-        itemUtils.deleteImagesFromFolder(itemNamesToDelete);
+        itemUtils.deleteImagesFromFolder(namesToDelete);
     }
 
+    // ======= PRIVATE HELPERS =======
+
+    private Item getItemByIdOrThrow(int itemId) {
+        return itemRepository.findById(itemId)
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "No such item"));
+    }
+
+    private void validateItemNameUniqueness(String name) {
+        if (itemRepository.existsByName(name)) {
+            throw new ApiException(HttpStatus.CONFLICT, "Item name should be unique");
+        }
+    }
+
+    private void validateItemIdMatch(int pathId, int bodyId) {
+        if (pathId != bodyId) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "Item id in the path and in the body should match");
+        }
+    }
+
+    private void validateItemNameUniqueOrSame(String name, int itemId) {
+        if (itemRepository.existsByName(name)) {
+            String existingName = itemRepository.findById(itemId)
+                    .map(Item::getName)
+                    .orElse("");
+            if (!name.equals(existingName)) {
+                throw new ApiException(HttpStatus.BAD_REQUEST, "Item name should be unique or the same");
+            }
+        }
+    }
+
+    private List<String> getExistingImageNames(Item item, boolean includeLogo, boolean includeImages) {
+        List<String> names = new ArrayList<>();
+        if (includeLogo) {
+            names.add(item.getLogoName());
+        }
+        if (includeImages) {
+            names.addAll(item.getImageNames());
+        }
+        return names;
+    }
+
+    private List<MultipartFile> combineFiles(MultipartFile logo, List<MultipartFile> images) {
+        List<MultipartFile> all = new ArrayList<>();
+        if (logo != null) all.add(logo);
+        if (images != null) all.addAll(images);
+        return all;
+    }
+
+    private List<String> combineNames(String logoName, List<String> imageNames) {
+        List<String> all = new ArrayList<>();
+        if (logoName != null) all.add(logoName);
+        if (imageNames != null) all.addAll(imageNames);
+        return all;
+    }
 }

@@ -7,6 +7,7 @@ import Onlinestorerestapi.dto.item.ItemUpdateDTO;
 import Onlinestorerestapi.entity.Item;
 import Onlinestorerestapi.mapper.ItemMapper;
 import Onlinestorerestapi.repository.ItemRepository;
+import Onlinestorerestapi.repository.OrderRepository;
 import Onlinestorerestapi.util.ItemUtils;
 import Onlinestorerestapi.validation.exception.ApiException;
 import lombok.AllArgsConstructor;
@@ -25,6 +26,7 @@ public class ItemService {
     private final ItemHelperService itemHelperService;
     private final ItemMapper itemMapper;
     private final ItemUtils itemUtils;
+    private final OrderRepository orderRepository;
 
     @Transactional(readOnly = true)
     public ItemResponseDTO getItemResponseDTO(int itemId) {
@@ -83,7 +85,7 @@ public class ItemService {
         String itemName = itemUpdateDTO.getName();
         if (itemRepository.existsByName(itemName) // if it doesn't exist then findById() won't be called
                 && !itemName.equals(itemRepository.findById(itemId).get().getName())) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "Item name number should be unique or the same");
+            throw new ApiException(HttpStatus.BAD_REQUEST, "Item name should be unique or the same");
         }
 
         Optional<Item> optionalItem = itemRepository.findById(itemId);
@@ -93,16 +95,19 @@ public class ItemService {
 
         Item item = optionalItem.get();
 
+        // save all old file names
         List<String> allOldImageNames = new ArrayList<>();
         allOldImageNames.add(item.getLogoName());
         allOldImageNames.addAll(item.getImageNames());
 
         itemMapper.itemUpdateDTOToItem(itemUpdateDTO, item, images.size());
 
+        // save all new images
         List<MultipartFile> allNewImages = new ArrayList<>();
         allNewImages.add(logo);
         allNewImages.addAll(images);
 
+        // save all new image names
         List<String> allNewImageNames = new ArrayList<>();
         allNewImageNames.add(item.getLogoName());
         allNewImageNames.addAll(item.getImageNames());
@@ -126,7 +131,7 @@ public class ItemService {
         if (itemName != null
                 && itemRepository.existsByName(itemName) // if it doesn't exist then findById() won't be called
                 && !itemName.equals(itemRepository.findById(itemId).get().getName())) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "Item name number should be unique or the same");
+            throw new ApiException(HttpStatus.BAD_REQUEST, "Item name should be unique or the same");
         }
 
         Optional<Item> optionalItem = itemRepository.findById(itemId);
@@ -171,6 +176,26 @@ public class ItemService {
         // all actions with the database will be rolled back automatically if there is an error when working with pictures,
         // but actions with pictures will not be rolled back automatically if there is a problem with the database
         itemUtils.swapImages(allOldImageNames, allNewImages, allNewImageNames);
+    }
+
+    @Transactional
+    public void deleteItem(int itemId) {
+
+        Optional<Item> optionalItem = itemRepository.findById(itemId);
+        if (optionalItem.isEmpty()) {
+            throw new ApiException(HttpStatus.NOT_FOUND, "No such item");
+        }
+
+        Item item = optionalItem.get();
+
+        List<String> itemNamesToDelete = new ArrayList<>();
+        itemNamesToDelete.add(item.getLogoName());
+        itemNamesToDelete.addAll(item.getImageNames());
+
+        orderRepository.deleteOrdersByItem(item);
+        itemRepository.deleteById(itemId);
+
+        itemUtils.deleteImagesFromFolder(itemNamesToDelete);
     }
 
 }

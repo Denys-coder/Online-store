@@ -5,10 +5,7 @@ import Onlinestorerestapi.dto.item.ItemResponseDTO;
 import Onlinestorerestapi.dto.item.ItemPatchDTO;
 import Onlinestorerestapi.dto.item.ItemUpdateDTO;
 import Onlinestorerestapi.entity.Item;
-import Onlinestorerestapi.repository.ItemRepository;
-import Onlinestorerestapi.repository.OrderRepository;
 import Onlinestorerestapi.service.ItemService;
-import Onlinestorerestapi.util.ItemUtils;
 import Onlinestorerestapi.validation.annotation.item.Image;
 import Onlinestorerestapi.validation.annotation.item.ImageArray;
 import Onlinestorerestapi.validation.annotation.item.MaxFileCount;
@@ -27,9 +24,6 @@ import java.util.*;
 @AllArgsConstructor
 public class ItemController {
 
-    private final ItemRepository itemRepository;
-    private final OrderRepository orderRepository;
-    private final ItemUtils itemUtils;
     private final ItemService itemService;
 
     @GetMapping({"/{itemId}"})
@@ -81,12 +75,7 @@ public class ItemController {
     @DeleteMapping({"/{itemId}"})
     public ResponseEntity<?> deleteItem(@PathVariable int itemId) {
 
-        Item itemToDelete = itemRepository.getReferenceById(itemId);
-        itemUtils.deleteImageFromFolder(itemToDelete.getLogoName());
-        itemUtils.deleteImagesFromFolder(itemToDelete.getImageNames());
-
-        orderRepository.deleteOrdersByItem(itemToDelete);
-        itemRepository.deleteById(itemId);
+        itemService.deleteItem(itemId);
 
         return ResponseEntity.noContent().build();
     }

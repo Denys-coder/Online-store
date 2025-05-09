@@ -94,18 +94,37 @@ public class ItemUtils {
         }
     }
 
-    public void deleteImageFromFolder(String imageName) {
-        deleteImagesFromFolder(List.of(imageName));
-    }
-
     public void deleteImagesFromFolder(List<String> imageNames) {
-        for (String imageName : imageNames) {
-            Path imagePath = resolveImagePath(imageName);
-            try {
-                Files.deleteIfExists(imagePath);
-            } catch (IOException e) {
-                System.err.println("Failed to delete image: " + imagePath + " - " + e.getMessage());
+        Map<Path, byte[]> imageBackups = new HashMap<>();
+        List<Path> deletedPaths = new ArrayList<>();
+
+        try {
+            for (String imageName : imageNames) {
+                Path imagePath = resolveImagePath(imageName);
+
+                if (Files.exists(imagePath)) {
+                    // Backup image before deleting
+                    imageBackups.put(imagePath, Files.readAllBytes(imagePath));
+
+                    // Attempt to delete
+                    Files.delete(imagePath);
+                    deletedPaths.add(imagePath);
+                }
             }
+        } catch (IOException e) {
+            // Rollback previously deleted images
+            for (Path deletedPath : deletedPaths) {
+                byte[] backup = imageBackups.get(deletedPath);
+                if (backup != null) {
+                    try {
+                        Files.write(deletedPath, backup, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+                    } catch (IOException ex) {
+                        System.err.println("Failed to restore image after failed deletion: " + deletedPath + " - " + ex.getMessage());
+                    }
+                }
+            }
+
+            throw new UncheckedIOException("Failed to delete all images. Rolled back changes.", e);
         }
     }
 

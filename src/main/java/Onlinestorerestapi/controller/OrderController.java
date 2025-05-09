@@ -7,6 +7,7 @@ import Onlinestorerestapi.entity.User;
 import Onlinestorerestapi.mapper.OrderMapper;
 import Onlinestorerestapi.repository.ItemRepository;
 import Onlinestorerestapi.repository.OrderRepository;
+import Onlinestorerestapi.service.OrderService;
 import Onlinestorerestapi.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -30,26 +31,16 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class OrderController {
 
-    ItemRepository itemRepository;
-    OrderRepository orderRepository;
-    UserService userService;
-    OrderMapper orderMapper;
+    private final ItemRepository itemRepository;
+    private final OrderRepository orderRepository;
+    private final UserService userService;
+    private final OrderMapper orderMapper;
+    private final OrderService orderService;
 
     @GetMapping("/{orderId}")
     public ResponseEntity<?> getOrder(@PathVariable int orderId) {
 
-        Optional<Order> orderOptional = orderRepository.findById(orderId);
-
-        if (orderOptional.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Order order = orderOptional.get();
-        if (!order.getUser().getId().equals(userService.getCurrentUser().getId())) {
-            return ResponseEntity.notFound().build();
-        }
-
-        OrderResponseDTO orderResponseDTO = orderMapper.orderToOrderResponseDTO(order);
+        OrderResponseDTO orderResponseDTO = orderService.getOrderResponseDTO(orderId);
 
         return ResponseEntity.ok(orderResponseDTO);
 

@@ -1,9 +1,7 @@
 package Onlinestorerestapi.controller;
 
 import Onlinestorerestapi.dto.order.*;
-import Onlinestorerestapi.entity.Item;
 import Onlinestorerestapi.entity.Order;
-import Onlinestorerestapi.entity.User;
 import Onlinestorerestapi.mapper.OrderMapper;
 import Onlinestorerestapi.repository.ItemRepository;
 import Onlinestorerestapi.repository.OrderRepository;
@@ -57,30 +55,7 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<?> postOrder(@Valid @RequestBody OrderCreateDTO orderCreateDTO) throws URISyntaxException {
 
-        // validate that postOrderDTO has existing item id
-        if (!itemRepository.existsById(orderCreateDTO.getItemId())) {
-            return ResponseEntity.badRequest().body("There is no item with the specified id");
-        }
-
-        User user = userService.getCurrentUser();
-        Item itemToOrder = itemRepository.getReferenceById(orderCreateDTO.getItemId());
-
-        // prevent adding order with the same item
-        List<Order> userOrders = orderRepository.findByUser(user);
-        List<Item> itemsInOrders = userOrders.stream()
-                .map(Order::getItem)
-                .toList();
-        if (itemsInOrders.contains(itemToOrder)) {
-            return ResponseEntity.badRequest().body("This item was already ordered");
-        }
-
-        // prevent adding order with order.amount > item.amount
-        if (orderCreateDTO.getAmount() > itemToOrder.getAmount()) {
-            return ResponseEntity.badRequest().body("You try to order more than is available in stock");
-        }
-
-        Order newOrder = orderMapper.orderCreateDTOToOrder(orderCreateDTO, itemToOrder, user);
-        orderRepository.save(newOrder);
+        Order newOrder = orderService.createOrder(orderCreateDTO);
 
         return ResponseEntity.created(new URI("/users/me/orders/" + newOrder.getId())).build();
     }

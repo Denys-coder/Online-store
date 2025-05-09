@@ -2,6 +2,7 @@ package Onlinestorerestapi.service;
 
 import Onlinestorerestapi.dto.order.OrderCreateDTO;
 import Onlinestorerestapi.dto.order.OrderResponseDTO;
+import Onlinestorerestapi.dto.order.OrderUpdateDTO;
 import Onlinestorerestapi.entity.Item;
 import Onlinestorerestapi.entity.Order;
 import Onlinestorerestapi.entity.User;
@@ -32,12 +33,12 @@ public class OrderService {
         Optional<Order> orderOptional = orderRepository.findById(orderId);
 
         if (orderOptional.isEmpty()) {
-            throw new ApiException(HttpStatus.NOT_FOUND, "you have no such order");
+            throw new ApiException(HttpStatus.NOT_FOUND, "You have no such order");
         }
 
         Order order = orderOptional.get();
         if (!order.getUser().getId().equals(userService.getCurrentUser().getId())) {
-            throw new ApiException(HttpStatus.NOT_FOUND, "you have no such order");
+            throw new ApiException(HttpStatus.NOT_FOUND, "You have no such order");
         }
 
         return orderMapper.orderToOrderResponseDTO(order);
@@ -82,5 +83,32 @@ public class OrderService {
         orderRepository.save(newOrder);
 
         return newOrder;
+    }
+
+    @Transactional
+    public void updateOrder(int orderId, OrderUpdateDTO orderUpdateDTO) {
+        if (orderId != orderUpdateDTO.getId()) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "Order id in the path and in the body should match");
+        }
+
+        // validate that postOrderDTO has existing item id
+        if (!itemRepository.existsById(orderUpdateDTO.getItemId())) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "There is no item with the specified id");
+        }
+
+        Optional<Order> orderOptional = orderRepository.findById(orderId);
+
+        if (orderOptional.isEmpty()) {
+            throw new ApiException(HttpStatus.NOT_FOUND, "You have no such order");
+        }
+
+        Order order = orderOptional.get();
+        if (!order.getUser().getId().equals(userService.getCurrentUser().getId())) {
+            throw new ApiException(HttpStatus.NOT_FOUND, "You have no such order");
+        }
+
+        orderMapper.mergeOrderUpdateDTOIntoOrder(orderUpdateDTO, order);
+
+        orderRepository.save(order);
     }
 }

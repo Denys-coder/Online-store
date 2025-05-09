@@ -8,7 +8,7 @@ import Onlinestorerestapi.entity.Item;
 import Onlinestorerestapi.mapper.ItemMapper;
 import Onlinestorerestapi.repository.ItemRepository;
 import Onlinestorerestapi.repository.OrderRepository;
-import Onlinestorerestapi.util.ItemUtils;
+import Onlinestorerestapi.util.ImageUtils;
 import Onlinestorerestapi.validation.exception.ApiException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,7 +25,7 @@ public class ItemService {
     private final ItemRepository itemRepository;
     private final ItemHelperService itemHelperService;
     private final ItemMapper itemMapper;
-    private final ItemUtils itemUtils;
+    private final ImageUtils imageUtils;
     private final OrderRepository orderRepository;
 
     @Transactional(readOnly = true)
@@ -48,7 +48,7 @@ public class ItemService {
         List<String> allImageNames = combineNames(item.getLogoName(), item.getImageNames());
 
         itemRepository.save(item);
-        itemUtils.saveImagesToFolder(allImages, allImageNames);
+        imageUtils.saveImagesToFolder(allImages, allImageNames);
 
         return item;
     }
@@ -68,7 +68,7 @@ public class ItemService {
         List<MultipartFile> newFiles = combineFiles(logo, images);
         List<String> newNames = combineNames(item.getLogoName(), item.getImageNames());
 
-        itemUtils.swapImages(oldNames, newFiles, newNames);
+        imageUtils.swapImages(oldNames, newFiles, newNames);
     }
 
     @Transactional
@@ -91,7 +91,7 @@ public class ItemService {
                 images != null ? item.getImageNames() : Collections.emptyList()
         );
 
-        itemUtils.swapImages(oldNames, newFiles, newNames);
+        imageUtils.swapImages(oldNames, newFiles, newNames);
     }
 
     @Transactional
@@ -101,7 +101,7 @@ public class ItemService {
 
         orderRepository.deleteOrdersByItem(item);
         itemRepository.deleteById(itemId);
-        itemUtils.deleteImagesFromFolder(namesToDelete);
+        imageUtils.deleteImagesFromFolder(namesToDelete);
     }
 
     // ======= PRIVATE HELPERS =======

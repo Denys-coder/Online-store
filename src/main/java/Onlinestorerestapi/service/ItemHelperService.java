@@ -16,7 +16,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-// this class is needed because @Transactional only works if the method is called from another class (not a case of self-invocation)
+// this class is needed because @Transactional only works if the method is called from another class (not a case of self-invocation) and it is public
 @Service
 @AllArgsConstructor
 public class ItemHelperService {

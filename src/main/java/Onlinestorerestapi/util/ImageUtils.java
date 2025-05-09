@@ -10,10 +10,10 @@ import java.nio.file.*;
 import java.util.*;
 
 @Service
-public class ItemUtils {
+public class ImageUtils {
     private final Path imagesDirectory;
 
-    public ItemUtils(Environment environment) {
+    public ImageUtils(Environment environment) {
         String dir = environment.getProperty("images.directory");
         if (dir == null || dir.isBlank()) {
             throw new IllegalArgumentException("Property 'images.directory' is not set.");
@@ -25,10 +25,6 @@ public class ItemUtils {
         } catch (IOException e) {
             throw new UncheckedIOException("Failed to create images directory", e);
         }
-    }
-
-    public void saveImageToFolder(MultipartFile logo, String imageName) {
-        saveImagesToFolder(List.of(logo), List.of(imageName));
     }
 
     public void saveImagesToFolder(List<MultipartFile> images, List<String> imageNames) {
@@ -82,6 +78,7 @@ public class ItemUtils {
         } catch (IOException e) {
             rollbackSavedFiles(newSavedFiles);
 
+            // Rollback previously deleted images
             for (Map.Entry<Path, byte[]> entry : oldImageBackups.entrySet()) {
                 try {
                     Files.write(entry.getKey(), entry.getValue(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);

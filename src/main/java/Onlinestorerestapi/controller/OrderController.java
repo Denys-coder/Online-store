@@ -24,7 +24,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/users/me/orders")
@@ -49,14 +48,9 @@ public class OrderController {
     @GetMapping
     public ResponseEntity<?> getOrders() {
 
-        User user = userService.getCurrentUser();
-        List<Order> orders = orderRepository.findByUser(user);
+        List<OrderResponseDTO> orderResponseDTOs = orderService.getOrderResponseDTOs();
 
-        List<OrderResponseDTO> orderResponseDTOS = orders.stream()
-                .map(orderMapper::orderToOrderResponseDTO)
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(orderResponseDTOS);
+        return ResponseEntity.ok(orderResponseDTOs);
 
     }
 

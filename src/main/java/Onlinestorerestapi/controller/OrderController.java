@@ -76,7 +76,7 @@ public class OrderController {
     @DeleteMapping
     public ResponseEntity<?> deleteOrders() {
 
-        orderRepository.deleteOrdersByUser(userService.getCurrentUser());
+        orderService.deleteOrders();
         return ResponseEntity.noContent().build();
     }
 

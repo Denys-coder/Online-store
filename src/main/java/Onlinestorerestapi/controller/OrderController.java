@@ -2,21 +2,13 @@ package Onlinestorerestapi.controller;
 
 import Onlinestorerestapi.dto.order.*;
 import Onlinestorerestapi.entity.Order;
-import Onlinestorerestapi.repository.ItemRepository;
-import Onlinestorerestapi.repository.OrderRepository;
 import Onlinestorerestapi.service.OrderService;
-import Onlinestorerestapi.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.core.MethodParameter;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BeanPropertyBindingResult;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
-import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -26,9 +18,6 @@ import java.util.List;
 @AllArgsConstructor
 public class OrderController {
 
-    private final ItemRepository itemRepository;
-    private final OrderRepository orderRepository;
-    private final UserService userService;
     private final OrderService orderService;
 
     @GetMapping("/{orderId}")
@@ -83,35 +72,7 @@ public class OrderController {
     @PostMapping("/fulfill")
     public ResponseEntity<?> fulfillOrders() throws MethodArgumentNotValidException, NoSuchMethodException {
 
-        // take all user's orders
-        List<Order> orders = orderRepository.findByUser(userService.getCurrentUser());
-
-        // check if order.amount <= item.amount, otherwise put an error in BindingResult
-        BindingResult bindingResult = new BeanPropertyBindingResult(orders, "order");
-        for (Order order : orders) {
-            if (order.getAmount() > order.getItem().getAmount()) {
-                bindingResult.addError(new FieldError(
-                        order.getItem().getName(),
-                        "Order: " + order.getId(),
-                        "Ordered amount (" + order.getAmount() + ") exceeds available stock ("
-                                + order.getItem().getAmount() + ") for item: " + order.getItem().getName()
-                ));
-            }
-            int itemAmount = order.getItem().getAmount();
-            order.getItem().setAmount(itemAmount - order.getAmount());
-        }
-
-        if (bindingResult.hasErrors()) {
-            Method method = this.getClass().getMethod("fulfillOrders");
-            MethodParameter methodParameter = new MethodParameter(method, -1);
-            throw new MethodArgumentNotValidException(methodParameter, bindingResult);
-        }
-
-        orderRepository.deleteAll(orders);
-        itemRepository.saveAll(orders.stream().map(Order::getItem).toList());
-
+        orderService.fulfillOrders();
         return ResponseEntity.noContent().build();
-
     }
-
 }

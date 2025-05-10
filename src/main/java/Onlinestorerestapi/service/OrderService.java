@@ -16,8 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -159,5 +158,35 @@ public class OrderService {
     @Transactional
     public void deleteOrders() {
         orderRepository.deleteOrdersByUser(userService.getCurrentUser());
+    }
+
+    @Transactional
+    public void fulfillOrders() {
+        // take all user's orders
+        List<Order> orders = orderRepository.findByUser(userService.getCurrentUser());
+
+        // check if order.amount <= item.amount, for each item
+        List<String> errors = new ArrayList<>();
+        for (Order order : orders) {
+            if (order.getAmount() > order.getItem().getAmount()) {
+                String error = String.format(
+                        "order: %s Ordered amount (%d) exceeds available stock (%d) for item: %s.",
+                        order.getId(),
+                        order.getAmount(),
+                        order.getItem().getAmount(),
+                        order.getItem().getName()
+                );
+                errors.add(error);
+            }
+            int itemAmount = order.getItem().getAmount();
+            order.getItem().setAmount(itemAmount - order.getAmount());
+        }
+
+        if (!errors.isEmpty()) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, errors);
+        }
+
+        orderRepository.deleteAll(orders);
+        itemRepository.saveAll(orders.stream().map(Order::getItem).toList());
     }
 }

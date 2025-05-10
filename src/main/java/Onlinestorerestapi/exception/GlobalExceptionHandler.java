@@ -90,7 +90,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleApiException(ApiException exception) {
         return ResponseEntity
                 .status(exception.getStatus())
-                .body(Map.of("errors", exception.getErrors()));
+                .body(exception.getErrors());
     }
 
 }

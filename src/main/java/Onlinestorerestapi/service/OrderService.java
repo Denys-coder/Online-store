@@ -30,59 +30,36 @@ public class OrderService {
 
     @Transactional
     public OrderResponseDTO getOrderResponseDTO(int orderId) {
-        Optional<Order> orderOptional = orderRepository.findById(orderId);
-
-        if (orderOptional.isEmpty()) {
-            throw new ApiException(HttpStatus.NOT_FOUND, "You have no such order");
-        }
-
-        Order order = orderOptional.get();
-        if (!order.getUser().getId().equals(userService.getCurrentUser().getId())) {
-            throw new ApiException(HttpStatus.NOT_FOUND, "You have no such order");
-        }
-
+        Order order = getOrderForCurrentUserOrThrow(orderId);
         return orderMapper.orderToOrderResponseDTO(order);
     }
 
     @Transactional
     public List<OrderResponseDTO> getOrderResponseDTOs() {
         User user = userService.getCurrentUser();
-        List<Order> orders = orderRepository.findByUser(user);
-
-        return orders.stream()
+        return orderRepository.findByUser(user).stream()
                 .map(orderMapper::orderToOrderResponseDTO)
                 .collect(Collectors.toList());
     }
 
     @Transactional
     public Order createOrder(OrderCreateDTO orderCreateDTO) {
-
-        // validate that postOrderDTO has existing item id
-        if (!itemRepository.existsById(orderCreateDTO.getItemId())) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "There is no item with the specified id");
-        }
-
         User user = userService.getCurrentUser();
-        Item itemToOrder = itemRepository.getReferenceById(orderCreateDTO.getItemId());
+        Item item = getItemOrThrow(orderCreateDTO.getItemId());
 
-        // prevent adding order with the same item
-        List<Order> userOrders = orderRepository.findByUser(user);
-        List<Item> itemsInOrders = userOrders.stream()
+        boolean ordered = orderRepository.findByUser(user).stream()
                 .map(Order::getItem)
-                .toList();
-        if (itemsInOrders.contains(itemToOrder)) {
+                .anyMatch(i -> i.getId().equals(item.getId()));
+        if (ordered) {
             throw new ApiException(HttpStatus.BAD_REQUEST, "This item was already ordered");
         }
 
-        // prevent adding order with order.amount > item.amount
-        if (orderCreateDTO.getAmount() > itemToOrder.getAmount()) {
+        if (orderCreateDTO.getAmount() > item.getAmount()) {
             throw new ApiException(HttpStatus.BAD_REQUEST, "You try to order more than is available in stock");
         }
 
-        Order newOrder = orderMapper.orderCreateDTOToOrder(orderCreateDTO, itemToOrder, user);
-        orderRepository.save(newOrder);
-
-        return newOrder;
+        Order newOrder = orderMapper.orderCreateDTOToOrder(orderCreateDTO, item, user);
+        return orderRepository.save(newOrder);
     }
 
     @Transactional
@@ -91,24 +68,10 @@ public class OrderService {
             throw new ApiException(HttpStatus.BAD_REQUEST, "Order id in the path and in the body should match");
         }
 
-        // validate that postOrderDTO has existing item id
-        if (!itemRepository.existsById(orderUpdateDTO.getItemId())) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "There is no item with the specified id");
-        }
-
-        Optional<Order> orderOptional = orderRepository.findById(orderId);
-
-        if (orderOptional.isEmpty()) {
-            throw new ApiException(HttpStatus.NOT_FOUND, "You have no such order");
-        }
-
-        Order order = orderOptional.get();
-        if (!order.getUser().getId().equals(userService.getCurrentUser().getId())) {
-            throw new ApiException(HttpStatus.NOT_FOUND, "You have no such order");
-        }
+        getItemOrThrow(orderUpdateDTO.getItemId());
+        Order order = getOrderForCurrentUserOrThrow(orderId);
 
         orderMapper.mergeOrderUpdateDTOIntoOrder(orderUpdateDTO, order);
-
         orderRepository.save(order);
     }
 
@@ -118,40 +81,18 @@ public class OrderService {
             throw new ApiException(HttpStatus.BAD_REQUEST, "Order id in the path and in the body should match");
         }
 
-        // validate that postOrderDTO has existing item id
-        if (orderPatchDTO.getItemId() != null && !itemRepository.existsById(orderPatchDTO.getItemId())) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "There is no item with the specified id");
+        if (orderPatchDTO.getItemId() != null) {
+            getItemOrThrow(orderPatchDTO.getItemId());
         }
 
-        Optional<Order> orderOptional = orderRepository.findById(orderId);
-
-        if (orderOptional.isEmpty()) {
-            throw new ApiException(HttpStatus.NOT_FOUND, "You have no such order");
-        }
-
-        Order order = orderOptional.get();
-        if (!order.getUser().getId().equals(userService.getCurrentUser().getId())) {
-            throw new ApiException(HttpStatus.NOT_FOUND, "You have no such order");
-        }
-
+        Order order = getOrderForCurrentUserOrThrow(orderId);
         orderMapper.mergeOrderPatchDTOIntoOrder(orderPatchDTO, order);
-
         orderRepository.save(order);
     }
 
     @Transactional
     public void deleteOrder(int orderId) {
-        Optional<Order> orderOptional = orderRepository.findById(orderId);
-
-        if (orderOptional.isEmpty()) {
-            throw new ApiException(HttpStatus.NOT_FOUND, "You have no such order");
-        }
-
-        Order order = orderOptional.get();
-        if (!order.getUser().getId().equals(userService.getCurrentUser().getId())) {
-            throw new ApiException(HttpStatus.NOT_FOUND, "You have no such order");
-        }
-
+        Order order = getOrderForCurrentUserOrThrow(orderId);
         orderRepository.delete(order);
     }
 
@@ -162,24 +103,21 @@ public class OrderService {
 
     @Transactional
     public void fulfillOrders() {
-        // take all user's orders
         List<Order> orders = orderRepository.findByUser(userService.getCurrentUser());
 
-        // check if order.amount <= item.amount, for each item
         List<String> errors = new ArrayList<>();
         for (Order order : orders) {
-            if (order.getAmount() > order.getItem().getAmount()) {
-                String error = String.format(
+            Item item = order.getItem();
+            int availableAmount = item.getAmount();
+
+            if (order.getAmount() > availableAmount) {
+                errors.add(String.format(
                         "order: %s Ordered amount (%d) exceeds available stock (%d) for item: %s.",
-                        order.getId(),
-                        order.getAmount(),
-                        order.getItem().getAmount(),
-                        order.getItem().getName()
-                );
-                errors.add(error);
+                        order.getId(), order.getAmount(), availableAmount, item.getName()
+                ));
+            } else {
+                item.setAmount(availableAmount - order.getAmount());
             }
-            int itemAmount = order.getItem().getAmount();
-            order.getItem().setAmount(itemAmount - order.getAmount());
         }
 
         if (!errors.isEmpty()) {
@@ -188,5 +126,18 @@ public class OrderService {
 
         orderRepository.deleteAll(orders);
         itemRepository.saveAll(orders.stream().map(Order::getItem).toList());
+    }
+
+    // ======= PRIVATE HELPERS =======
+
+    private Order getOrderForCurrentUserOrThrow(int orderId) {
+        return orderRepository.findById(orderId)
+                .filter(order -> order.getUser().getId().equals(userService.getCurrentUser().getId()))
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "You have no such order"));
+    }
+
+    private Item getItemOrThrow(int itemId) {
+        return itemRepository.findById(itemId)
+                .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, "There is no item with the specified id"));
     }
 }

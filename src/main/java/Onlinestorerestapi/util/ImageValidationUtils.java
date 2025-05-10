@@ -13,7 +13,7 @@ public class ImageValidationUtils {
 
     public static boolean isImage(MultipartFile file) {
         if (file == null) {
-            return true; // Assume null files are handled elsewhere (optional depending on use case)
+            return true; // Assume null files are handled elsewhere (optional depending on a use case)
         }
 
         try {

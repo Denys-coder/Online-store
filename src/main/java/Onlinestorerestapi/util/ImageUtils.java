@@ -77,7 +77,7 @@ public class ImageUtils {
         }
     }
 
-    // --- Helper Methods ---
+    // ======= PRIVATE HELPERS =======
 
     private void validateMatchingSizes(int size1, int size2) {
         if (size1 != size2) {

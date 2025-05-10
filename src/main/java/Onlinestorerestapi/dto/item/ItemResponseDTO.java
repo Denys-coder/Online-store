@@ -9,6 +9,8 @@ import java.util.Set;
 @Getter
 @Setter
 public class ItemResponseDTO {
+    private Integer id;
+
     private String name;
 
     private Double price;

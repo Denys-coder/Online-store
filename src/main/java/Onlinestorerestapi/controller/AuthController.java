@@ -4,14 +4,14 @@ import Onlinestorerestapi.dto.auth.AuthStatusDTO;
 import Onlinestorerestapi.dto.auth.LoginRequestDTO;
 import Onlinestorerestapi.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/auth")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
 

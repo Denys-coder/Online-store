@@ -2,7 +2,7 @@ package Onlinestorerestapi.controller;
 
 import Onlinestorerestapi.dto.image.ImageResponseDTO;
 import Onlinestorerestapi.service.ImageService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/images")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ImageController {
 
     private final ImageService imageService;

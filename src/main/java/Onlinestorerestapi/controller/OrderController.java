@@ -4,7 +4,7 @@ import Onlinestorerestapi.dto.order.*;
 import Onlinestorerestapi.entity.Order;
 import Onlinestorerestapi.service.OrderService;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/users/me/orders")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class OrderController {
 
     private final OrderService orderService;
@@ -70,7 +70,7 @@ public class OrderController {
     }
 
     @PostMapping("/fulfill")
-    public ResponseEntity<?> fulfillOrders() throws MethodArgumentNotValidException, NoSuchMethodException {
+    public ResponseEntity<?> fulfillOrders() {
 
         orderService.fulfillOrders();
         return ResponseEntity.noContent().build();

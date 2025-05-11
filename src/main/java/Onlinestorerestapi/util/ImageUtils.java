@@ -8,11 +8,9 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.*;
 import java.util.*;
-import java.util.logging.Logger;
 
 @Service
 public class ImageUtils {
-    private static final Logger logger = Logger.getLogger(ImageUtils.class.getName());
     private final Path imagesDirectory;
 
     public ImageUtils(Environment environment) {
@@ -115,7 +113,7 @@ public class ImageUtils {
             try {
                 Files.write(entry.getKey(), entry.getValue(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
             } catch (IOException ex) {
-                logger.warning("Failed to restore backup: " + entry.getKey() + " - " + ex.getMessage());
+                System.out.println("Failed to restore backup: " + entry.getKey() + " - " + ex.getMessage());
             }
         }
     }
@@ -125,7 +123,7 @@ public class ImageUtils {
             try {
                 Files.deleteIfExists(path);
             } catch (IOException ex) {
-                logger.warning("Rollback failed for: " + path + " - " + ex.getMessage());
+                System.out.println("Rollback failed for: " + path + " - " + ex.getMessage());
             }
         }
     }

@@ -1,9 +1,6 @@
 package Onlinestorerestapi.service;
 
-import Onlinestorerestapi.dto.user.UserCreateDTO;
-import Onlinestorerestapi.dto.user.UserPatchDTO;
-import Onlinestorerestapi.dto.user.UserResponseDTO;
-import Onlinestorerestapi.dto.user.UserUpdateDTO;
+import Onlinestorerestapi.dto.user.*;
 import Onlinestorerestapi.entity.User;
 import Onlinestorerestapi.mapper.UserMapper;
 import Onlinestorerestapi.repository.UserRepository;
@@ -25,65 +22,58 @@ public class UserService {
     private final AuthService authService;
 
     public UserResponseDTO getUserResponseDTO() {
-        User user = authService.getCurrentUser();
-        return userMapper.userToUserResponseDTO(user);
+        return userMapper.userToUserResponseDTO(authService.getCurrentUser());
     }
 
     public void createUser(UserCreateDTO userCreateDTO) {
         if (userRepository.existsByEmail(userCreateDTO.getEmail())) {
             throw new ApiException(HttpStatus.BAD_REQUEST, "Email address already in use");
         }
-
         if (userRepository.existsByTelephoneNumber(userCreateDTO.getTelephoneNumber())) {
             throw new ApiException(HttpStatus.BAD_REQUEST, "Telephone number already in use");
         }
-
         User user = userMapper.userCreateDTOToUserMapper(userCreateDTO);
         userRepository.save(user);
     }
 
     public void updateUser(UserUpdateDTO userUpdateDTO) {
-        String email = userUpdateDTO.getEmail();
-        if (userRepository.existsByEmail(email)
-                && !email.equals(authService.getCurrentUser().getEmail())) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "Email address should be unique or the same");
-        }
-
-        String telephoneNumber = userUpdateDTO.getTelephoneNumber();
-        if (telephoneNumber != null
-                && userRepository.existsByTelephoneNumber(telephoneNumber)
-                && !telephoneNumber.equals(authService.getCurrentUser().getTelephoneNumber())) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "Telephone number should be unique or the same");
-        }
-
         User currentUser = authService.getCurrentUser();
+        validateEmail(userUpdateDTO.getEmail(), currentUser.getEmail());
+        validateTelephone(userUpdateDTO.getTelephoneNumber(), currentUser.getTelephoneNumber());
+
         userMapper.mergeUserUpdateDTOIntoUser(userUpdateDTO, currentUser);
         userRepository.save(currentUser);
     }
 
     public void patchUser(UserPatchDTO userPatchDTO) {
-        String email = userPatchDTO.getEmail();
-        if (email != null && userRepository.existsByEmail(email) && !email.equals(authService.getCurrentUser().getEmail())) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "Email address should be unique or the same");
-        }
-
-        String telephoneNumber = userPatchDTO.getTelephoneNumber();
-        if (telephoneNumber != null
-                && userRepository.existsByTelephoneNumber(telephoneNumber)
-                && !telephoneNumber.equals(authService.getCurrentUser().getTelephoneNumber())) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "Telephone number should be unique or the same");
-        }
-
         User currentUser = authService.getCurrentUser();
+        validateEmail(userPatchDTO.getEmail(), currentUser.getEmail());
+        validateTelephone(userPatchDTO.getTelephoneNumber(), currentUser.getTelephoneNumber());
+
         userMapper.mergeUserPatchDTOIntoUser(userPatchDTO, currentUser);
         userRepository.save(currentUser);
     }
 
     public void deleteUser(HttpServletRequest request, HttpServletResponse response) {
-        User user = authService.getCurrentUser();
-        userRepository.delete(user);
-
-        new SecurityContextLogoutHandler().logout(request, response, SecurityContextHolder.getContext().getAuthentication());
+        userRepository.delete(authService.getCurrentUser());
+        new SecurityContextLogoutHandler().logout(
+                request,
+                response,
+                SecurityContextHolder.getContext().getAuthentication()
+        );
     }
 
+    // ======= PRIVATE HELPERS =======
+
+    private void validateEmail(String newEmail, String currentEmail) {
+        if (newEmail != null && !newEmail.equals(currentEmail) && userRepository.existsByEmail(newEmail)) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "Email address should be unique or the same");
+        }
+    }
+
+    private void validateTelephone(String newNumber, String currentNumber) {
+        if (newNumber != null && !newNumber.equals(currentNumber) && userRepository.existsByTelephoneNumber(newNumber)) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "Telephone number should be unique or the same");
+        }
+    }
 }

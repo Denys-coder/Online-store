@@ -41,7 +41,7 @@ public class AuthService {
 
     public User getCurrentUser() {
         if (isAuthenticated()) {
-            return ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+            return ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).user();
         }
         throw new IllegalStateException("User is not authenticated");
     }

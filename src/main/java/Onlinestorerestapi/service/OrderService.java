@@ -24,9 +24,9 @@ import java.util.stream.Collectors;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final UserService userService;
     private final OrderMapper orderMapper;
     private final ItemRepository itemRepository;
+    private final AuthService authService;
 
     public OrderResponseDTO getOrderResponseDTO(int orderId) {
         Order order = getOrderForCurrentUserOrThrow(orderId);
@@ -34,7 +34,7 @@ public class OrderService {
     }
 
     public List<OrderResponseDTO> getOrderResponseDTOs() {
-        User user = userService.getCurrentUser();
+        User user = authService.getCurrentUser();
         return orderRepository.findByUser(user).stream()
                 .map(orderMapper::orderToOrderResponseDTO)
                 .collect(Collectors.toList());
@@ -42,7 +42,7 @@ public class OrderService {
 
     @Transactional
     public Order createOrder(OrderCreateDTO orderCreateDTO) {
-        User user = userService.getCurrentUser();
+        User user = authService.getCurrentUser();
         Item item = getItemOrThrow(orderCreateDTO.getItemId());
 
         boolean ordered = orderRepository.findByUser(user).stream()
@@ -96,12 +96,12 @@ public class OrderService {
 
     @Transactional
     public void deleteOrders() {
-        orderRepository.deleteOrdersByUser(userService.getCurrentUser());
+        orderRepository.deleteOrdersByUser(authService.getCurrentUser());
     }
 
     @Transactional
     public void fulfillOrders() {
-        List<Order> orders = orderRepository.findByUser(userService.getCurrentUser());
+        List<Order> orders = orderRepository.findByUser(authService.getCurrentUser());
 
         List<String> errors = new ArrayList<>();
         for (Order order : orders) {
@@ -130,7 +130,7 @@ public class OrderService {
 
     private Order getOrderForCurrentUserOrThrow(int orderId) {
         return orderRepository.findById(orderId)
-                .filter(order -> order.getUser().getId().equals(userService.getCurrentUser().getId()))
+                .filter(order -> order.getUser().getId().equals(authService.getCurrentUser().getId()))
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "You have no such order"));
     }
 

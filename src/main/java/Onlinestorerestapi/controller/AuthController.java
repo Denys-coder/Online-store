@@ -2,7 +2,7 @@ package Onlinestorerestapi.controller;
 
 import Onlinestorerestapi.dto.auth.AuthStatusDTO;
 import Onlinestorerestapi.dto.auth.LoginRequestDTO;
-import Onlinestorerestapi.service.UserService;
+import Onlinestorerestapi.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -13,12 +13,12 @@ import jakarta.validation.Valid;
 @RequestMapping("/auth")
 @AllArgsConstructor
 public class AuthController {
-    private final UserService userService;
+    private final AuthService authService;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO, HttpServletRequest request) {
 
-        userService.login(loginRequestDTO, request);
+        authService.login(loginRequestDTO, request);
 
         return ResponseEntity.ok("User logged in");
     }
@@ -26,7 +26,7 @@ public class AuthController {
     @GetMapping("/status")
     public ResponseEntity<?> getAuthStatus() {
 
-        AuthStatusDTO authStatusDTO = userService.getAuthStatusDTO();
+        AuthStatusDTO authStatusDTO = authService.getAuthStatusDTO();
 
         return ResponseEntity.ok(authStatusDTO);
     }

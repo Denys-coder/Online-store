@@ -28,7 +28,7 @@ public class ItemService {
     private final ItemMapper itemMapper;
     private final ImageUtils imageUtils;
     private final OrderRepository orderRepository;
-    private final UserService userService;
+    private final AuthService authService;
 
     @Transactional(readOnly = true)
     public ItemResponseDTO getItemResponseDTO(int itemId) {
@@ -166,9 +166,9 @@ public class ItemService {
         List<ItemResponseDTO> getItemDTOs = new ArrayList<>();
         List<Boolean> itemsOrderedFlags = new ArrayList<>(Collections.nCopies(items.size(), false));
 
-        if (userService.isAuthenticated()) {
+        if (authService.isAuthenticated()) {
 
-            User user = userService.getCurrentUser();
+            User user = authService.getCurrentUser();
             List<Order> orders = orderRepository.findByUser(user);
 
             // get boolean ordered for each item

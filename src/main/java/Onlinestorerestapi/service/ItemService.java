@@ -5,6 +5,8 @@ import Onlinestorerestapi.dto.item.ItemPatchDTO;
 import Onlinestorerestapi.dto.item.ItemResponseDTO;
 import Onlinestorerestapi.dto.item.ItemUpdateDTO;
 import Onlinestorerestapi.entity.Item;
+import Onlinestorerestapi.entity.Order;
+import Onlinestorerestapi.entity.User;
 import Onlinestorerestapi.mapper.ItemMapper;
 import Onlinestorerestapi.repository.ItemRepository;
 import Onlinestorerestapi.repository.OrderRepository;
@@ -23,20 +25,20 @@ import java.util.*;
 public class ItemService {
 
     private final ItemRepository itemRepository;
-    private final ItemHelperService itemHelperService;
     private final ItemMapper itemMapper;
     private final ImageUtils imageUtils;
     private final OrderRepository orderRepository;
+    private final UserService userService;
 
     @Transactional(readOnly = true)
     public ItemResponseDTO getItemResponseDTO(int itemId) {
         Item item = getItemByIdOrThrow(itemId);
-        return itemHelperService.getItemResponseDTOsByItems(List.of(item)).get(0);
+        return getItemResponseDTOsByItems(List.of(item)).get(0);
     }
 
     @Transactional(readOnly = true)
     public List<ItemResponseDTO> getItemResponseDTOs() {
-        return itemHelperService.getItemResponseDTOsByItems(itemRepository.findAll());
+        return getItemResponseDTOsByItems(itemRepository.findAll());
     }
 
     @Transactional
@@ -104,8 +106,6 @@ public class ItemService {
         imageUtils.deleteImagesFromFolder(namesToDelete);
     }
 
-    // ======= PRIVATE HELPERS =======
-
     private Item getItemByIdOrThrow(int itemId) {
         return itemRepository.findById(itemId)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "No such item"));
@@ -157,5 +157,44 @@ public class ItemService {
         if (logoName != null) all.add(logoName);
         if (imageNames != null) all.addAll(imageNames);
         return all;
+    }
+
+    // ======= PRIVATE HELPERS =======
+
+    private List<ItemResponseDTO> getItemResponseDTOsByItems(List<Item> items) {
+
+        List<ItemResponseDTO> getItemDTOs = new ArrayList<>();
+        List<Boolean> itemsOrderedFlags = new ArrayList<>(Collections.nCopies(items.size(), false));
+
+        if (userService.isAuthenticated()) {
+
+            User user = userService.getCurrentUser();
+            List<Order> orders = orderRepository.findByUser(user);
+
+            // get boolean ordered for each item
+            for (int i = 0; i < items.size(); i++) {
+                boolean ordered = isOrdered(items.get(i), orders);
+                itemsOrderedFlags.add(i, ordered);
+            }
+
+        }
+
+        // fill getItemDTOs using item and respective boolean ordered
+        for (int i = 0; i < items.size(); i++) {
+            Item item = items.get(i);
+            boolean ordered = itemsOrderedFlags.get(i);
+            getItemDTOs.add(itemMapper.itemToItemResponseDTO(item, ordered));
+        }
+
+        return getItemDTOs;
+    }
+
+    private boolean isOrdered(Item item, List<Order> orders) {
+        for (Order order : orders) {
+            if (Objects.equals(order.getItem().getId(), item.getId())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

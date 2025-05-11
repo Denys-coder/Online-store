@@ -18,6 +18,8 @@
 • prepend all apis with api/v1/
 • rename ItemUtils -> ImageUtils
 • use @Names + qualifiedBy vs expression in mappers
+• add and apply Google Java Style Guide
+• If during validation in the service it is possible to check several errors at the same time and correct several at the same time, then do this
 
 
 // IMPLEMENT

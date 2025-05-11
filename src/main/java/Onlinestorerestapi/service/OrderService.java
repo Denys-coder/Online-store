@@ -27,14 +27,13 @@ public class OrderService {
     private final UserService userService;
     private final OrderMapper orderMapper;
     private final ItemRepository itemRepository;
+    private final OrderHelperService orderHelperService;
 
-    @Transactional
     public OrderResponseDTO getOrderResponseDTO(int orderId) {
-        Order order = getOrderForCurrentUserOrThrow(orderId);
+        Order order = orderHelperService.getOrderForCurrentUserOrThrow(orderId);
         return orderMapper.orderToOrderResponseDTO(order);
     }
 
-    @Transactional
     public List<OrderResponseDTO> getOrderResponseDTOs() {
         User user = userService.getCurrentUser();
         return orderRepository.findByUser(user).stream()
@@ -45,7 +44,7 @@ public class OrderService {
     @Transactional
     public Order createOrder(OrderCreateDTO orderCreateDTO) {
         User user = userService.getCurrentUser();
-        Item item = getItemOrThrow(orderCreateDTO.getItemId());
+        Item item = orderHelperService.getItemOrThrow(orderCreateDTO.getItemId());
 
         boolean ordered = orderRepository.findByUser(user).stream()
                 .map(Order::getItem)
@@ -68,8 +67,8 @@ public class OrderService {
             throw new ApiException(HttpStatus.BAD_REQUEST, "Order id in the path and in the body should match");
         }
 
-        getItemOrThrow(orderUpdateDTO.getItemId());
-        Order order = getOrderForCurrentUserOrThrow(orderId);
+        orderHelperService.getItemOrThrow(orderUpdateDTO.getItemId());
+        Order order = orderHelperService.getOrderForCurrentUserOrThrow(orderId);
 
         orderMapper.mergeOrderUpdateDTOIntoOrder(orderUpdateDTO, order);
         orderRepository.save(order);
@@ -82,17 +81,17 @@ public class OrderService {
         }
 
         if (orderPatchDTO.getItemId() != null) {
-            getItemOrThrow(orderPatchDTO.getItemId());
+            orderHelperService.getItemOrThrow(orderPatchDTO.getItemId());
         }
 
-        Order order = getOrderForCurrentUserOrThrow(orderId);
+        Order order = orderHelperService.getOrderForCurrentUserOrThrow(orderId);
         orderMapper.mergeOrderPatchDTOIntoOrder(orderPatchDTO, order);
         orderRepository.save(order);
     }
 
     @Transactional
     public void deleteOrder(int orderId) {
-        Order order = getOrderForCurrentUserOrThrow(orderId);
+        Order order = orderHelperService.getOrderForCurrentUserOrThrow(orderId);
         orderRepository.delete(order);
     }
 
@@ -126,18 +125,5 @@ public class OrderService {
 
         orderRepository.deleteAll(orders);
         itemRepository.saveAll(orders.stream().map(Order::getItem).toList());
-    }
-
-    // ======= PRIVATE HELPERS =======
-
-    private Order getOrderForCurrentUserOrThrow(int orderId) {
-        return orderRepository.findById(orderId)
-                .filter(order -> order.getUser().getId().equals(userService.getCurrentUser().getId()))
-                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "You have no such order"));
-    }
-
-    private Item getItemOrThrow(int itemId) {
-        return itemRepository.findById(itemId)
-                .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, "There is no item with the specified id"));
     }
 }

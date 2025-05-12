@@ -4,22 +4,13 @@
 
 
 // REFACTOR
-• delegate controller parameter validation to service/util class methods
-• move code from controllers into service or util methods
-• extract similar logic from GET, POST, PUT, PATCH, DELETE endpoints
 • swap all deprecated methods (getReference(), etc)
 • refactor usage of Optional class
-• in controller always call a single service method to get dto and then display it
-• always return Optional when method can throw null
-• throw ApiException only from service method invoked directly by controller
+• always return Optional when method can return null
 • use String.format() wherever possible
-• rename all service methods that are used in controllers
-• make proper controller and respective service method names
-• prepend all apis with api/v1/
-• rename ItemUtils -> ImageUtils
 • use @Names + qualifiedBy vs expression in mappers
-• add and apply Google Java Style Guide
-• If during validation in the service it is possible to check several errors at the same time and correct several at the same time, then do this
+• when to put logic into service class and when into util
+• if during validation in the service it is possible to check several errors at the same time and correct several at the same time, then do this
 
 
 // IMPLEMENT

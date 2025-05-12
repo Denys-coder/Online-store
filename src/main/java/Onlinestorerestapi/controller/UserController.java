@@ -13,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -28,7 +28,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<?> postUser(@Valid @RequestBody UserCreateDTO userCreateDTO) {
+    public ResponseEntity<?> createUser(@Valid @RequestBody UserCreateDTO userCreateDTO) {
 
         userService.createUser(userCreateDTO);
 
@@ -36,7 +36,7 @@ public class UserController {
     }
 
     @PutMapping("/me")
-    public ResponseEntity<?> putUser(@Valid @RequestBody UserUpdateDTO userUpdateDTO) {
+    public ResponseEntity<?> updateUser(@Valid @RequestBody UserUpdateDTO userUpdateDTO) {
 
         userService.updateUser(userUpdateDTO);
 

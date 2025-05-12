@@ -7,14 +7,13 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/users/me/orders")
+@RequestMapping("/api/v1/users/me/orders")
 @RequiredArgsConstructor
 public class OrderController {
 
@@ -35,14 +34,14 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<?> postOrder(@Valid @RequestBody OrderCreateDTO orderCreateDTO) throws URISyntaxException {
+    public ResponseEntity<?> createOrder(@Valid @RequestBody OrderCreateDTO orderCreateDTO) throws URISyntaxException {
 
         Order newOrder = orderService.createOrder(orderCreateDTO);
         return ResponseEntity.created(new URI("/users/me/orders/" + newOrder.getId())).build();
     }
 
     @PutMapping("/{orderId}")
-    public ResponseEntity<?> putOrder(@PathVariable int orderId, @Valid @RequestBody OrderUpdateDTO orderUpdateDTO) {
+    public ResponseEntity<?> updateOrder(@PathVariable int orderId, @Valid @RequestBody OrderUpdateDTO orderUpdateDTO) {
 
         orderService.updateOrder(orderId, orderUpdateDTO);
         return ResponseEntity.ok().build();

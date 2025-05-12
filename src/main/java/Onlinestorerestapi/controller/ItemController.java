@@ -20,7 +20,7 @@ import java.net.URISyntaxException;
 import java.util.*;
 
 @RestController
-@RequestMapping("/items")
+@RequestMapping("/api/v1/items")
 @RequiredArgsConstructor
 public class ItemController {
 

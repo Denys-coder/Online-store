@@ -17,7 +17,7 @@ import java.nio.file.Paths;
 @Service
 public class ImageService {
 
-    private final Tika tika;
+    private final Tika tika = new Tika();
     private final Path imagesDirectory;
 
     public ImageService(Environment environment) {
@@ -27,8 +27,6 @@ public class ImageService {
             throw new IllegalArgumentException("Property 'images.directory' is not set.");
         }
         this.imagesDirectory = Paths.get(dir).toAbsolutePath().normalize();
-
-        tika = new Tika(); // reused instance
     }
 
     public Resource getImage(String imageName) {

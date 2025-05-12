@@ -66,7 +66,9 @@ public class OrderService {
             throw new ApiException(HttpStatus.BAD_REQUEST, "Order id in the path and in the body should match");
         }
 
+        // verify that item with specified it exists
         getItemOrThrow(orderUpdateDTO.getItemId());
+
         Order order = getOrderForCurrentUserOrThrow(orderId);
 
         orderMapper.mergeOrderUpdateDTOIntoOrder(orderUpdateDTO, order);
@@ -75,10 +77,12 @@ public class OrderService {
 
     @Transactional
     public void patchOrder(int orderId, OrderPatchDTO orderPatchDTO) {
+
         if (orderId != orderPatchDTO.getId()) {
             throw new ApiException(HttpStatus.BAD_REQUEST, "Order id in the path and in the body should match");
         }
 
+        // verify that item with specified it exists
         if (orderPatchDTO.getItemId() != null) {
             getItemOrThrow(orderPatchDTO.getItemId());
         }

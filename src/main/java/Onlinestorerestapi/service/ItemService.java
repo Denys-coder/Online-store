@@ -43,7 +43,9 @@ public class ItemService {
 
     @Transactional
     public Item createItem(ItemCreateDTO dto, MultipartFile logo, List<MultipartFile> images) {
-        validateItemNameUniqueness(dto.getName());
+        if (itemRepository.existsByName(dto.getName())) {
+            throw new ApiException(HttpStatus.CONFLICT, "Item name should be unique");
+        }
 
         Item item = itemMapper.itemCreateDTOToItem(dto, images.size());
         List<MultipartFile> allImages = combineFiles(logo, images);
@@ -106,15 +108,11 @@ public class ItemService {
         imageUtils.deleteImagesFromFolder(namesToDelete);
     }
 
+    // ======= PRIVATE HELPERS =======
+
     private Item getItemByIdOrThrow(int itemId) {
         return itemRepository.findById(itemId)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "No such item"));
-    }
-
-    private void validateItemNameUniqueness(String name) {
-        if (itemRepository.existsByName(name)) {
-            throw new ApiException(HttpStatus.CONFLICT, "Item name should be unique");
-        }
     }
 
     private void validateItemIdMatch(int pathId, int bodyId) {
@@ -158,8 +156,6 @@ public class ItemService {
         if (imageNames != null) all.addAll(imageNames);
         return all;
     }
-
-    // ======= PRIVATE HELPERS =======
 
     private List<ItemResponseDTO> getItemResponseDTOsByItems(List<Item> items) {
 

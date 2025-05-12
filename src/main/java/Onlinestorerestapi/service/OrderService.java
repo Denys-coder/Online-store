@@ -94,7 +94,6 @@ public class OrderService {
         orderRepository.delete(order);
     }
 
-    @Transactional
     public void deleteOrders() {
         orderRepository.deleteOrdersByUser(authService.getCurrentUser());
     }

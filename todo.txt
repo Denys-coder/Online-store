@@ -1,5 +1,4 @@
 // FIX
-• make operations that depend on each other or put a database into inconsistent state transactional
 • always send user from a database, using user id from security context
 
 
@@ -8,8 +7,7 @@
 • refactor usage of Optional class
 • always return Optional when method can return null
 • use String.format() wherever possible
-• use @Names + qualifiedBy vs expression in mappers
-• when to put logic into service class and when into util
+• use @Named + qualifiedBy vs expression in mappers
 • if during validation in the service it is possible to check several errors at the same time and correct several at the same time, then do this
 
 

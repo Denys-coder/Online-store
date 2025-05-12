@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +26,7 @@ public class UserService {
         return userMapper.userToUserResponseDTO(authService.getCurrentUser());
     }
 
+    @Transactional
     public void createUser(UserCreateDTO userCreateDTO) {
         if (userRepository.existsByEmail(userCreateDTO.getEmail())) {
             throw new ApiException(HttpStatus.BAD_REQUEST, "Email address already in use");
@@ -36,6 +38,7 @@ public class UserService {
         userRepository.save(user);
     }
 
+    @Transactional
     public void updateUser(UserUpdateDTO userUpdateDTO) {
         User currentUser = authService.getCurrentUser();
         validateEmail(userUpdateDTO.getEmail(), currentUser.getEmail());
@@ -45,6 +48,7 @@ public class UserService {
         userRepository.save(currentUser);
     }
 
+    @Transactional
     public void patchUser(UserPatchDTO userPatchDTO) {
         User currentUser = authService.getCurrentUser();
         validateEmail(userPatchDTO.getEmail(), currentUser.getEmail());

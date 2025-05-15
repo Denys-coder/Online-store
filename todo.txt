@@ -1,5 +1,4 @@
 // FIX
-• always send user from a database, using user id from security context
 
 
 // REFACTOR

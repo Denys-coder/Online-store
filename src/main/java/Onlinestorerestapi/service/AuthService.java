@@ -4,6 +4,7 @@ import Onlinestorerestapi.dto.auth.AuthStatusDTO;
 import Onlinestorerestapi.dto.auth.LoginRequestDTO;
 import Onlinestorerestapi.entity.RoleName;
 import Onlinestorerestapi.entity.User;
+import Onlinestorerestapi.repository.UserRepository;
 import Onlinestorerestapi.security.UserPrincipal;
 import Onlinestorerestapi.validation.exception.ApiException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class AuthService {
     private final AuthenticationManager authenticationManager;
+    private final UserRepository userRepository;
 
     public void login(LoginRequestDTO loginRequestDTO, HttpServletRequest request) {
         String username = loginRequestDTO.getEmail();
@@ -41,7 +43,8 @@ public class AuthService {
 
     public User getCurrentUser() {
         if (isAuthenticated()) {
-            return ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).user();
+            int userId = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).user().getId();
+            return userRepository.findById(userId).get();
         }
         throw new IllegalStateException("User is not authenticated");
     }

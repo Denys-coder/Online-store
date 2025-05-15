@@ -2,8 +2,6 @@
 
 
 // REFACTOR
-• use @Named + qualifiedBy vs expression in mappers
-• if during validation in the service it is possible to check several errors at the same time and correct several at the same time, then do this
 
 
 // IMPLEMENT

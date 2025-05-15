@@ -113,7 +113,7 @@ public class ImageUtils {
             try {
                 Files.write(entry.getKey(), entry.getValue(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
             } catch (IOException ex) {
-                System.out.println("Failed to restore backup: " + entry.getKey() + " - " + ex.getMessage());
+                System.out.printf("Failed to restore backup: %s - %s%n", entry.getKey(), ex.getMessage());
             }
         }
     }
@@ -123,7 +123,7 @@ public class ImageUtils {
             try {
                 Files.deleteIfExists(path);
             } catch (IOException ex) {
-                System.out.println("Rollback failed for: " + path + " - " + ex.getMessage());
+                System.out.printf("Rollback failed for: %s - %s%n", path, ex.getMessage());
             }
         }
     }

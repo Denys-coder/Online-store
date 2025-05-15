@@ -28,6 +28,6 @@ public abstract class UserMapper {
     public abstract void mergeUserUpdateDTOIntoUser(UserUpdateDTO userUpdateDTO, @MappingTarget User user);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(target = "password", expression = "java(passwordEncoder.encode(userPatchDTO.getPassword()))")
+    @Mapping(target = "password", expression = "java(userPatchDTO.getPassword() != null ? passwordEncoder.encode(userPatchDTO.getPassword()) : user.getPassword())")
     public abstract void mergeUserPatchDTOIntoUser(UserPatchDTO userPatchDTO, @MappingTarget User user);
 }

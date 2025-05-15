@@ -16,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -58,5 +59,20 @@ public class AuthService {
         boolean authenticated = isAuthenticated();
         RoleName roleName = authenticated ? getCurrentUser().getRoleName() : null;
         return new AuthStatusDTO(authenticated, roleName);
+    }
+
+    public void refreshAuthenticatedUser(User updatedUser) {
+
+        UserDetails updatedUserDetails = new UserPrincipal(updatedUser);
+
+        Authentication currentAuth = SecurityContextHolder.getContext().getAuthentication();
+
+        UsernamePasswordAuthenticationToken newAuth = new UsernamePasswordAuthenticationToken(
+                updatedUserDetails,
+                currentAuth.getCredentials(),
+                updatedUserDetails.getAuthorities()
+        );
+
+        SecurityContextHolder.getContext().setAuthentication(newAuth);
     }
 }

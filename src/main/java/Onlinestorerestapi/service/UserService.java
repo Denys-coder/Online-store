@@ -46,6 +46,8 @@ public class UserService {
 
         userMapper.mergeUserUpdateDTOIntoUser(userUpdateDTO, currentUser);
         userRepository.save(currentUser);
+
+        authService.refreshAuthenticatedUser(currentUser);
     }
 
     @Transactional
@@ -56,6 +58,8 @@ public class UserService {
 
         userMapper.mergeUserPatchDTOIntoUser(userPatchDTO, currentUser);
         userRepository.save(currentUser);
+
+        authService.refreshAuthenticatedUser(currentUser);
     }
 
     public void deleteUser(HttpServletRequest request, HttpServletResponse response) {

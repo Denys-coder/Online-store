@@ -10,7 +10,7 @@ import Onlinestorerestapi.entity.User;
 import Onlinestorerestapi.mapper.OrderMapper;
 import Onlinestorerestapi.repository.ItemRepository;
 import Onlinestorerestapi.repository.OrderRepository;
-import Onlinestorerestapi.validation.exception.ApiException;
+import Onlinestorerestapi.exception.ApiException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

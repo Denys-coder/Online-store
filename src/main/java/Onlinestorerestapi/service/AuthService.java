@@ -6,7 +6,7 @@ import Onlinestorerestapi.entity.RoleName;
 import Onlinestorerestapi.entity.User;
 import Onlinestorerestapi.repository.UserRepository;
 import Onlinestorerestapi.security.UserPrincipal;
-import Onlinestorerestapi.validation.exception.ApiException;
+import Onlinestorerestapi.exception.ApiException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;

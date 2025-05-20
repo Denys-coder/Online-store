@@ -1,7 +1,7 @@
 package Onlinestorerestapi.service;
 
 import Onlinestorerestapi.dto.image.ImageResponseDTO;
-import Onlinestorerestapi.validation.exception.ApiException;
+import Onlinestorerestapi.exception.ApiException;
 import org.apache.tika.Tika;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;

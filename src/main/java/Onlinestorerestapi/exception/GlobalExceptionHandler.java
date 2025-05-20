@@ -1,6 +1,5 @@
 package Onlinestorerestapi.exception;
 
-import Onlinestorerestapi.validation.exception.ApiException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;

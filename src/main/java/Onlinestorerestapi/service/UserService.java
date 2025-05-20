@@ -4,7 +4,7 @@ import Onlinestorerestapi.dto.user.*;
 import Onlinestorerestapi.entity.User;
 import Onlinestorerestapi.mapper.UserMapper;
 import Onlinestorerestapi.repository.UserRepository;
-import Onlinestorerestapi.validation.exception.ApiException;
+import Onlinestorerestapi.exception.ApiException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

@@ -1,5 +1,6 @@
 package Onlinestorerestapi.service;
 
+import Onlinestorerestapi.dto.item.ItemCreateDTO;
 import Onlinestorerestapi.dto.item.ItemResponseDTO;
 import Onlinestorerestapi.entity.Item;
 import Onlinestorerestapi.entity.Order;
@@ -8,16 +9,20 @@ import Onlinestorerestapi.mapper.ItemMapper;
 import Onlinestorerestapi.repository.ItemRepository;
 import Onlinestorerestapi.repository.OrderRepository;
 import Onlinestorerestapi.exception.ApiException;
+import Onlinestorerestapi.util.ImageUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.multipart.MultipartFile;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,6 +40,9 @@ public class ItemServiceTest {
 
     @Mock
     private AuthService authService;
+
+    @Mock
+    private ImageUtils imageUtils;
 
     @InjectMocks
     private ItemService itemService;
@@ -115,5 +123,51 @@ public class ItemServiceTest {
 
         // then
         assertThrows(ApiException.class, () -> itemService.getItemResponseDTO(999));
+    }
+
+    @Test
+    void createItem_whenItemNameUnique_shouldCreateItem() {
+
+        // given
+        ItemCreateDTO itemCreateDTO = new ItemCreateDTO();
+        itemCreateDTO.setName("Unique name");
+        MultipartFile logo = Mockito.mock(MultipartFile.class);
+        List<MultipartFile> images = List.of(Mockito.mock(MultipartFile.class), Mockito.mock(MultipartFile.class));
+        Item item = new Item();
+        item.setLogoName("logo name 1");
+        item.setImageNames(List.of("image name 1", "image name 2"));
+        List<MultipartFile> allImages = new ArrayList<>();
+        allImages.add(logo);
+        allImages.addAll(images);
+        List<String> allImageNames = new ArrayList<>();
+        allImageNames.add(item.getLogoName());
+        allImageNames.addAll(item.getImageNames());
+
+        // when
+        when(itemRepository.existsByName(itemCreateDTO.getName())).thenReturn(false);
+        when(itemMapper.itemCreateDTOToItem(itemCreateDTO, images.size())).thenReturn(item);
+        when(itemRepository.save(item)).thenReturn(item);
+        doNothing().when(imageUtils).saveImagesToFolder(allImages, allImageNames);
+
+        // then
+        assertEquals(item, itemService.createItem(itemCreateDTO, logo, images));
+        verify(itemRepository).save(item);
+        verify(imageUtils).saveImagesToFolder(allImages, allImageNames);
+    }
+
+    @Test
+    void createItem_whenItemNameExists_shouldThrowException() {
+
+        // given
+        ItemCreateDTO itemCreateDTO = new ItemCreateDTO();
+        itemCreateDTO.setName("Existing name");
+        MultipartFile logo = Mockito.mock(MultipartFile.class);
+        List<MultipartFile> images = List.of();
+
+        // when
+        when(itemRepository.existsByName(itemCreateDTO.getName())).thenReturn(true);
+
+        // then
+        assertThrows(ApiException.class, () -> itemService.createItem(itemCreateDTO, logo, images));
     }
 }

@@ -10,24 +10,24 @@ import java.nio.file.*;
 import java.util.*;
 
 @Service
-public class ImageUtils {
-    private final Path imagesDirectory;
+public class PictureUtils {
+    private final Path picturesDirectory;
 
-    public ImageUtils(Environment environment) {
-        String dir = environment.getProperty("images.directory");
+    public PictureUtils(Environment environment) {
+        String dir = environment.getProperty("pictures.directory");
         if (dir == null || dir.isBlank()) {
-            throw new IllegalArgumentException("Property 'images.directory' is not set.");
+            throw new IllegalArgumentException("Property 'pictures.directory' is not set.");
         }
-        this.imagesDirectory = Paths.get(dir).toAbsolutePath().normalize();
+        this.picturesDirectory = Paths.get(dir).toAbsolutePath().normalize();
 
         try {
-            Files.createDirectories(this.imagesDirectory);
+            Files.createDirectories(this.picturesDirectory);
         } catch (IOException e) {
-            throw new UncheckedIOException("Failed to create images directory", e);
+            throw new UncheckedIOException("Failed to create pictures directory", e);
         }
     }
 
-    public void saveImagesToFolder(List<MultipartFile> images, List<String> imageNames) {
+    public void savePicturesToFolder(List<MultipartFile> images, List<String> imageNames) {
         validateMatchingSizes(images.size(), imageNames.size());
         List<Path> savedFiles = new ArrayList<>();
 
@@ -42,7 +42,7 @@ public class ImageUtils {
         }
     }
 
-    public void swapImages(List<String> oldImageNames, List<MultipartFile> newImages, List<String> newImageNames) {
+    public void swapPictures(List<String> oldImageNames, List<MultipartFile> newImages, List<String> newImageNames) {
         validateMatchingSizes(newImages.size(), newImageNames.size());
         List<Path> newSavedFiles = new ArrayList<>();
         Map<Path, byte[]> oldBackups = backupFiles(oldImageNames);
@@ -62,7 +62,7 @@ public class ImageUtils {
         }
     }
 
-    public void deleteImagesFromFolder(List<String> imageNames) {
+    public void deletePicturesFromFolder(List<String> imageNames) {
         Map<Path, byte[]> backups = backupFiles(imageNames);
 
         try {
@@ -84,7 +84,7 @@ public class ImageUtils {
     }
 
     private Path resolveImagePath(String imageName) {
-        return imagesDirectory.resolve(imageName).normalize();
+        return picturesDirectory.resolve(imageName).normalize();
     }
 
     private Path saveImage(MultipartFile image, String name) throws IOException {

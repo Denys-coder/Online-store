@@ -10,7 +10,7 @@ import Onlinestorerestapi.mapper.ItemMapper;
 import Onlinestorerestapi.repository.ItemRepository;
 import Onlinestorerestapi.repository.OrderRepository;
 import Onlinestorerestapi.exception.ApiException;
-import Onlinestorerestapi.util.ImageUtils;
+import Onlinestorerestapi.util.PictureUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -43,7 +43,7 @@ public class ItemServiceTest {
     private AuthService authService;
 
     @Mock
-    private ImageUtils imageUtils;
+    private PictureUtils pictureUtils;
 
     @InjectMocks
     private ItemService itemService;
@@ -148,12 +148,12 @@ public class ItemServiceTest {
         when(itemRepository.existsByName(itemCreateDTO.getName())).thenReturn(false);
         when(itemMapper.itemCreateDTOToItem(itemCreateDTO, images.size())).thenReturn(item);
         when(itemRepository.save(item)).thenReturn(item);
-        doNothing().when(imageUtils).saveImagesToFolder(allImages, allImageNames);
+        doNothing().when(pictureUtils).savePicturesToFolder(allImages, allImageNames);
 
         // then
         assertEquals(item, itemService.createItem(itemCreateDTO, logo, images));
         verify(itemRepository).save(item);
-        verify(imageUtils).saveImagesToFolder(allImages, allImageNames);
+        verify(pictureUtils).savePicturesToFolder(allImages, allImageNames);
     }
 
     @Test
@@ -205,7 +205,7 @@ public class ItemServiceTest {
             return null;
         }).when(itemMapper).itemUpdateDTOToItem(itemUpdateDTO, itemInDb, images.size());
         when(itemRepository.save(itemInDb)).thenReturn(itemInDb);
-        doNothing().when(imageUtils).swapImages(oldImages, newImages, newNames);
+        doNothing().when(pictureUtils).swapPictures(oldImages, newImages, newNames);
 
         // then
         itemService.updateItem(itemId, itemUpdateDTO, logo, images);
@@ -265,4 +265,5 @@ public class ItemServiceTest {
         // then
         assertThrows(ApiException.class, () -> itemService.updateItem(itemId, itemUpdateDTO, logo, images));
     }
+
 }

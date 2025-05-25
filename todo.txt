@@ -2,6 +2,11 @@
 
 
 // REFACTOR
+• logo
+-----------------
+• images
+-----------------
+• pictures
 
 
 // IMPLEMENT

@@ -10,7 +10,7 @@ import Onlinestorerestapi.entity.User;
 import Onlinestorerestapi.mapper.ItemMapper;
 import Onlinestorerestapi.repository.ItemRepository;
 import Onlinestorerestapi.repository.OrderRepository;
-import Onlinestorerestapi.util.ImageUtils;
+import Onlinestorerestapi.util.PictureUtils;
 import Onlinestorerestapi.exception.ApiException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,7 +26,7 @@ public class ItemService {
 
     private final ItemRepository itemRepository;
     private final ItemMapper itemMapper;
-    private final ImageUtils imageUtils;
+    private final PictureUtils pictureUtils;
     private final OrderRepository orderRepository;
     private final AuthService authService;
 
@@ -48,11 +48,11 @@ public class ItemService {
         }
 
         Item item = itemMapper.itemCreateDTOToItem(dto, images.size());
-        List<MultipartFile> allImages = combineFiles(logo, images);
-        List<String> allImageNames = combineNames(item.getLogoName(), item.getImageNames());
+        List<MultipartFile> allPictures = combineFiles(logo, images);
+        List<String> allPictureNames = combineNames(item.getLogoName(), item.getImageNames());
 
         itemRepository.save(item);
-        imageUtils.saveImagesToFolder(allImages, allImageNames);
+        pictureUtils.savePicturesToFolder(allPictures, allPictureNames);
 
         return item;
     }
@@ -64,15 +64,15 @@ public class ItemService {
 
         Item item = getItemByIdOrThrow(itemId);
 
-        List<String> oldNames = getExistingImageNames(item, true, true);
+        List<String> oldPictureNames = getExistingPictureNames(item, true, true);
 
         itemMapper.itemUpdateDTOToItem(dto, item, images.size());
         itemRepository.save(item);
 
-        List<MultipartFile> newFiles = combineFiles(logo, images);
-        List<String> newNames = combineNames(item.getLogoName(), item.getImageNames());
+        List<MultipartFile> newPictures = combineFiles(logo, images);
+        List<String> newPictureNames = combineNames(item.getLogoName(), item.getImageNames());
 
-        imageUtils.swapImages(oldNames, newFiles, newNames);
+        pictureUtils.swapPictures(oldPictureNames, newPictures, newPictureNames);
     }
 
     @Transactional
@@ -84,28 +84,28 @@ public class ItemService {
         }
 
         Item item = getItemByIdOrThrow(itemId);
-        List<String> oldNames = getExistingImageNames(item, logo != null, images != null);
+        List<String> oldPictureNames = getExistingPictureNames(item, logo != null, images != null);
 
         itemMapper.itemPatchDTOToItem(dto, item, logo, images);
         itemRepository.save(item);
 
-        List<MultipartFile> newFiles = combineFiles(logo, images);
-        List<String> newNames = combineNames(
+        List<MultipartFile> newPictures = combineFiles(logo, images);
+        List<String> newPictureNames = combineNames(
                 logo != null ? item.getLogoName() : null,
                 images != null ? item.getImageNames() : Collections.emptyList()
         );
 
-        imageUtils.swapImages(oldNames, newFiles, newNames);
+        pictureUtils.swapPictures(oldPictureNames, newPictures, newPictureNames);
     }
 
     @Transactional
     public void deleteItem(int itemId) {
         Item item = getItemByIdOrThrow(itemId);
-        List<String> namesToDelete = combineNames(item.getLogoName(), item.getImageNames());
+        List<String> pictureNamesToDelete = combineNames(item.getLogoName(), item.getImageNames());
 
         orderRepository.deleteOrdersByItem(item);
         itemRepository.deleteById(itemId);
-        imageUtils.deleteImagesFromFolder(namesToDelete);
+        pictureUtils.deletePicturesFromFolder(pictureNamesToDelete);
     }
 
     // ======= PRIVATE HELPERS =======
@@ -132,29 +132,29 @@ public class ItemService {
         }
     }
 
-    private List<String> getExistingImageNames(Item item, boolean includeLogo, boolean includeImages) {
-        List<String> names = new ArrayList<>();
+    private List<String> getExistingPictureNames(Item item, boolean includeLogo, boolean includeImages) {
+        List<String> pictureNames = new ArrayList<>();
         if (includeLogo) {
-            names.add(item.getLogoName());
+            pictureNames.add(item.getLogoName());
         }
         if (includeImages) {
-            names.addAll(item.getImageNames());
+            pictureNames.addAll(item.getImageNames());
         }
-        return names;
+        return pictureNames;
     }
 
     private List<MultipartFile> combineFiles(MultipartFile logo, List<MultipartFile> images) {
-        List<MultipartFile> all = new ArrayList<>();
-        if (logo != null) all.add(logo);
-        if (images != null) all.addAll(images);
-        return all;
+        List<MultipartFile> pictures = new ArrayList<>();
+        if (logo != null) pictures.add(logo);
+        if (images != null) pictures.addAll(images);
+        return pictures;
     }
 
     private List<String> combineNames(String logoName, List<String> imageNames) {
-        List<String> all = new ArrayList<>();
-        if (logoName != null) all.add(logoName);
-        if (imageNames != null) all.addAll(imageNames);
-        return all;
+        List<String> pictureNames = new ArrayList<>();
+        if (logoName != null) pictureNames.add(logoName);
+        if (imageNames != null) pictureNames.addAll(imageNames);
+        return pictureNames;
     }
 
     private List<ItemResponseDTO> getItemResponseDTOsByItems(List<Item> items) {

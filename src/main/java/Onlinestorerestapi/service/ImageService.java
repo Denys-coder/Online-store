@@ -22,9 +22,9 @@ public class ImageService {
 
     public ImageService(Environment environment) {
 
-        String dir = environment.getProperty("images.directory");
+        String dir = environment.getProperty("pictures.directory");
         if (dir == null || dir.isBlank()) {
-            throw new IllegalArgumentException("Property 'images.directory' is not set.");
+            throw new IllegalArgumentException("Property 'pictures.directory' is not set.");
         }
         this.imagesDirectory = Paths.get(dir).toAbsolutePath().normalize();
     }

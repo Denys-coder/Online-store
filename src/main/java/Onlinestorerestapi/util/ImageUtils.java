@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class ImageHelper {
+public class ImageUtils {
 
     public List<String> combineExistingLogoAndImageNames(Item item, boolean includeLogo, boolean includeImages) {
         List<String> logoAndPictureNames = new ArrayList<>();

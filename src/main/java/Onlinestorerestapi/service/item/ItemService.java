@@ -8,8 +8,8 @@ import Onlinestorerestapi.entity.Item;
 import Onlinestorerestapi.mapper.ItemMapper;
 import Onlinestorerestapi.repository.ItemRepository;
 import Onlinestorerestapi.repository.OrderRepository;
-import Onlinestorerestapi.service.picture.ImageStorageService;
-import Onlinestorerestapi.util.ImageHelper;
+import Onlinestorerestapi.service.image.ImageStorageService;
+import Onlinestorerestapi.util.ImageUtils;
 import Onlinestorerestapi.exception.ApiException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -28,7 +28,7 @@ public class ItemService {
     private final ImageStorageService imageStorageService;
     private final OrderRepository orderRepository;
     private final ItemResponseBuilderService itemResponseBuilderService;
-    private final ImageHelper imageHelper;
+    private final ImageUtils imageUtils;
 
     @Transactional(readOnly = true)
     public ItemResponseDTO getItemResponseDTO(int itemId) {
@@ -48,8 +48,8 @@ public class ItemService {
         }
 
         Item item = itemMapper.itemCreateDTOToItem(dto, pictures.size());
-        List<MultipartFile> logoAndPictures = imageHelper.combineLogoAndImages(logo, pictures);
-        List<String> logoAndPicturesNames = imageHelper.combineLogoAndImageNames(item.getLogoName(), item.getPictureNames());
+        List<MultipartFile> logoAndPictures = imageUtils.combineLogoAndImages(logo, pictures);
+        List<String> logoAndPicturesNames = imageUtils.combineLogoAndImageNames(item.getLogoName(), item.getPictureNames());
 
         itemRepository.save(item);
         imageStorageService.saveImagesToFolder(logoAndPictures, logoAndPicturesNames);
@@ -64,13 +64,13 @@ public class ItemService {
 
         Item item = getItemByIdOrThrow(itemId);
 
-        List<String> oldLogoAndPictureNames = imageHelper.combineExistingLogoAndImageNames(item, true, true);
+        List<String> oldLogoAndPictureNames = imageUtils.combineExistingLogoAndImageNames(item, true, true);
 
         itemMapper.itemUpdateDTOToItem(dto, item, pictures.size());
         itemRepository.save(item);
 
-        List<MultipartFile> newLogoAndPictures = imageHelper.combineLogoAndImages(logo, pictures);
-        List<String> newLogoAndPictureNames = imageHelper.combineLogoAndImageNames(item.getLogoName(), item.getPictureNames());
+        List<MultipartFile> newLogoAndPictures = imageUtils.combineLogoAndImages(logo, pictures);
+        List<String> newLogoAndPictureNames = imageUtils.combineLogoAndImageNames(item.getLogoName(), item.getPictureNames());
 
         imageStorageService.swapImages(oldLogoAndPictureNames, newLogoAndPictures, newLogoAndPictureNames);
     }
@@ -84,13 +84,13 @@ public class ItemService {
         }
 
         Item item = getItemByIdOrThrow(itemId);
-        List<String> oldLogoAndImageNames = imageHelper.combineExistingLogoAndImageNames(item, logo != null, pictures != null);
+        List<String> oldLogoAndImageNames = imageUtils.combineExistingLogoAndImageNames(item, logo != null, pictures != null);
 
         itemMapper.itemPatchDTOToItem(dto, item, logo, pictures);
         itemRepository.save(item);
 
-        List<MultipartFile> newLogoAndImages = imageHelper.combineLogoAndImages(logo, pictures);
-        List<String> newLogoAndImageNames = imageHelper.combineLogoAndImageNames(
+        List<MultipartFile> newLogoAndImages = imageUtils.combineLogoAndImages(logo, pictures);
+        List<String> newLogoAndImageNames = imageUtils.combineLogoAndImageNames(
                 logo != null ? item.getLogoName() : null,
                 pictures != null ? item.getPictureNames() : Collections.emptyList()
         );
@@ -101,7 +101,7 @@ public class ItemService {
     @Transactional
     public void deleteItem(int itemId) {
         Item item = getItemByIdOrThrow(itemId);
-        List<String> logoAndImageNamesToDelete = imageHelper.combineLogoAndImageNames(item.getLogoName(), item.getPictureNames());
+        List<String> logoAndImageNamesToDelete = imageUtils.combineLogoAndImageNames(item.getLogoName(), item.getPictureNames());
 
         orderRepository.deleteOrdersByItem(item);
         itemRepository.deleteById(itemId);

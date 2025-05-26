@@ -1,7 +1,7 @@
 package Onlinestorerestapi.controller;
 
 import Onlinestorerestapi.dto.image.ImageResponseDTO;
-import Onlinestorerestapi.service.picture.ImageService;
+import Onlinestorerestapi.service.image.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -30,5 +30,4 @@ public class ImageController {
                 .body(imageResponseDTO.getImage());
 
     }
-
 }

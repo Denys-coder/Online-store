@@ -1,4 +1,4 @@
-package Onlinestorerestapi.service.picture;
+package Onlinestorerestapi.service.image;
 
 import Onlinestorerestapi.dto.image.ImageResponseDTO;
 import Onlinestorerestapi.exception.ApiException;

@@ -1,4 +1,4 @@
-package Onlinestorerestapi.service;
+package Onlinestorerestapi.service.picture;
 
 import Onlinestorerestapi.dto.image.ImageResponseDTO;
 import Onlinestorerestapi.exception.ApiException;
@@ -18,23 +18,23 @@ import java.nio.file.Paths;
 public class ImageService {
 
     private final Tika tika = new Tika();
-    private final Path imagesDirectory;
+    private final Path pictureDirectory;
 
     public ImageService(Environment environment) {
 
-        String dir = environment.getProperty("pictures.directory");
-        if (dir == null || dir.isBlank()) {
-            throw new IllegalArgumentException("Property 'pictures.directory' is not set.");
+        String logoAndImagesDirectory = environment.getProperty("images.directory");
+        if (logoAndImagesDirectory == null || logoAndImagesDirectory.isBlank()) {
+            throw new IllegalArgumentException("Property 'images.directory' is not set.");
         }
-        this.imagesDirectory = Paths.get(dir).toAbsolutePath().normalize();
+        this.pictureDirectory = Paths.get(logoAndImagesDirectory).toAbsolutePath().normalize();
     }
 
-    public Resource getImage(String imageName) {
+    private Resource getImage(String imageName) {
         try {
-            Path imagePath = imagesDirectory.resolve(imageName).normalize();
+            Path imagePath = pictureDirectory.resolve(imageName).normalize();
 
             // Prevent path traversal
-            if (!imagePath.startsWith(imagesDirectory)) {
+            if (!imagePath.startsWith(pictureDirectory)) {
                 throw new ApiException(HttpStatus.BAD_REQUEST, "Don't allow path traversal: " + imagePath);
             }
 
@@ -51,7 +51,7 @@ public class ImageService {
         }
     }
 
-    public String getImageType(Resource image) {
+    private String getImageType(Resource image) {
         String imageType;
         try {
             imageType = tika.detect(image.getInputStream());

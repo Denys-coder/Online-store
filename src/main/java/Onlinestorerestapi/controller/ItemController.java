@@ -5,7 +5,7 @@ import Onlinestorerestapi.dto.item.ItemResponseDTO;
 import Onlinestorerestapi.dto.item.ItemPatchDTO;
 import Onlinestorerestapi.dto.item.ItemUpdateDTO;
 import Onlinestorerestapi.entity.Item;
-import Onlinestorerestapi.service.ItemService;
+import Onlinestorerestapi.service.item.ItemService;
 import Onlinestorerestapi.validation.annotation.item.Image;
 import Onlinestorerestapi.validation.annotation.item.ImageArray;
 import Onlinestorerestapi.validation.annotation.item.MaxFileCount;
@@ -43,9 +43,9 @@ public class ItemController {
     @PostMapping
     public ResponseEntity<?> createItem(@RequestPart("item") @Valid ItemCreateDTO itemCreateDTO,
                                       @RequestPart("logo") @Image MultipartFile logo,
-                                      @RequestPart("images") @ImageArray @MaxFileCount(maxFileAmount = 10) List<MultipartFile> images) throws URISyntaxException {
+                                      @RequestPart("images") @ImageArray @MaxFileCount(maxFileAmount = 10) List<MultipartFile> pictures) throws URISyntaxException {
 
-        Item item = itemService.createItem(itemCreateDTO, logo, images);
+        Item item = itemService.createItem(itemCreateDTO, logo, pictures);
 
         return ResponseEntity.created(new URI("/items/" + item.getId())).build();
     }
@@ -54,9 +54,9 @@ public class ItemController {
     public ResponseEntity<?> updateItem(@PathVariable int itemId,
                                         @RequestPart("item") @Valid ItemUpdateDTO itemUpdateDTO,
                                         @RequestPart("logo") @Image MultipartFile logo,
-                                        @RequestPart("images") @ImageArray @MaxFileCount(maxFileAmount = 10) List<MultipartFile> images) {
+                                        @RequestPart("pictures") @ImageArray @MaxFileCount(maxFileAmount = 10) List<MultipartFile> pictures) {
 
-        itemService.updateItem(itemId, itemUpdateDTO, logo, images);
+        itemService.updateItem(itemId, itemUpdateDTO, logo, pictures);
 
         return ResponseEntity.ok().build();
     }
@@ -65,9 +65,9 @@ public class ItemController {
     public ResponseEntity<?> patchItem(@PathVariable int itemId,
                                        @RequestPart(name = "item", required = false) @Valid ItemPatchDTO itemPatchDTO,
                                        @RequestPart(name = "logo", required = false) @Image MultipartFile logo,
-                                       @RequestPart(name = "images", required = false) @ImageArray @MaxFileCount(maxFileAmount = 10) List<MultipartFile> images) {
+                                       @RequestPart(name = "pictures", required = false) @ImageArray @MaxFileCount(maxFileAmount = 10) List<MultipartFile> pictures) {
 
-        itemService.patchItem(itemId, itemPatchDTO, logo, images);
+        itemService.patchItem(itemId, itemPatchDTO, logo, pictures);
 
         return ResponseEntity.ok().build();
     }

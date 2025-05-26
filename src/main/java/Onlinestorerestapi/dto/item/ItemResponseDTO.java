@@ -21,7 +21,7 @@ public class ItemResponseDTO {
 
     private String logoName;
 
-    private Set<String> imageNames;
+    private Set<String> pictureNames;
 
     private Map<String, String> specs;
 

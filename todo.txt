@@ -2,11 +2,10 @@
 
 
 // REFACTOR
-• logo
------------------
-• images
------------------
-• pictures
+• throw ApiException only from ItemService
+• refactor PictureHelper, PictureService
+• put PictureHelper, PictureService in proper packages
+• extract private methods from all service classes to improve testability
 
 
 // IMPLEMENT

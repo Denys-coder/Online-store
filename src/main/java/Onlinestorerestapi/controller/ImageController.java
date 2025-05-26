@@ -1,7 +1,7 @@
 package Onlinestorerestapi.controller;
 
 import Onlinestorerestapi.dto.image.ImageResponseDTO;
-import Onlinestorerestapi.service.ImageService;
+import Onlinestorerestapi.service.picture.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;

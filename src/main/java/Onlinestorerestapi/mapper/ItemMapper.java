@@ -17,23 +17,23 @@ public abstract class ItemMapper {
     public abstract ItemResponseDTO itemToItemResponseDTO(Item item, boolean ordered);
 
     @Mapping(target = "logoName", expression = "java(generateUUID())")
-    @Mapping(target = "imageNames", expression = "java(populateImageNames(imageAmount))")
-    public abstract Item itemCreateDTOToItem(ItemCreateDTO itemCreateDTO, int imageAmount);
+    @Mapping(target = "pictureNames", expression = "java(populatePictureNames(pictureAmount))")
+    public abstract Item itemCreateDTOToItem(ItemCreateDTO itemCreateDTO, int pictureAmount);
 
     @Mapping(target = "logoName", expression = "java(generateUUID())")
-    @Mapping(target = "imageNames", expression = "java(populateImageNames(imageAmount))")
-    public abstract void itemUpdateDTOToItem(ItemUpdateDTO itemUpdateDTO, @MappingTarget Item item, int imageAmount);
+    @Mapping(target = "pictureNames", expression = "java(populatePictureNames(pictureAmount))")
+    public abstract void itemUpdateDTOToItem(ItemUpdateDTO itemUpdateDTO, @MappingTarget Item item, int pictureAmount);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     public abstract void patchItemBase(ItemPatchDTO dto, @MappingTarget Item item);
 
-    public void itemPatchDTOToItem(ItemPatchDTO itemPatchDTO, @MappingTarget Item item, MultipartFile logo, List<MultipartFile> images) {
+    public void itemPatchDTOToItem(ItemPatchDTO itemPatchDTO, @MappingTarget Item item, MultipartFile logo, List<MultipartFile> pictures) {
         patchItemBase(itemPatchDTO, item);
         if (logo != null) {
             item.setLogoName(generateUUID());
         }
-        if (images != null) {
-            item.setImageNames(populateImageNames(images.size()));
+        if (pictures != null) {
+            item.setPictureNames(populatePictureNames(pictures.size()));
         }
     }
 
@@ -41,12 +41,12 @@ public abstract class ItemMapper {
         return UUID.randomUUID().toString();
     }
 
-    public List<String> populateImageNames(int imageAmount) {
-        List<String> imageNames = new ArrayList<>();
-        while (imageNames.size() < imageAmount) {
-            imageNames.add(UUID.randomUUID().toString());
+    public List<String> populatePictureNames(int pictureAmount) {
+        List<String> pictureNames = new ArrayList<>();
+        while (pictureNames.size() < pictureAmount) {
+            pictureNames.add(UUID.randomUUID().toString());
         }
-        return imageNames;
+        return pictureNames;
     }
 
 }

@@ -42,12 +42,12 @@ public class ItemService {
     }
 
     @Transactional
-    public Item createItem(ItemCreateDTO dto, MultipartFile logo, List<MultipartFile> pictures) {
-        if (itemRepository.existsByName(dto.getName())) {
+    public Item createItem(ItemCreateDTO itemCreateDTO, MultipartFile logo, List<MultipartFile> pictures) {
+        if (itemRepository.existsByName(itemCreateDTO.getName())) {
             throw new ApiException(HttpStatus.CONFLICT, "Item name should be unique");
         }
 
-        Item item = itemMapper.itemCreateDTOToItem(dto, pictures.size());
+        Item item = itemMapper.itemCreateDTOToItem(itemCreateDTO, pictures.size());
         List<MultipartFile> logoAndPictures = imageUtils.combineLogoAndImages(logo, pictures);
         List<String> logoAndPicturesNames = imageUtils.combineLogoAndImageNames(item.getLogoName(), item.getPictureNames());
 
@@ -58,15 +58,15 @@ public class ItemService {
     }
 
     @Transactional
-    public void updateItem(int itemId, ItemUpdateDTO dto, MultipartFile logo, List<MultipartFile> pictures) {
-        validateItemIdMatch(itemId, dto.getId());
-        validateItemNameUniqueOrSame(dto.getName(), itemId);
+    public void updateItem(int itemId, ItemUpdateDTO itemUpdateDTO, MultipartFile logo, List<MultipartFile> pictures) {
+        validateItemIdMatch(itemId, itemUpdateDTO.getId());
+        validateItemNameUniqueOrSame(itemUpdateDTO.getName(), itemId);
 
         Item item = getItemByIdOrThrow(itemId);
 
         List<String> oldLogoAndPictureNames = imageUtils.combineExistingLogoAndImageNames(item, true, true);
 
-        itemMapper.itemUpdateDTOToItem(dto, item, pictures.size());
+        itemMapper.itemUpdateDTOToItem(itemUpdateDTO, item, pictures.size());
         itemRepository.save(item);
 
         List<MultipartFile> newLogoAndPictures = imageUtils.combineLogoAndImages(logo, pictures);
@@ -76,17 +76,17 @@ public class ItemService {
     }
 
     @Transactional
-    public void patchItem(int itemId, ItemPatchDTO dto, MultipartFile logo, List<MultipartFile> pictures) {
-        validateItemIdMatch(itemId, dto.getId());
+    public void patchItem(int itemId, ItemPatchDTO itemPatchDTO, MultipartFile logo, List<MultipartFile> pictures) {
+        validateItemIdMatch(itemId, itemPatchDTO.getId());
 
-        if (dto.getName() != null) {
-            validateItemNameUniqueOrSame(dto.getName(), itemId);
+        if (itemPatchDTO.getName() != null) {
+            validateItemNameUniqueOrSame(itemPatchDTO.getName(), itemId);
         }
 
         Item item = getItemByIdOrThrow(itemId);
         List<String> oldLogoAndImageNames = imageUtils.combineExistingLogoAndImageNames(item, logo != null, pictures != null);
 
-        itemMapper.itemPatchDTOToItem(dto, item, logo, pictures);
+        itemMapper.itemPatchDTOToItem(itemPatchDTO, item, logo, pictures);
         itemRepository.save(item);
 
         List<MultipartFile> newLogoAndImages = imageUtils.combineLogoAndImages(logo, pictures);

@@ -2,6 +2,7 @@ package Onlinestorerestapi.service;
 
 import Onlinestorerestapi.dto.item.ItemCreateDTO;
 import Onlinestorerestapi.dto.item.ItemResponseDTO;
+import Onlinestorerestapi.dto.item.ItemUpdateDTO;
 import Onlinestorerestapi.entity.Item;
 import Onlinestorerestapi.mapper.ItemMapper;
 import Onlinestorerestapi.repository.ItemRepository;
@@ -42,7 +43,7 @@ public class ItemServiceTest {
     private ImageUtils imageUtils;
 
     @Mock
-    ImageStorageService imageStorageService;
+    private ImageStorageService imageStorageService;
 
     @InjectMocks
     private ItemService itemService;
@@ -62,10 +63,7 @@ public class ItemServiceTest {
     void getItemResponseDTO_successfullyGetResponse() {
 
         // given
-
-        // method parameters
         int itemId = 1;
-
         Item item = new Item();
         item.setId(1);
         ItemResponseDTO itemResponseDTO = new ItemResponseDTO();
@@ -85,8 +83,6 @@ public class ItemServiceTest {
     void createItem_whenItemNameExists_shouldThrowException() {
 
         // given
-
-        // method parameters
         String itemName = "Not unique name";
         ItemCreateDTO itemCreateDTO = new ItemCreateDTO();
         itemCreateDTO.setName(itemName);
@@ -105,15 +101,12 @@ public class ItemServiceTest {
     void createItem_whenItemNameUnique_shouldCreateItem() {
 
         // given
-
-        // method parameters
         String itemName = "Unique name";
         ItemCreateDTO itemCreateDTO = new ItemCreateDTO();
         itemCreateDTO.setName(itemName);
         MultipartFile logo = Mockito.mock(MultipartFile.class);
         List<MultipartFile> pictures = new ArrayList<>();
         pictures.add(mock(MultipartFile.class));
-
         Item item = new Item();
         item.setName(itemName);
         item.setLogoName("logo name");
@@ -136,5 +129,100 @@ public class ItemServiceTest {
         assertEquals(item.getName(), itemService.createItem(itemCreateDTO, logo, pictures).getName());
         verify(itemRepository).save(item);
         verify(imageStorageService).saveImagesToFolder(logoAndPictures, logoAndPictureNames);
+    }
+
+    @Test
+    void updateItem_throwsWhenIdMismatch() {
+
+        // given
+        int itemId = 1;
+        ItemUpdateDTO itemUpdateDTO = new ItemUpdateDTO();
+        itemUpdateDTO.setId(2);
+        MultipartFile logo = Mockito.mock(MultipartFile.class);
+        List<MultipartFile> images = List.of(Mockito.mock(MultipartFile.class), Mockito.mock(MultipartFile.class));
+
+        // then
+        assertThrows(ApiException.class, () -> itemService.updateItem(itemId, itemUpdateDTO, logo, images));
+    }
+
+    @Test
+    void updateItem_throwsWhenNameNotUnique() {
+
+        // given
+        int itemId = 1;
+        ItemUpdateDTO itemUpdateDTO = new ItemUpdateDTO();
+        itemUpdateDTO.setId(1);
+        itemUpdateDTO.setName("Not unique name");
+        MultipartFile logo = Mockito.mock(MultipartFile.class);
+        List<MultipartFile> images = List.of(Mockito.mock(MultipartFile.class), Mockito.mock(MultipartFile.class));
+        Item anoterItem = Mockito.mock(Item.class);
+        anoterItem.setName("Another name");
+
+        // when
+        when(itemRepository.existsByName("Not unique name")).thenReturn(true);
+        when(itemRepository.findById(1)).thenReturn(Optional.of(anoterItem));
+
+        // then
+        assertThrows(ApiException.class, () -> itemService.updateItem(itemId, itemUpdateDTO, logo, images));
+    }
+
+    @Test
+    void updateItem_throwsWhenItemNotFound() {
+
+        // given
+        int itemId = 1;
+        ItemUpdateDTO itemUpdateDTO = new ItemUpdateDTO();
+        itemUpdateDTO.setId(1);
+        itemUpdateDTO.setName("Same name");
+        MultipartFile logo = Mockito.mock(MultipartFile.class);
+        List<MultipartFile> images = List.of(Mockito.mock(MultipartFile.class), Mockito.mock(MultipartFile.class));
+
+        // when
+        when(itemRepository.existsByName("Same name")).thenReturn(true);
+        when(itemRepository.findById(1)).thenThrow(new ApiException(HttpStatus.NOT_FOUND, "No such item"));
+
+        // then
+        assertThrows(ApiException.class, () -> itemService.updateItem(itemId, itemUpdateDTO, logo, images));
+    }
+
+    @Test
+    void updateItem_successfullyUpdatesItemAndSwapsImages() {
+
+        // given
+        int itemId = 1;
+        ItemUpdateDTO itemUpdateDTO = new ItemUpdateDTO();
+        itemUpdateDTO.setId(itemId);
+        MultipartFile logo = mock(MultipartFile.class);
+        List<MultipartFile> pictures = new ArrayList<>();
+        pictures.add(mock(MultipartFile.class));
+        pictures.add(mock(MultipartFile.class));
+        String updateItemDTOName = "Unique name";
+        itemUpdateDTO.setName(updateItemDTOName);
+        Item item = new Item();
+        item.setId(1);
+        item.setLogoName("logo name");
+        item.setPictureNames(List.of("picture name 1", "picture name 2"));
+        List<String> oldLogoAndPictureNames = new ArrayList<>();
+        List<MultipartFile> newLogoAndPictures = new ArrayList<>();
+        newLogoAndPictures.add(logo);
+        newLogoAndPictures.addAll(pictures);
+        List<String> newLogoAndPictureNames = new ArrayList<>();
+        newLogoAndPictureNames.add(item.getLogoName());
+        newLogoAndPictureNames.addAll(item.getPictureNames());
+
+        // when
+        when(itemRepository.existsByName(updateItemDTOName)).thenReturn(false);
+        when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
+        when(imageUtils.combineExistingLogoAndImageNames(item, true, true)).thenReturn(oldLogoAndPictureNames);
+        doNothing().when(itemMapper).itemUpdateDTOToItem(itemUpdateDTO, item, pictures.size());
+        when(itemRepository.save(item)).thenReturn(item);
+        when(imageUtils.combineLogoAndImages(logo, pictures)).thenReturn(newLogoAndPictures);
+        when(imageUtils.combineLogoAndImageNames(item.getLogoName(), item.getPictureNames())).thenReturn(newLogoAndPictureNames);
+        doNothing().when(imageStorageService).swapImages(oldLogoAndPictureNames, newLogoAndPictures, newLogoAndPictureNames);
+
+        // then
+        itemService.updateItem(itemId, itemUpdateDTO, logo, pictures);
+        assertEquals(itemId, itemRepository.save(item).getId());
+        verify(imageStorageService).swapImages(oldLogoAndPictureNames, newLogoAndPictures, newLogoAndPictureNames);
     }
 }

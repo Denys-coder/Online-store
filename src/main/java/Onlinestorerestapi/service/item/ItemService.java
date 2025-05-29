@@ -101,11 +101,11 @@ public class ItemService {
     @Transactional
     public void deleteItem(int itemId) {
         Item item = getItemByIdOrThrow(itemId);
-        List<String> logoAndImageNamesToDelete = imageUtils.combineLogoAndImageNames(item.getLogoName(), item.getPictureNames());
+        List<String> logoAndPictureNamesToDelete = imageUtils.combineLogoAndImageNames(item.getLogoName(), item.getPictureNames());
 
         orderRepository.deleteOrdersByItem(item);
         itemRepository.deleteById(itemId);
-        imageStorageService.deleteImagesFromFolder(logoAndImageNamesToDelete);
+        imageStorageService.deleteImagesFromFolder(logoAndPictureNamesToDelete);
     }
 
     // ======= PRIVATE HELPERS =======

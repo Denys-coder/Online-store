@@ -8,6 +8,7 @@ import Onlinestorerestapi.entity.Item;
 import Onlinestorerestapi.mapper.ItemMapper;
 import Onlinestorerestapi.repository.ItemRepository;
 import Onlinestorerestapi.exception.ApiException;
+import Onlinestorerestapi.repository.OrderRepository;
 import Onlinestorerestapi.service.image.ImageStorageService;
 import Onlinestorerestapi.service.item.ItemResponseBuilderService;
 import Onlinestorerestapi.service.item.ItemService;
@@ -47,18 +48,24 @@ public class ItemServiceTest {
     @Mock
     private ImageStorageService imageStorageService;
 
+    @Mock
+    private OrderRepository orderRepository;
+
     @InjectMocks
     private ItemService itemService;
 
     @Test
     void getItemResponseDTO_whenItemDoesNotExist_throwsApiExceptionWithNotFoundStatus() {
 
+        // given
+        String exceptionName = "No such item";
+
         // when
-        when(itemRepository.findById(999)).thenThrow(new ApiException(HttpStatus.NOT_FOUND, "No such item"));
+        when(itemRepository.findById(999)).thenThrow(new ApiException(HttpStatus.NOT_FOUND, exceptionName));
 
         // then
         ApiException apiException = assertThrows(ApiException.class, () -> itemService.getItemResponseDTO(999));
-        assertEquals("No such item", apiException.getMessage());
+        assertEquals(exceptionName, apiException.getMessage());
     }
 
     @Test
@@ -155,14 +162,15 @@ public class ItemServiceTest {
         int itemId = 1;
         ItemUpdateDTO itemUpdateDTO = new ItemUpdateDTO();
         itemUpdateDTO.setId(1);
-        itemUpdateDTO.setName("Not unique name");
+        String itemUpdateDTOName = "Not unique name";
+        itemUpdateDTO.setName(itemUpdateDTOName);
         MultipartFile logo = Mockito.mock(MultipartFile.class);
         List<MultipartFile> pictures = List.of(Mockito.mock(MultipartFile.class), Mockito.mock(MultipartFile.class));
         Item anoterItem = Mockito.mock(Item.class);
         anoterItem.setName("Another name");
 
         // when
-        when(itemRepository.existsByName("Not unique name")).thenReturn(true);
+        when(itemRepository.existsByName(itemUpdateDTOName)).thenReturn(true);
         when(itemRepository.findById(1)).thenReturn(Optional.of(anoterItem));
 
         // then
@@ -177,17 +185,19 @@ public class ItemServiceTest {
         int itemId = 1;
         ItemUpdateDTO itemUpdateDTO = new ItemUpdateDTO();
         itemUpdateDTO.setId(1);
-        itemUpdateDTO.setName("Same name");
+        String itemUpdateDTOName = "Same name";
+        itemUpdateDTO.setName(itemUpdateDTOName);
         MultipartFile logo = Mockito.mock(MultipartFile.class);
         List<MultipartFile> pictures = List.of(Mockito.mock(MultipartFile.class), Mockito.mock(MultipartFile.class));
+        String exceptionName = "No such item";
 
         // when
-        when(itemRepository.existsByName("Same name")).thenReturn(true);
-        when(itemRepository.findById(1)).thenThrow(new ApiException(HttpStatus.NOT_FOUND, "No such item"));
+        when(itemRepository.existsByName(itemUpdateDTOName)).thenReturn(true);
+        when(itemRepository.findById(1)).thenThrow(new ApiException(HttpStatus.NOT_FOUND, exceptionName));
 
         // then
         ApiException apiException = assertThrows(ApiException.class, () -> itemService.updateItem(itemId, itemUpdateDTO, logo, pictures));
-        assertEquals("No such item", apiException.getMessage());
+        assertEquals(exceptionName, apiException.getMessage());
     }
 
     @Test
@@ -269,14 +279,15 @@ public class ItemServiceTest {
         ItemPatchDTO itemPatchDTO = new ItemPatchDTO();
         itemPatchDTO.setId(1);
         itemPatchDTO.setName("Unique name");
+        String exceptionMessage = "No such item";
 
         // when
         when(itemRepository.existsByName("Unique name")).thenReturn(false);
-        when(itemRepository.findById(1)).thenThrow(new ApiException(HttpStatus.NOT_FOUND, "No such item"));
+        when(itemRepository.findById(1)).thenThrow(new ApiException(HttpStatus.NOT_FOUND, exceptionMessage));
 
         // then
         ApiException apiException = assertThrows(ApiException.class, () -> itemService.patchItem(itemId, itemPatchDTO, null, null));
-        assertEquals("No such item", apiException.getMessage());
+        assertEquals(exceptionMessage, apiException.getMessage());
     }
 
     @Test
@@ -349,5 +360,40 @@ public class ItemServiceTest {
         itemService.patchItem(itemId, itemPatchDTO, null, null);
         assertEquals(item, itemRepository.save(item));
         verify(imageStorageService).swapImages(oldLogoAndPicturesNames, newLogoAndPictures, newLogoAndPictureNames);
+    }
+
+    @Test
+    void deleteItem_throwsWhenItemNotFound() {
+
+        // given
+        int itemId = 1;
+        String exceptionMessage = "No such item";
+
+        // when
+        when(itemRepository.findById(itemId)).thenThrow(new ApiException(HttpStatus.NOT_FOUND, exceptionMessage));
+
+        // then
+        ApiException exception = assertThrows(ApiException.class, () -> itemService.deleteItem(itemId));
+        assertEquals(exceptionMessage, exception.getMessage());
+    }
+
+
+    @Test
+    void deleteItem_successfullyDeleteItem() {
+
+        // given
+        int itemId = 1;
+        Item item = new Item();
+        item.setId(itemId);
+        List<String> logoAndPictureNamesToDelete = new ArrayList<>();
+
+        // when
+        when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
+
+        // then
+        itemService.deleteItem(itemId);
+        verify(orderRepository).deleteOrdersByItem(item);
+        verify(itemRepository).deleteById(itemId);
+        verify(imageStorageService).deleteImagesFromFolder(logoAndPictureNamesToDelete);
     }
 }

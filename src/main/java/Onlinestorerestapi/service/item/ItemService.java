@@ -64,7 +64,7 @@ public class ItemService {
 
         Item item = getItemByIdOrThrow(itemId);
 
-        List<String> oldLogoAndPictureNames = imageUtils.combineExistingLogoAndImageNames(item, true, true);
+        List<String> oldLogoAndPictureNames = imageUtils.combineExistingLogoAndPictureNames(item, true, true);
 
         itemMapper.itemUpdateDTOToItem(itemUpdateDTO, item, pictures.size());
         itemRepository.save(item);
@@ -84,18 +84,18 @@ public class ItemService {
         }
 
         Item item = getItemByIdOrThrow(itemId);
-        List<String> oldLogoAndImageNames = imageUtils.combineExistingLogoAndImageNames(item, logo != null, pictures != null);
+        List<String> oldLogoAndPicturesNames = imageUtils.combineExistingLogoAndPictureNames(item, logo != null, pictures != null);
 
         itemMapper.itemPatchDTOToItem(itemPatchDTO, item, logo, pictures);
         itemRepository.save(item);
 
-        List<MultipartFile> newLogoAndImages = imageUtils.combineLogoAndImages(logo, pictures);
-        List<String> newLogoAndImageNames = imageUtils.combineLogoAndImageNames(
+        List<MultipartFile> newLogoAndPictures = imageUtils.combineLogoAndImages(logo, pictures);
+        List<String> newLogoAndPictureNames = imageUtils.combineLogoAndImageNames(
                 logo != null ? item.getLogoName() : null,
                 pictures != null ? item.getPictureNames() : Collections.emptyList()
         );
 
-        imageStorageService.swapImages(oldLogoAndImageNames, newLogoAndImages, newLogoAndImageNames);
+        imageStorageService.swapImages(oldLogoAndPicturesNames, newLogoAndPictures, newLogoAndPictureNames);
     }
 
     @Transactional

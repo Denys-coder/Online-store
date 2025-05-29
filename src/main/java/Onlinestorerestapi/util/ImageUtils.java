@@ -10,7 +10,7 @@ import java.util.List;
 @Service
 public class ImageUtils {
 
-    public List<String> combineExistingLogoAndImageNames(Item item, boolean includeLogo, boolean includeImages) {
+    public List<String> combineExistingLogoAndPictureNames(Item item, boolean includeLogo, boolean includeImages) {
         List<String> logoAndPictureNames = new ArrayList<>();
         if (includeLogo) {
             logoAndPictureNames.add(item.getLogoName());

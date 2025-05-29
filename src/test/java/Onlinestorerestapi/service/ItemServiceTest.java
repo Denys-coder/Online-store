@@ -1,6 +1,7 @@
 package Onlinestorerestapi.service;
 
 import Onlinestorerestapi.dto.item.ItemCreateDTO;
+import Onlinestorerestapi.dto.item.ItemPatchDTO;
 import Onlinestorerestapi.dto.item.ItemResponseDTO;
 import Onlinestorerestapi.dto.item.ItemUpdateDTO;
 import Onlinestorerestapi.entity.Item;
@@ -24,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -139,14 +141,15 @@ public class ItemServiceTest {
         ItemUpdateDTO itemUpdateDTO = new ItemUpdateDTO();
         itemUpdateDTO.setId(2);
         MultipartFile logo = Mockito.mock(MultipartFile.class);
-        List<MultipartFile> images = List.of(Mockito.mock(MultipartFile.class), Mockito.mock(MultipartFile.class));
+        List<MultipartFile> pictures = List.of(Mockito.mock(MultipartFile.class), Mockito.mock(MultipartFile.class));
 
         // then
-        assertThrows(ApiException.class, () -> itemService.updateItem(itemId, itemUpdateDTO, logo, images));
+        ApiException apiException = assertThrows(ApiException.class, () -> itemService.updateItem(itemId, itemUpdateDTO, logo, pictures));
+        assertEquals("Item id in the path and in the body should match", apiException.getMessage());
     }
 
     @Test
-    void updateItem_throwsWhenNameNotUnique() {
+    void updateItem_throwsWhenNameNotUniqueAndNotSame() {
 
         // given
         int itemId = 1;
@@ -154,7 +157,7 @@ public class ItemServiceTest {
         itemUpdateDTO.setId(1);
         itemUpdateDTO.setName("Not unique name");
         MultipartFile logo = Mockito.mock(MultipartFile.class);
-        List<MultipartFile> images = List.of(Mockito.mock(MultipartFile.class), Mockito.mock(MultipartFile.class));
+        List<MultipartFile> pictures = List.of(Mockito.mock(MultipartFile.class), Mockito.mock(MultipartFile.class));
         Item anoterItem = Mockito.mock(Item.class);
         anoterItem.setName("Another name");
 
@@ -163,7 +166,8 @@ public class ItemServiceTest {
         when(itemRepository.findById(1)).thenReturn(Optional.of(anoterItem));
 
         // then
-        assertThrows(ApiException.class, () -> itemService.updateItem(itemId, itemUpdateDTO, logo, images));
+        ApiException apiException = assertThrows(ApiException.class, () -> itemService.updateItem(itemId, itemUpdateDTO, logo, pictures));
+        assertEquals("Item name should be unique or the same", apiException.getMessage());
     }
 
     @Test
@@ -175,14 +179,15 @@ public class ItemServiceTest {
         itemUpdateDTO.setId(1);
         itemUpdateDTO.setName("Same name");
         MultipartFile logo = Mockito.mock(MultipartFile.class);
-        List<MultipartFile> images = List.of(Mockito.mock(MultipartFile.class), Mockito.mock(MultipartFile.class));
+        List<MultipartFile> pictures = List.of(Mockito.mock(MultipartFile.class), Mockito.mock(MultipartFile.class));
 
         // when
         when(itemRepository.existsByName("Same name")).thenReturn(true);
         when(itemRepository.findById(1)).thenThrow(new ApiException(HttpStatus.NOT_FOUND, "No such item"));
 
         // then
-        assertThrows(ApiException.class, () -> itemService.updateItem(itemId, itemUpdateDTO, logo, images));
+        ApiException apiException = assertThrows(ApiException.class, () -> itemService.updateItem(itemId, itemUpdateDTO, logo, pictures));
+        assertEquals("No such item", apiException.getMessage());
     }
 
     @Test
@@ -213,7 +218,7 @@ public class ItemServiceTest {
         // when
         when(itemRepository.existsByName(updateItemDTOName)).thenReturn(false);
         when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
-        when(imageUtils.combineExistingLogoAndImageNames(item, true, true)).thenReturn(oldLogoAndPictureNames);
+        when(imageUtils.combineExistingLogoAndPictureNames(item, true, true)).thenReturn(oldLogoAndPictureNames);
         doNothing().when(itemMapper).itemUpdateDTOToItem(itemUpdateDTO, item, pictures.size());
         when(itemRepository.save(item)).thenReturn(item);
         when(imageUtils.combineLogoAndImages(logo, pictures)).thenReturn(newLogoAndPictures);
@@ -224,5 +229,125 @@ public class ItemServiceTest {
         itemService.updateItem(itemId, itemUpdateDTO, logo, pictures);
         assertEquals(itemId, itemRepository.save(item).getId());
         verify(imageStorageService).swapImages(oldLogoAndPictureNames, newLogoAndPictures, newLogoAndPictureNames);
+    }
+
+    @Test
+    void patchItem_throwsWhenIdMismatch() {
+
+        // given
+        int itemId = 1;
+        ItemPatchDTO itemPatchDTO = new ItemPatchDTO();
+        itemPatchDTO.setId(2);
+
+        // then
+        ApiException apiException = assertThrows(ApiException.class, () -> itemService.patchItem(itemId, itemPatchDTO, null, null));
+        assertEquals("Item id in the path and in the body should match", apiException.getMessage());
+    }
+
+    @Test
+    void patchItem_throwsWhenNameNotUniqueAndNotSame() {
+
+        // given
+        int itemId = 1;
+        ItemPatchDTO itemPatchDTO = new ItemPatchDTO();
+        itemPatchDTO.setId(1);
+        itemPatchDTO.setName("Not unique name");
+
+        // when
+        when(itemRepository.existsByName("Not unique name")).thenReturn(true);
+
+        // then
+        ApiException apiException = assertThrows(ApiException.class, () -> itemService.patchItem(itemId, itemPatchDTO, null, null));
+        assertEquals("Item name should be unique or the same", apiException.getMessage());
+    }
+
+    @Test
+    void patchItem_throwsWhenItemNotFound() {
+
+        // given
+        int itemId = 1;
+        ItemPatchDTO itemPatchDTO = new ItemPatchDTO();
+        itemPatchDTO.setId(1);
+        itemPatchDTO.setName("Unique name");
+
+        // when
+        when(itemRepository.existsByName("Unique name")).thenReturn(false);
+        when(itemRepository.findById(1)).thenThrow(new ApiException(HttpStatus.NOT_FOUND, "No such item"));
+
+        // then
+        ApiException apiException = assertThrows(ApiException.class, () -> itemService.patchItem(itemId, itemPatchDTO, null, null));
+        assertEquals("No such item", apiException.getMessage());
+    }
+
+    @Test
+    void patchItem_whenLogoIsNotNullAndPicturesIsNotNull_successfullyPatchesItemAndSwapsImages() {
+
+        // given
+        int itemId = 1;
+        ItemPatchDTO itemPatchDTO = new ItemPatchDTO();
+        itemPatchDTO.setId(itemId);
+        MultipartFile logo = mock(MultipartFile.class);
+        List<MultipartFile> pictures = new ArrayList<>();
+        pictures.add(mock(MultipartFile.class));
+        pictures.add(mock(MultipartFile.class));
+        String patchItemDTOName = "Unique name";
+        itemPatchDTO.setName(patchItemDTOName);
+        Item item = new Item();
+        item.setId(1);
+        item.setLogoName("logo name");
+        item.setPictureNames(List.of("picture name 1", "picture name 2"));
+        List<String> oldLogoAndPictureNames = new ArrayList<>();
+        List<MultipartFile> newLogoAndPictures = new ArrayList<>();
+        newLogoAndPictures.add(logo);
+        newLogoAndPictures.addAll(pictures);
+        List<String> newLogoAndPictureNames = new ArrayList<>();
+        newLogoAndPictureNames.add(item.getLogoName());
+        newLogoAndPictureNames.addAll(item.getPictureNames());
+
+        // when
+        when(itemRepository.existsByName(patchItemDTOName)).thenReturn(false);
+        when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
+        when(imageUtils.combineExistingLogoAndPictureNames(item, true, true)).thenReturn(oldLogoAndPictureNames);
+        doNothing().when(itemMapper).itemPatchDTOToItem(itemPatchDTO, item, logo, pictures);
+        when(itemRepository.save(item)).thenReturn(item);
+        when(imageUtils.combineLogoAndImages(logo, pictures)).thenReturn(newLogoAndPictures);
+        when(imageUtils.combineLogoAndImageNames(item.getLogoName(), item.getPictureNames())).thenReturn(newLogoAndPictureNames);
+        doNothing().when(imageStorageService).swapImages(oldLogoAndPictureNames, newLogoAndPictures, newLogoAndPictureNames);
+
+        // then
+        itemService.patchItem(itemId, itemPatchDTO, logo, pictures);
+        assertEquals(itemId, itemRepository.save(item).getId());
+        verify(imageStorageService).swapImages(oldLogoAndPictureNames, newLogoAndPictures, newLogoAndPictureNames);
+    }
+
+    @Test
+    void patchItem_whenLogoIsNullAndPicturesIsNull_successfullyPatchesItemAndSwapsImages() {
+
+        // given
+        int itemId = 1;
+        ItemPatchDTO itemPatchDTO = new ItemPatchDTO();
+        itemPatchDTO.setId(itemId);
+        String itemName = "Unique name";
+        itemPatchDTO.setName(itemName);
+        Item item = new Item();
+        item.setId(itemId);
+        List<String> oldLogoAndPicturesNames = new ArrayList<>();
+        List<MultipartFile> newLogoAndPictures = new ArrayList<>();
+        List<String> newLogoAndPictureNames = new ArrayList<>();
+
+        // when
+        when(itemRepository.existsByName(itemName)).thenReturn(false);
+        when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
+        when(imageUtils.combineExistingLogoAndPictureNames(item, false, false)).thenReturn(oldLogoAndPicturesNames);
+        doNothing().when(itemMapper).itemPatchDTOToItem(itemPatchDTO, item, null, null);
+        when(itemRepository.save(item)).thenReturn(item);
+        when(imageUtils.combineLogoAndImages(null, null)).thenReturn(newLogoAndPictures);
+        when(imageUtils.combineLogoAndImageNames(null, Collections.emptyList())).thenReturn(newLogoAndPictureNames);
+        doNothing().when(imageStorageService).swapImages(oldLogoAndPicturesNames, newLogoAndPictures, newLogoAndPictureNames);
+
+        // then
+        itemService.patchItem(itemId, itemPatchDTO, null, null);
+        assertEquals(item, itemRepository.save(item));
+        verify(imageStorageService).swapImages(oldLogoAndPicturesNames, newLogoAndPictures, newLogoAndPictureNames);
     }
 }

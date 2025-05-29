@@ -29,6 +29,18 @@ public class ImageService {
         this.pictureDirectory = Paths.get(logoAndImagesDirectory).toAbsolutePath().normalize();
     }
 
+    public ImageResponseDTO getImageDTO(String imageName) {
+
+        Resource image = getImage(imageName);
+
+        // Detect MIME type
+        String contentType = getImageType(image);
+
+        return new ImageResponseDTO(image, contentType);
+    }
+
+    // ======= PRIVATE HELPERS =======
+
     private Resource getImage(String imageName) {
         try {
             Path imagePath = pictureDirectory.resolve(imageName).normalize();
@@ -59,15 +71,5 @@ public class ImageService {
             throw new RuntimeException("Failed to detect image type", e);
         }
         return imageType;
-    }
-
-    public ImageResponseDTO getImageDTO(String imageName) {
-
-        Resource image = getImage(imageName);
-
-        // Detect MIME type
-        String contentType = getImageType(image);
-
-        return new ImageResponseDTO(image, contentType);
     }
 }

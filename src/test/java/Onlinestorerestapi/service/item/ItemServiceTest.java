@@ -1,4 +1,4 @@
-package Onlinestorerestapi.service;
+package Onlinestorerestapi.service.item;
 
 import Onlinestorerestapi.dto.item.ItemCreateDTO;
 import Onlinestorerestapi.dto.item.ItemPatchDTO;
@@ -10,8 +10,6 @@ import Onlinestorerestapi.repository.ItemRepository;
 import Onlinestorerestapi.exception.ApiException;
 import Onlinestorerestapi.repository.OrderRepository;
 import Onlinestorerestapi.service.image.ImageStorageService;
-import Onlinestorerestapi.service.item.ItemResponseBuilderService;
-import Onlinestorerestapi.service.item.ItemService;
 import Onlinestorerestapi.util.ImageUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

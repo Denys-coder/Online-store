@@ -46,8 +46,8 @@ public class ImageService {
             Path imagePath = imageDirectory.resolve(imageName).normalize();
 
             // Prevent path traversal
-            if (!imagePath.startsWith(pictureDirectory)) {
-                throw new ApiException(HttpStatus.BAD_REQUEST, "Don't allow path traversal: " + imagePath);
+            if (!imagePath.startsWith(imageDirectory)) {
+                throw new ApiException(HttpStatus.BAD_REQUEST, "Path traversal not allowed");
             }
 
             // Load resource

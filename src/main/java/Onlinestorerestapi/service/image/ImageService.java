@@ -18,7 +18,7 @@ import java.nio.file.Paths;
 public class ImageService {
 
     private final Tika tika = new Tika();
-    private final Path pictureDirectory;
+    private final Path imageDirectory;
 
     public ImageService(Environment environment) {
 
@@ -26,7 +26,7 @@ public class ImageService {
         if (logoAndImagesDirectory == null || logoAndImagesDirectory.isBlank()) {
             throw new IllegalArgumentException("Property 'images.directory' is not set.");
         }
-        this.pictureDirectory = Paths.get(logoAndImagesDirectory).toAbsolutePath().normalize();
+        this.imageDirectory = Paths.get(logoAndImagesDirectory).toAbsolutePath().normalize();
     }
 
     public ImageResponseDTO getImageDTO(String imageName) {
@@ -43,7 +43,7 @@ public class ImageService {
 
     private Resource getImage(String imageName) {
         try {
-            Path imagePath = pictureDirectory.resolve(imageName).normalize();
+            Path imagePath = imageDirectory.resolve(imageName).normalize();
 
             // Prevent path traversal
             if (!imagePath.startsWith(pictureDirectory)) {

@@ -1,5 +1,6 @@
 package Onlinestorerestapi.service.image;
 
+import Onlinestorerestapi.util.FileStorageUtils;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,9 +12,12 @@ import java.util.*;
 
 @Service
 public class ImageStorageService {
-    private final Path imagesDirectory;
 
-    public ImageStorageService(Environment environment) {
+    private final Path imagesDirectory;
+    private final FileStorageUtils fileStorageUtils;
+
+    public ImageStorageService(Environment environment, FileStorageUtils fileStorageUtils) {
+        this.fileStorageUtils = fileStorageUtils;
         String dir = environment.getProperty("images.directory");
         if (dir == null || dir.isBlank()) {
             throw new IllegalArgumentException("Property 'images.directory' is not set.");
@@ -33,11 +37,11 @@ public class ImageStorageService {
 
         try {
             for (int i = 0; i < images.size(); i++) {
-                Path path = saveImage(images.get(i), imageNames.get(i));
+                Path path = fileStorageUtils.saveImage(images.get(i), imageNames.get(i), imagesDirectory);
                 savedFiles.add(path);
             }
         } catch (IOException e) {
-            rollbackSavedImages(savedFiles);
+            fileStorageUtils.rollbackSavedImages(savedFiles);
             throw new UncheckedIOException("Failed to save images to folder", e);
         }
     }
@@ -45,32 +49,32 @@ public class ImageStorageService {
     public void swapImages(List<String> oldImageNames, List<MultipartFile> newImages, List<String> newImageNames) {
         validateMatchingSizes(newImages.size(), newImageNames.size());
         List<Path> newSavedFiles = new ArrayList<>();
-        Map<Path, byte[]> oldBackups = backupImages(oldImageNames);
+        Map<Path, byte[]> oldBackups = fileStorageUtils.backupImages(oldImageNames, imagesDirectory);
 
         try {
             for (String name : oldImageNames) {
-                Files.deleteIfExists(resolveImagePath(name));
+                Files.deleteIfExists(imagesDirectory.resolve(name).normalize());
             }
             for (int i = 0; i < newImages.size(); i++) {
-                Path path = saveImage(newImages.get(i), newImageNames.get(i));
+                Path path = fileStorageUtils.saveImage(newImages.get(i), newImageNames.get(i), imagesDirectory);
                 newSavedFiles.add(path);
             }
         } catch (IOException e) {
-            rollbackSavedImages(newSavedFiles);
-            restoreBackups(oldBackups);
+            fileStorageUtils.rollbackSavedImages(newSavedFiles);
+            fileStorageUtils.restoreBackups(oldBackups);
             throw new UncheckedIOException("Failed to swap images", e);
         }
     }
 
     public void deleteImagesFromFolder(List<String> imageNames) {
-        Map<Path, byte[]> backups = backupImages(imageNames);
+        Map<Path, byte[]> backups = fileStorageUtils.backupImages(imageNames, imagesDirectory);
 
         try {
             for (Path path : backups.keySet()) {
                 Files.deleteIfExists(path);
             }
         } catch (IOException e) {
-            restoreBackups(backups);
+            fileStorageUtils.restoreBackups(backups);
             throw new UncheckedIOException("Failed to delete all images. Rolled back changes.", e);
         }
     }
@@ -83,48 +87,4 @@ public class ImageStorageService {
         }
     }
 
-    private Path resolveImagePath(String imageName) {
-        return imagesDirectory.resolve(imageName).normalize();
-    }
-
-    private Path saveImage(MultipartFile image, String name) throws IOException {
-        Path path = resolveImagePath(name);
-        Files.write(path, image.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
-        return path;
-    }
-
-    private Map<Path, byte[]> backupImages(List<String> imageNames) {
-        Map<Path, byte[]> backups = new HashMap<>();
-        for (String name : imageNames) {
-            Path path = resolveImagePath(name);
-            if (Files.exists(path)) {
-                try {
-                    backups.put(path, Files.readAllBytes(path));
-                } catch (IOException e) {
-                    throw new UncheckedIOException("Failed to backup image: " + name, e);
-                }
-            }
-        }
-        return backups;
-    }
-
-    private void restoreBackups(Map<Path, byte[]> backups) {
-        for (Map.Entry<Path, byte[]> entry : backups.entrySet()) {
-            try {
-                Files.write(entry.getKey(), entry.getValue(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
-            } catch (IOException ex) {
-                System.out.printf("Failed to restore backup: %s - %s%n", entry.getKey(), ex.getMessage());
-            }
-        }
-    }
-
-    private void rollbackSavedImages(List<Path> savedFiles) {
-        for (Path path : savedFiles) {
-            try {
-                Files.deleteIfExists(path);
-            } catch (IOException ex) {
-                System.out.printf("Rollback failed for: %s - %s%n", path, ex.getMessage());
-            }
-        }
-    }
 }

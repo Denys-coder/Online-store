@@ -1,7 +1,9 @@
 package Onlinestorerestapi.service.image;
 
 import Onlinestorerestapi.util.FileStorageUtils;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,6 +18,8 @@ import java.util.*;
 public class ImageStorageService {
 
     @Value("${images.directory}")
+    @Getter
+    @Setter
     private String imagesDirectory;
 
     private final FileStorageUtils fileStorageUtils;

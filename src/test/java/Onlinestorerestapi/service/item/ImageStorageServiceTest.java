@@ -9,7 +9,6 @@ import org.junit.jupiter.api.io.TempDir;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,12 +17,13 @@ import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class ImageStorageServiceTest {
@@ -47,10 +47,8 @@ public class ImageStorageServiceTest {
 
         // given
         List<MultipartFile> images = new ArrayList<>();
-        images.add(Mockito.mock(MultipartFile.class));
+        images.add(mock(MultipartFile.class));
         List<String> imageNames = new ArrayList<>();
-
-        // when
 
         // then
         IllegalArgumentException illegalArgumentException = assertThrows(IllegalArgumentException.class, () -> imageStorageService.saveImagesToFolder(images, imageNames));
@@ -62,8 +60,8 @@ public class ImageStorageServiceTest {
 
         // given
         List<MultipartFile> images = new ArrayList<>();
-        images.add(Mockito.mock(MultipartFile.class));
-        images.add(Mockito.mock(MultipartFile.class));
+        images.add(mock(MultipartFile.class));
+        images.add(mock(MultipartFile.class));
         List<String> imageNames = new ArrayList<>();
         imageNames.add("Image name 1");
         imageNames.add("Image name 2");
@@ -80,15 +78,14 @@ public class ImageStorageServiceTest {
         assertEquals("Failed to save images to folder", uncheckedIOException.getMessage());
         verify(fileStorageUtils).rollbackSavedImages(argumentCaptor.capture());
         assertEquals(savedFile, argumentCaptor.getValue().get(0));
-
     }
 
     @Test
-    void saveImagesToFolder_successfullySaveImages() throws IOException {
+    void saveImagesToFolder_successfullySavesImages() throws IOException {
 
         // given
         List<MultipartFile> images = new ArrayList<>();
-        images.add(Mockito.mock(MultipartFile.class));
+        images.add(mock(MultipartFile.class));
         List<String> imageNames = new ArrayList<>();
         imageNames.add("Image name 1");
         Path savedFile = Paths.get(tempDir.toString(), imageNames.get(0));
@@ -98,5 +95,73 @@ public class ImageStorageServiceTest {
 
         // then
         imageStorageService.saveImagesToFolder(images, imageNames);
+    }
+
+    @Test
+    void swapImages_whenSizeMismatch_throwsException() {
+
+        // given
+        List<String> oldImageNames = new ArrayList<>();
+        List<MultipartFile> newImages = new ArrayList<>();
+        List<String> newImageNames = new ArrayList<>();
+        newImages.add(mock(MultipartFile.class));
+
+        // then
+        IllegalArgumentException illegalArgumentException = assertThrows(IllegalArgumentException.class, () -> imageStorageService.swapImages(oldImageNames, newImages, newImageNames));
+        assertEquals("List sizes must match.", illegalArgumentException.getMessage());
+    }
+
+    @Test
+    void swapImages_whenSaveImageFails_throwsException() throws IOException {
+
+        // given
+        List<String> oldImageNames = new ArrayList<>();
+        oldImageNames.add("Old image name 1");
+        List<MultipartFile> newImages = new ArrayList<>();
+        newImages.add(mock(MultipartFile.class));
+        newImages.add(mock(MultipartFile.class));
+        List<String> newImageNames = new ArrayList<>();
+        newImageNames.add("New image name 1");
+        newImageNames.add("New image name 2");
+        Map<Path, byte[]> oldBackups = new HashMap<>();
+        Path newSavedFile1 = Paths.get(tempDir.toString(), newImageNames.get(0));
+        // ArgumentCaptor to capture what was passed to rollbackSavedImages
+        ArgumentCaptor<List<Path>> argumentCaptor = ArgumentCaptor.forClass(List.class);
+
+        // when
+        when(fileStorageUtils.backupImages(oldImageNames)).thenReturn(oldBackups);
+        when(fileStorageUtils.saveImage(newImages.get(0), newImageNames.get(0))).thenReturn(newSavedFile1);
+        when(fileStorageUtils.saveImage(newImages.get(1), newImageNames.get(1))).thenThrow(IOException.class);
+
+        // then
+        UncheckedIOException uncheckedIOException = assertThrows(UncheckedIOException.class, () -> imageStorageService.swapImages(oldImageNames, newImages, newImageNames));
+        assertEquals("Failed to swap images", uncheckedIOException.getMessage());
+        verify(fileStorageUtils).rollbackSavedImages(argumentCaptor.capture());
+        assertEquals(newSavedFile1, argumentCaptor.getValue().get(0));
+        verify(fileStorageUtils).restoreBackups(oldBackups);
+    }
+
+    @Test
+    void swapImages_successfullySwapsImages() throws IOException {
+
+        // given
+        List<String> oldImageNames = new ArrayList<>();
+        oldImageNames.add("Old image name 1");
+        List<MultipartFile> newImages = new ArrayList<>();
+        newImages.add(mock(MultipartFile.class));
+        List<String> newImageNames = new ArrayList<>();
+        newImageNames.add("New image name 1");
+        Map<Path, byte[]> oldBackups = new HashMap<>();
+        Path newSavedFile1 = Paths.get(tempDir.toString(), newImageNames.get(0));
+        // ArgumentCaptor to capture what was passed to rollbackSavedImages
+        ArgumentCaptor<List<Path>> argumentCaptor = ArgumentCaptor.forClass(List.class);
+
+        // when
+        when(fileStorageUtils.backupImages(oldImageNames)).thenReturn(oldBackups);
+        when(fileStorageUtils.saveImage(newImages.get(0), newImageNames.get(0))).thenReturn(newSavedFile1);
+
+        // then
+        imageStorageService.swapImages(oldImageNames, newImages, newImageNames);
+        verify(fileStorageUtils).saveImage(newImages.get(0), newImageNames.get(0));
     }
 }

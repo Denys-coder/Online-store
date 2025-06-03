@@ -2,8 +2,11 @@ package Onlinestorerestapi.service.image;
 
 import Onlinestorerestapi.dto.image.ImageResponseDTO;
 import Onlinestorerestapi.exception.ApiException;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.apache.tika.Tika;
-import org.springframework.core.env.Environment;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
@@ -15,19 +18,15 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @Service
+@RequiredArgsConstructor
 public class ImageService {
 
-    private final Tika tika = new Tika();
-    private final Path imageDirectory;
+    private final Tika tika;
 
-    public ImageService(Environment environment) {
-
-        String logoAndImagesDirectory = environment.getProperty("images.directory");
-        if (logoAndImagesDirectory == null || logoAndImagesDirectory.isBlank()) {
-            throw new IllegalArgumentException("Property 'images.directory' is not set.");
-        }
-        this.imageDirectory = Paths.get(logoAndImagesDirectory).toAbsolutePath().normalize();
-    }
+    @Value("${images.directory}")
+    @Getter
+    @Setter
+    private String imagesDirectory;
 
     public ImageResponseDTO getImageDTO(String imageName) {
 
@@ -43,15 +42,15 @@ public class ImageService {
 
     private Resource getImage(String imageName) {
         try {
-            Path imagePath = imageDirectory.resolve(imageName).normalize();
+            Path currentImagesPath = Paths.get(imagesDirectory).resolve(imageName).normalize();
 
             // Prevent path traversal
-            if (!imagePath.startsWith(imageDirectory)) {
+            if (!currentImagesPath.startsWith(imagesDirectory)) {
                 throw new ApiException(HttpStatus.BAD_REQUEST, "Path traversal not allowed");
             }
 
             // Load resource
-            Resource resource = new UrlResource(imagePath.toUri());
+            Resource resource = new UrlResource(currentImagesPath.toUri());
             if (!resource.exists() || !resource.isReadable()) {
                 throw new ApiException(HttpStatus.NOT_FOUND, "Specified image does not exist: " + imageName);
             }

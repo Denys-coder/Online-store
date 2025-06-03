@@ -1,7 +1,8 @@
 package Onlinestorerestapi.service.image;
 
 import Onlinestorerestapi.util.FileStorageUtils;
-import org.springframework.core.env.Environment;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -11,25 +12,13 @@ import java.nio.file.*;
 import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class ImageStorageService {
 
-    private final Path imagesDirectory;
+    @Value("${images.directory}")
+    private String imagesDirectory;
+
     private final FileStorageUtils fileStorageUtils;
-
-    public ImageStorageService(Environment environment, FileStorageUtils fileStorageUtils) {
-        this.fileStorageUtils = fileStorageUtils;
-        String dir = environment.getProperty("images.directory");
-        if (dir == null || dir.isBlank()) {
-            throw new IllegalArgumentException("Property 'images.directory' is not set.");
-        }
-        this.imagesDirectory = Paths.get(dir).toAbsolutePath().normalize();
-
-        try {
-            Files.createDirectories(this.imagesDirectory);
-        } catch (IOException e) {
-            throw new UncheckedIOException("Failed to create images directory", e);
-        }
-    }
 
     public void saveImagesToFolder(List<MultipartFile> images, List<String> imageNames) {
         validateMatchingSizes(images.size(), imageNames.size());
@@ -37,7 +26,7 @@ public class ImageStorageService {
 
         try {
             for (int i = 0; i < images.size(); i++) {
-                Path path = fileStorageUtils.saveImage(images.get(i), imageNames.get(i), imagesDirectory);
+                Path path = fileStorageUtils.saveImage(images.get(i), imageNames.get(i));
                 savedFiles.add(path);
             }
         } catch (IOException e) {
@@ -49,14 +38,14 @@ public class ImageStorageService {
     public void swapImages(List<String> oldImageNames, List<MultipartFile> newImages, List<String> newImageNames) {
         validateMatchingSizes(newImages.size(), newImageNames.size());
         List<Path> newSavedFiles = new ArrayList<>();
-        Map<Path, byte[]> oldBackups = fileStorageUtils.backupImages(oldImageNames, imagesDirectory);
+        Map<Path, byte[]> oldBackups = fileStorageUtils.backupImages(oldImageNames);
 
         try {
             for (String name : oldImageNames) {
-                Files.deleteIfExists(imagesDirectory.resolve(name).normalize());
+                Files.deleteIfExists(Paths.get(imagesDirectory).resolve(name).normalize());
             }
             for (int i = 0; i < newImages.size(); i++) {
-                Path path = fileStorageUtils.saveImage(newImages.get(i), newImageNames.get(i), imagesDirectory);
+                Path path = fileStorageUtils.saveImage(newImages.get(i), newImageNames.get(i));
                 newSavedFiles.add(path);
             }
         } catch (IOException e) {
@@ -67,7 +56,7 @@ public class ImageStorageService {
     }
 
     public void deleteImagesFromFolder(List<String> imageNames) {
-        Map<Path, byte[]> backups = fileStorageUtils.backupImages(imageNames, imagesDirectory);
+        Map<Path, byte[]> backups = fileStorageUtils.backupImages(imageNames);
 
         try {
             for (Path path : backups.keySet()) {

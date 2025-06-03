@@ -1,5 +1,6 @@
 package Onlinestorerestapi.util;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -7,6 +8,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
 import java.util.List;
@@ -15,16 +17,19 @@ import java.util.Map;
 @Service
 public class FileStorageUtils {
 
-    public Path saveImage(MultipartFile image, String imageName, Path imagesDirectory) throws IOException {
-        Path path = imagesDirectory.resolve(imageName).normalize();
+    @Value("${images.directory}")
+    private String imagesDirectory;
+
+    public Path saveImage(MultipartFile image, String imageName) throws IOException {
+        Path path = Path.of(imagesDirectory).resolve(imageName).normalize();
         Files.write(path, image.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
         return path;
     }
 
-    public Map<Path, byte[]> backupImages(List<String> imageNames, Path imagesDirectory) {
+    public Map<Path, byte[]> backupImages(List<String> imageNames) {
         Map<Path, byte[]> backups = new HashMap<>();
         for (String imageName : imageNames) {
-            Path path = imagesDirectory.resolve(imageName).normalize();
+            Path path = Paths.get(imagesDirectory).resolve(imageName).normalize();
             if (Files.exists(path)) {
                 try {
                     backups.put(path, Files.readAllBytes(path));

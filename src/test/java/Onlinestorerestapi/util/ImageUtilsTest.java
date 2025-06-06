@@ -131,4 +131,59 @@ public class ImageUtilsTest {
         List<MultipartFile> result = imageUtils.combineLogoAndPictures(null, pictures);
         assertTrue(result.isEmpty());
     }
+
+    @Test
+    void combineLogoAndPictureNames_includeBothLogoAndPictures() {
+        // given
+        String logoName = "logo.png";
+        List<String> pictureNames = List.of("pic1.png", "pic2.png");
+
+        // then
+        List<String> result = imageUtils.combineLogoAndPictureNames(logoName, pictureNames);
+        assertEquals(List.of("logo.png", "pic1.png", "pic2.png"), result);
+    }
+
+    @Test
+    void combineLogoAndPictureNames_includeOnlyLogo() {
+        // given
+        String logoName = "logo.png";
+        List<String> pictureNames = null;
+
+        // then
+        List<String> result = imageUtils.combineLogoAndPictureNames(logoName, pictureNames);
+        assertEquals(List.of("logo.png"), result);
+    }
+
+    @Test
+    void combineLogoAndPictureNames_includeOnlyPictures() {
+        // given
+        String logoName = null;
+        List<String> pictureNames = List.of("pic1.png", "pic2.png");
+
+        // then
+        List<String> result = imageUtils.combineLogoAndPictureNames(logoName, pictureNames);
+        assertEquals(List.of("pic1.png", "pic2.png"), result);
+    }
+
+    @Test
+    void combineLogoAndPictureNames_includeNeitherLogoNorPictures() {
+        // given
+        String logoName = null;
+        List<String> pictureNames = null;
+
+        // then
+        List<String> result = imageUtils.combineLogoAndPictureNames(logoName, pictureNames);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void combineLogoAndPictureNames_emptyPictureListWithLogo() {
+        // given
+        String logoName = "logo.png";
+        List<String> pictureNames = List.of();
+
+        // then
+        List<String> result = imageUtils.combineLogoAndPictureNames(logoName, pictureNames);
+        assertEquals(List.of("logo.png"), result);
+    }
 }

@@ -128,8 +128,8 @@ public class ItemServiceTest {
         // when
         when(itemRepository.existsByName(itemName)).thenReturn(false);
         when(itemMapper.itemCreateDTOToItem(itemCreateDTO, pictures.size())).thenReturn(item);
-        when(imageUtils.combineLogoAndImages(logo, pictures)).thenReturn(logoAndPictures);
-        when(imageUtils.combineLogoAndImageNames(item.getLogoName(), item.getPictureNames())).thenReturn(logoAndPictureNames);
+        when(imageUtils.combineLogoAndPictures(logo, pictures)).thenReturn(logoAndPictures);
+        when(imageUtils.combineLogoAndPictureNames(item.getLogoName(), item.getPictureNames())).thenReturn(logoAndPictureNames);
         when(itemRepository.save(item)).thenReturn(item);
 
         // then
@@ -229,8 +229,8 @@ public class ItemServiceTest {
         when(imageUtils.combineExistingLogoAndPictureNames(item, true, true)).thenReturn(oldLogoAndPictureNames);
         doNothing().when(itemMapper).itemUpdateDTOToItem(itemUpdateDTO, item, pictures.size());
         when(itemRepository.save(item)).thenReturn(item);
-        when(imageUtils.combineLogoAndImages(logo, pictures)).thenReturn(newLogoAndPictures);
-        when(imageUtils.combineLogoAndImageNames(item.getLogoName(), item.getPictureNames())).thenReturn(newLogoAndPictureNames);
+        when(imageUtils.combineLogoAndPictures(logo, pictures)).thenReturn(newLogoAndPictures);
+        when(imageUtils.combineLogoAndPictureNames(item.getLogoName(), item.getPictureNames())).thenReturn(newLogoAndPictureNames);
         doNothing().when(imageStorageService).swapImages(oldLogoAndPictureNames, newLogoAndPictures, newLogoAndPictureNames);
 
         // then
@@ -319,8 +319,8 @@ public class ItemServiceTest {
         when(imageUtils.combineExistingLogoAndPictureNames(item, true, true)).thenReturn(oldLogoAndPictureNames);
         doNothing().when(itemMapper).itemPatchDTOToItem(itemPatchDTO, item, logo, pictures);
         when(itemRepository.save(item)).thenReturn(item);
-        when(imageUtils.combineLogoAndImages(logo, pictures)).thenReturn(newLogoAndPictures);
-        when(imageUtils.combineLogoAndImageNames(item.getLogoName(), item.getPictureNames())).thenReturn(newLogoAndPictureNames);
+        when(imageUtils.combineLogoAndPictures(logo, pictures)).thenReturn(newLogoAndPictures);
+        when(imageUtils.combineLogoAndPictureNames(item.getLogoName(), item.getPictureNames())).thenReturn(newLogoAndPictureNames);
         doNothing().when(imageStorageService).swapImages(oldLogoAndPictureNames, newLogoAndPictures, newLogoAndPictureNames);
 
         // then
@@ -350,8 +350,8 @@ public class ItemServiceTest {
         when(imageUtils.combineExistingLogoAndPictureNames(item, false, false)).thenReturn(oldLogoAndPicturesNames);
         doNothing().when(itemMapper).itemPatchDTOToItem(itemPatchDTO, item, null, null);
         when(itemRepository.save(item)).thenReturn(item);
-        when(imageUtils.combineLogoAndImages(null, null)).thenReturn(newLogoAndPictures);
-        when(imageUtils.combineLogoAndImageNames(null, Collections.emptyList())).thenReturn(newLogoAndPictureNames);
+        when(imageUtils.combineLogoAndPictures(null, null)).thenReturn(newLogoAndPictures);
+        when(imageUtils.combineLogoAndPictureNames(null, Collections.emptyList())).thenReturn(newLogoAndPictureNames);
         doNothing().when(imageStorageService).swapImages(oldLogoAndPicturesNames, newLogoAndPictures, newLogoAndPictureNames);
 
         // then

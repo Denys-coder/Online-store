@@ -48,8 +48,8 @@ public class ItemService {
         }
 
         Item item = itemMapper.itemCreateDTOToItem(itemCreateDTO, pictures.size());
-        List<MultipartFile> logoAndPictures = imageUtils.combineLogoAndImages(logo, pictures);
-        List<String> logoAndPicturesNames = imageUtils.combineLogoAndImageNames(item.getLogoName(), item.getPictureNames());
+        List<MultipartFile> logoAndPictures = imageUtils.combineLogoAndPictures(logo, pictures);
+        List<String> logoAndPicturesNames = imageUtils.combineLogoAndPictureNames(item.getLogoName(), item.getPictureNames());
 
         itemRepository.save(item);
         imageStorageService.saveImagesToFolder(logoAndPictures, logoAndPicturesNames);
@@ -69,8 +69,8 @@ public class ItemService {
         itemMapper.itemUpdateDTOToItem(itemUpdateDTO, item, pictures.size());
         itemRepository.save(item);
 
-        List<MultipartFile> newLogoAndPictures = imageUtils.combineLogoAndImages(logo, pictures);
-        List<String> newLogoAndPictureNames = imageUtils.combineLogoAndImageNames(item.getLogoName(), item.getPictureNames());
+        List<MultipartFile> newLogoAndPictures = imageUtils.combineLogoAndPictures(logo, pictures);
+        List<String> newLogoAndPictureNames = imageUtils.combineLogoAndPictureNames(item.getLogoName(), item.getPictureNames());
 
         imageStorageService.swapImages(oldLogoAndPictureNames, newLogoAndPictures, newLogoAndPictureNames);
     }
@@ -89,8 +89,8 @@ public class ItemService {
         itemMapper.itemPatchDTOToItem(itemPatchDTO, item, logo, pictures);
         itemRepository.save(item);
 
-        List<MultipartFile> newLogoAndPictures = imageUtils.combineLogoAndImages(logo, pictures);
-        List<String> newLogoAndPictureNames = imageUtils.combineLogoAndImageNames(
+        List<MultipartFile> newLogoAndPictures = imageUtils.combineLogoAndPictures(logo, pictures);
+        List<String> newLogoAndPictureNames = imageUtils.combineLogoAndPictureNames(
                 logo != null ? item.getLogoName() : null,
                 pictures != null ? item.getPictureNames() : Collections.emptyList()
         );
@@ -101,7 +101,7 @@ public class ItemService {
     @Transactional
     public void deleteItem(int itemId) {
         Item item = getItemByIdOrThrow(itemId);
-        List<String> logoAndPictureNamesToDelete = imageUtils.combineLogoAndImageNames(item.getLogoName(), item.getPictureNames());
+        List<String> logoAndPictureNamesToDelete = imageUtils.combineLogoAndPictureNames(item.getLogoName(), item.getPictureNames());
 
         orderRepository.deleteOrdersByItem(item);
         itemRepository.deleteById(itemId);

@@ -10,28 +10,28 @@ import java.util.List;
 @Service
 public class ImageUtils {
 
-    public List<String> combineExistingLogoAndPictureNames(Item item, boolean includeLogo, boolean includeImages) {
+    public List<String> combineExistingLogoAndPictureNames(Item item, boolean includeLogo, boolean includePictures) {
         List<String> logoAndPictureNames = new ArrayList<>();
         if (includeLogo) {
             logoAndPictureNames.add(item.getLogoName());
         }
-        if (includeImages) {
+        if (includePictures) {
             logoAndPictureNames.addAll(item.getPictureNames());
         }
         return logoAndPictureNames;
     }
 
-    public List<MultipartFile> combineLogoAndImages(MultipartFile logo, List<MultipartFile> images) {
-        List<MultipartFile> logoAndImages = new ArrayList<>();
-        if (logo != null) logoAndImages.add(logo);
-        if (images != null) logoAndImages.addAll(images);
-        return logoAndImages;
+    public List<MultipartFile> combineLogoAndPictures(MultipartFile logo, List<MultipartFile> pictures) {
+        List<MultipartFile> logoAndPictures = new ArrayList<>();
+        if (logo != null) logoAndPictures.add(logo);
+        if (pictures != null) logoAndPictures.addAll(pictures);
+        return logoAndPictures;
     }
 
-    public List<String> combineLogoAndImageNames(String logoName, List<String> imageNames) {
-        List<String> logoAndImageNames = new ArrayList<>();
-        if (logoName != null) logoAndImageNames.add(logoName);
-        if (imageNames != null) logoAndImageNames.addAll(imageNames);
-        return logoAndImageNames;
+    public List<String> combineLogoAndPictureNames(String logoName, List<String> pictureNames) {
+        List<String> logoAndPictureNames = new ArrayList<>();
+        if (logoName != null) logoAndPictureNames.add(logoName);
+        if (pictureNames != null) logoAndPictureNames.addAll(pictureNames);
+        return logoAndPictureNames;
     }
 }

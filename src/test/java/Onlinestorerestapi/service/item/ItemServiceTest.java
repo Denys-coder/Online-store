@@ -54,7 +54,6 @@ public class ItemServiceTest {
 
     @Test
     void getItemResponseDTO_whenItemDoesNotExists_throwsApiException() {
-
         // given
         String exceptionName = "No such item";
 
@@ -68,7 +67,6 @@ public class ItemServiceTest {
 
     @Test
     void getItemResponseDTO_returnsGetResponse() {
-
         // given
         int itemId = 1;
         Item item = new Item();
@@ -88,7 +86,6 @@ public class ItemServiceTest {
 
     @Test
     void createItem_whenItemNameExists_throwsApiException() {
-
         // given
         String itemName = "Not unique name";
         ItemCreateDTO itemCreateDTO = new ItemCreateDTO();
@@ -106,7 +103,6 @@ public class ItemServiceTest {
 
     @Test
     void createItem_whenItemNameUnique_createsItem() {
-
         // given
         String itemName = "Unique name";
         ItemCreateDTO itemCreateDTO = new ItemCreateDTO();
@@ -140,7 +136,6 @@ public class ItemServiceTest {
 
     @Test
     void updateItem_whenIdsMismatch_throwsApiException() {
-
         // given
         int itemId = 1;
         ItemUpdateDTO itemUpdateDTO = new ItemUpdateDTO();
@@ -155,7 +150,6 @@ public class ItemServiceTest {
 
     @Test
     void updateItem_whenNameNotUniqueAndNotSame_throwsApiException() {
-
         // given
         int itemId = 1;
         ItemUpdateDTO itemUpdateDTO = new ItemUpdateDTO();
@@ -178,7 +172,6 @@ public class ItemServiceTest {
 
     @Test
     void updateItem_whenItemNotFound_throwsApiException() {
-
         // given
         int itemId = 1;
         ItemUpdateDTO itemUpdateDTO = new ItemUpdateDTO();
@@ -200,7 +193,6 @@ public class ItemServiceTest {
 
     @Test
     void updateItem_updatesItemAndSwapsImages() {
-
         // given
         int itemId = 1;
         ItemUpdateDTO itemUpdateDTO = new ItemUpdateDTO();
@@ -241,7 +233,6 @@ public class ItemServiceTest {
 
     @Test
     void patchItem_whenIdsMismatch_throwsApiException() {
-
         // given
         int itemId = 1;
         ItemPatchDTO itemPatchDTO = new ItemPatchDTO();
@@ -254,7 +245,6 @@ public class ItemServiceTest {
 
     @Test
     void patchItem_whenNameNotUniqueAndNotSame_throwsApiException() {
-
         // given
         int itemId = 1;
         ItemPatchDTO itemPatchDTO = new ItemPatchDTO();
@@ -271,7 +261,6 @@ public class ItemServiceTest {
 
     @Test
     void patchItem_whenItemNotFound_throwsApiException() {
-
         // given
         int itemId = 1;
         ItemPatchDTO itemPatchDTO = new ItemPatchDTO();
@@ -290,7 +279,6 @@ public class ItemServiceTest {
 
     @Test
     void patchItem_whenLogoIsNotNullAndPicturesIsNotNull_patchesItemAndSwapsImages() {
-
         // given
         int itemId = 1;
         ItemPatchDTO itemPatchDTO = new ItemPatchDTO();
@@ -331,7 +319,6 @@ public class ItemServiceTest {
 
     @Test
     void patchItem_whenLogoIsNullAndPicturesIsNull_patchesItemAndSwapsImages() {
-
         // given
         int itemId = 1;
         ItemPatchDTO itemPatchDTO = new ItemPatchDTO();
@@ -362,7 +349,6 @@ public class ItemServiceTest {
 
     @Test
     void deleteItem_whenItemNotFound_throwsApiException() {
-
         // given
         int itemId = 1;
         String exceptionMessage = "No such item";
@@ -378,7 +364,6 @@ public class ItemServiceTest {
 
     @Test
     void deleteItem_deletesItem() {
-
         // given
         int itemId = 1;
         Item item = new Item();

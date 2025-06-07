@@ -43,7 +43,6 @@ public class ImageStorageServiceTest {
 
     @Test
     void saveImagesToFolder_whenSizesMismatch_throwsIllegalArgumentException() {
-
         // given
         List<MultipartFile> images = new ArrayList<>();
         images.add(mock(MultipartFile.class));
@@ -56,7 +55,6 @@ public class ImageStorageServiceTest {
 
     @Test
     void saveImagesToFolder_whenSaveImageFails_throwsUncheckedIOException() throws IOException {
-
         // given
         List<MultipartFile> images = new ArrayList<>();
         images.add(mock(MultipartFile.class));
@@ -81,7 +79,6 @@ public class ImageStorageServiceTest {
 
     @Test
     void saveImagesToFolder_savesImages() throws IOException {
-
         // given
         List<MultipartFile> images = new ArrayList<>();
         images.add(mock(MultipartFile.class));
@@ -98,7 +95,6 @@ public class ImageStorageServiceTest {
 
     @Test
     void swapImages_whenSizesMismatch_throwsIllegalArgumentException() {
-
         // given
         List<String> oldImageNames = new ArrayList<>();
         List<MultipartFile> newImages = new ArrayList<>();
@@ -112,7 +108,6 @@ public class ImageStorageServiceTest {
 
     @Test
     void swapImages_whenSaveImageFails_throwsUncheckedIOException() throws IOException {
-
         // given
         List<String> oldImageNames = new ArrayList<>();
         oldImageNames.add("Old image name 1");
@@ -142,7 +137,6 @@ public class ImageStorageServiceTest {
 
     @Test
     void swapImages_swapsImages() throws IOException {
-
         // given
         List<String> oldImageNames = new ArrayList<>();
         oldImageNames.add("Old image name 1");
@@ -164,7 +158,6 @@ public class ImageStorageServiceTest {
 
 //    @Test
 //    void deleteImagesFromFolder_whenDeleteFails_throwsUncheckedIOException() {
-//
 //        // given
 //        List<String> imageNames = new ArrayList<>();
 //        imageNames.add("Name to delete 1");

@@ -43,7 +43,6 @@ public class ImageServiceTest {
 
     @Test
     void getImageDTO_whenAttemptsPathTraversal_throwsApiException() {
-
         // given
         String imageName = "../../etc/passwd";
 
@@ -54,7 +53,6 @@ public class ImageServiceTest {
 
     @Test
     void getImageDTO_whenImageNotExists_throwsApiException() {
-
         // given
         String imageName = "notExistingImage.jpg";
 
@@ -65,7 +63,6 @@ public class ImageServiceTest {
 
     @Test
     void getImageDTO_returnsImageResponseDTO() throws IOException {
-
         // given
         String imageName = "image.webp";
         String contentType = "image/webp";
@@ -84,7 +81,6 @@ public class ImageServiceTest {
 
     @Test
     void getImageDTO_whenFailsToDetectImageType_throwsApiException() throws IOException {
-
         // given
         String imageName = "image.webp";
         try (OutputStream os = Files.newOutputStream(Paths.get(imageService.getImagesDirectory()).resolve(imageName))) {

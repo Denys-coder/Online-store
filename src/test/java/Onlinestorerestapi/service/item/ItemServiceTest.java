@@ -53,7 +53,7 @@ public class ItemServiceTest {
     private ItemService itemService;
 
     @Test
-    void getItemResponseDTO_whenItemDoesNotExist_throwsApiExceptionWithNotFoundStatus() {
+    void getItemResponseDTO_whenItemDoesNotExists_throwsApiException() {
 
         // given
         String exceptionName = "No such item";
@@ -67,7 +67,7 @@ public class ItemServiceTest {
     }
 
     @Test
-    void getItemResponseDTO_successfullyGetResponse() {
+    void getItemResponseDTO_returnsGetResponse() {
 
         // given
         int itemId = 1;
@@ -87,7 +87,7 @@ public class ItemServiceTest {
     }
 
     @Test
-    void createItem_whenItemNameExists_shouldThrowException() {
+    void createItem_whenItemNameExists_throwsApiException() {
 
         // given
         String itemName = "Not unique name";
@@ -105,7 +105,7 @@ public class ItemServiceTest {
     }
 
     @Test
-    void createItem_whenItemNameUnique_shouldCreateItem() {
+    void createItem_whenItemNameUnique_createsItem() {
 
         // given
         String itemName = "Unique name";
@@ -139,7 +139,7 @@ public class ItemServiceTest {
     }
 
     @Test
-    void updateItem_throwsWhenIdMismatch() {
+    void updateItem_whenIdsMismatch_throwsApiException() {
 
         // given
         int itemId = 1;
@@ -154,7 +154,7 @@ public class ItemServiceTest {
     }
 
     @Test
-    void updateItem_throwsWhenNameNotUniqueAndNotSame() {
+    void updateItem_whenNameNotUniqueAndNotSame_throwsApiException() {
 
         // given
         int itemId = 1;
@@ -177,7 +177,7 @@ public class ItemServiceTest {
     }
 
     @Test
-    void updateItem_throwsWhenItemNotFound() {
+    void updateItem_whenItemNotFound_throwsApiException() {
 
         // given
         int itemId = 1;
@@ -199,7 +199,7 @@ public class ItemServiceTest {
     }
 
     @Test
-    void updateItem_successfullyUpdatesItemAndSwapsImages() {
+    void updateItem_updatesItemAndSwapsImages() {
 
         // given
         int itemId = 1;
@@ -240,7 +240,7 @@ public class ItemServiceTest {
     }
 
     @Test
-    void patchItem_throwsWhenIdMismatch() {
+    void patchItem_whenIdsMismatch_throwsApiException() {
 
         // given
         int itemId = 1;
@@ -253,7 +253,7 @@ public class ItemServiceTest {
     }
 
     @Test
-    void patchItem_throwsWhenNameNotUniqueAndNotSame() {
+    void patchItem_whenNameNotUniqueAndNotSame_throwsApiException() {
 
         // given
         int itemId = 1;
@@ -270,7 +270,7 @@ public class ItemServiceTest {
     }
 
     @Test
-    void patchItem_throwsWhenItemNotFound() {
+    void patchItem_whenItemNotFound_throwsApiException() {
 
         // given
         int itemId = 1;
@@ -289,7 +289,7 @@ public class ItemServiceTest {
     }
 
     @Test
-    void patchItem_whenLogoIsNotNullAndPicturesIsNotNull_successfullyPatchesItemAndSwapsImages() {
+    void patchItem_whenLogoIsNotNullAndPicturesIsNotNull_patchesItemAndSwapsImages() {
 
         // given
         int itemId = 1;
@@ -330,7 +330,7 @@ public class ItemServiceTest {
     }
 
     @Test
-    void patchItem_whenLogoIsNullAndPicturesIsNull_successfullyPatchesItemAndSwapsImages() {
+    void patchItem_whenLogoIsNullAndPicturesIsNull_patchesItemAndSwapsImages() {
 
         // given
         int itemId = 1;
@@ -361,7 +361,7 @@ public class ItemServiceTest {
     }
 
     @Test
-    void deleteItem_throwsWhenItemNotFound() {
+    void deleteItem_whenItemNotFound_throwsApiException() {
 
         // given
         int itemId = 1;
@@ -377,7 +377,7 @@ public class ItemServiceTest {
 
 
     @Test
-    void deleteItem_successfullyDeleteItem() {
+    void deleteItem_deletesItem() {
 
         // given
         int itemId = 1;

@@ -42,7 +42,7 @@ public class ImageStorageServiceTest {
     }
 
     @Test
-    void saveImagesToFolder_whenSizeMismatch_throwsException() {
+    void saveImagesToFolder_whenSizesMismatch_throwsIllegalArgumentException() {
 
         // given
         List<MultipartFile> images = new ArrayList<>();
@@ -55,7 +55,7 @@ public class ImageStorageServiceTest {
     }
 
     @Test
-    void saveImagesToFolder_whenSaveImageFails_throwsException() throws IOException {
+    void saveImagesToFolder_whenSaveImageFails_throwsUncheckedIOException() throws IOException {
 
         // given
         List<MultipartFile> images = new ArrayList<>();
@@ -80,7 +80,7 @@ public class ImageStorageServiceTest {
     }
 
     @Test
-    void saveImagesToFolder_successfullySavesImages() throws IOException {
+    void saveImagesToFolder_savesImages() throws IOException {
 
         // given
         List<MultipartFile> images = new ArrayList<>();
@@ -97,7 +97,7 @@ public class ImageStorageServiceTest {
     }
 
     @Test
-    void swapImages_whenSizeMismatch_throwsException() {
+    void swapImages_whenSizesMismatch_throwsIllegalArgumentException() {
 
         // given
         List<String> oldImageNames = new ArrayList<>();
@@ -111,7 +111,7 @@ public class ImageStorageServiceTest {
     }
 
     @Test
-    void swapImages_whenSaveImageFails_throwsException() throws IOException {
+    void swapImages_whenSaveImageFails_throwsUncheckedIOException() throws IOException {
 
         // given
         List<String> oldImageNames = new ArrayList<>();
@@ -141,7 +141,7 @@ public class ImageStorageServiceTest {
     }
 
     @Test
-    void swapImages_successfullySwapsImages() throws IOException {
+    void swapImages_swapsImages() throws IOException {
 
         // given
         List<String> oldImageNames = new ArrayList<>();
@@ -163,7 +163,7 @@ public class ImageStorageServiceTest {
     }
 
 //    @Test
-//    void deleteImagesFromFolder_whenDeleteFails_throwsException() {
+//    void deleteImagesFromFolder_whenDeleteFails_throwsUncheckedIOException() {
 //
 //        // given
 //        List<String> imageNames = new ArrayList<>();
@@ -182,9 +182,9 @@ public class ImageStorageServiceTest {
 //        UncheckedIOException uncheckedIOException = assertThrows(UncheckedIOException.class, () -> imageStorageService.deleteImagesFromFolder(imageNames));
 //        assertEquals("Failed to delete all images. Rolled back changes.", uncheckedIOException.getMessage());
 //    }
-
+//
 //    @Test
-//    void deleteImagesFromFolder_successfullyDeleteImages() {
+//    void deleteImagesFromFolder_deletesImages() {
 //
 //    }
 }

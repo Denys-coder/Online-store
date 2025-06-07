@@ -132,6 +132,7 @@ public class OrderService {
     // ======= PRIVATE HELPERS =======
 
     private Order getOrderForCurrentUserOrThrow(int orderId) {
+
         return orderRepository.findById(orderId)
                 .filter(order -> order.getUser().getId().equals(authService.getCurrentUser().getId()))
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "You have no such order"));

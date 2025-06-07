@@ -55,7 +55,7 @@ public class OrderServiceTest {
     }
 
     @Test
-    void getOrderResponseDTO_returnOrderResponseDTO() {
+    void getOrderResponseDTO_whenValidRequest_returnOrderResponseDTO() {
         // given
         int orderId = 1;
         int userId = 1;

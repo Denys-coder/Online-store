@@ -66,7 +66,7 @@ public class ItemServiceTest {
     }
 
     @Test
-    void getItemResponseDTO_returnsGetResponse() {
+    void getItemResponseDTO_whenValidRequest_returnsGetResponse() {
         // given
         int itemId = 1;
         Item item = new Item();
@@ -363,7 +363,7 @@ public class ItemServiceTest {
 
 
     @Test
-    void deleteItem_deletesItem() {
+    void deleteItem_whenValidRequest_deletesItem() {
         // given
         int itemId = 1;
         Item item = new Item();

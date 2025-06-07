@@ -62,7 +62,7 @@ public class ImageServiceTest {
     }
 
     @Test
-    void getImageDTO_returnsImageResponseDTO() throws IOException {
+    void getImageDTO_whenValidRequest_returnsImageResponseDTO() throws IOException {
         // given
         String imageName = "image.webp";
         String contentType = "image/webp";

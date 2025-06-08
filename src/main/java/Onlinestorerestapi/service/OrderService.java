@@ -47,7 +47,7 @@ public class OrderService {
 
         boolean ordered = orderRepository.findByUser(user).stream()
                 .map(Order::getItem)
-                .anyMatch(i -> i.getId().equals(item.getId()));
+                .anyMatch(currentItem -> currentItem.getId().equals(item.getId()));
         if (ordered) {
             throw new ApiException(HttpStatus.BAD_REQUEST, "This item was already ordered");
         }
@@ -66,7 +66,7 @@ public class OrderService {
             throw new ApiException(HttpStatus.BAD_REQUEST, "Order id in the path and in the body should match");
         }
 
-        // verify that item with specified it exists
+        // verify that item with specified id exists
         getItemOrThrow(orderUpdateDTO.getItemId());
 
         Order order = getOrderForCurrentUserOrThrow(orderId);
@@ -82,7 +82,7 @@ public class OrderService {
             throw new ApiException(HttpStatus.BAD_REQUEST, "Order id in the path and in the body should match");
         }
 
-        // verify that item with specified it exists
+        // verify that item with specified id exists
         if (orderPatchDTO.getItemId() != null) {
             getItemOrThrow(orderPatchDTO.getItemId());
         }

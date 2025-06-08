@@ -1,6 +1,8 @@
 package Onlinestorerestapi.service;
 
+import Onlinestorerestapi.dto.order.OrderCreateDTO;
 import Onlinestorerestapi.dto.order.OrderResponseDTO;
+import Onlinestorerestapi.entity.Item;
 import Onlinestorerestapi.entity.Order;
 import Onlinestorerestapi.entity.User;
 import Onlinestorerestapi.exception.ApiException;
@@ -40,7 +42,6 @@ public class OrderServiceTest {
     @InjectMocks
     OrderService orderService;
 
-    // should throw ApiException(HttpStatus.NOT_FOUND, "You have no such order"));
     @Test
     void getOrderResponseDTO_whenOrderNotExist_throwsApiException() {
         // given
@@ -116,5 +117,102 @@ public class OrderServiceTest {
 
         // then
         assertEquals(orderResponseDTOs.get(0).getId(), orderService.getOrderResponseDTOs().get(0).getId());
+    }
+
+    @Test
+    void createOrder_whenItemIdNonExisting_throwsApiException() {
+        // given
+        OrderCreateDTO orderCreateDTO = new OrderCreateDTO();
+        int itemId = 1;
+        orderCreateDTO.setItemId(itemId);
+        User user = new User();
+        int userId = 1;
+        user.setId(userId);
+
+        // when
+        when(authService.getCurrentUser()).thenReturn(user);
+        when(itemRepository.findById(itemId)).thenReturn(Optional.empty());
+
+        // then
+        ApiException apiException = assertThrows(ApiException.class, () -> orderService.createOrder(orderCreateDTO));
+        assertEquals("There is no item with the specified id", apiException.getMessage());
+    }
+
+    @Test
+    void createOrder_whenUserHasAlreadyOrderedItem_throwsApiException() {
+        // given
+        OrderCreateDTO orderCreateDTO = new OrderCreateDTO();
+        User user = new User();
+        int userId = 1;
+        user.setId(userId);
+        int itemID = 1;
+        orderCreateDTO.setItemId(itemID);
+        int orderId = 1;
+        Order order = new Order();
+        order.setId(orderId);
+        order.setUser(user);
+        Item item = new Item();
+        item.setId(itemID);
+        order.setItem(item);
+
+        // when
+        when(authService.getCurrentUser()).thenReturn(user);
+        when(itemRepository.findById(itemID)).thenReturn(Optional.of(item));
+        when(orderRepository.findByUser(user)).thenReturn(List.of(order));
+
+        // then
+        ApiException apiException = assertThrows(ApiException.class, () -> orderService.createOrder(orderCreateDTO));
+        assertEquals("This item was already ordered", apiException.getMessage());
+    }
+
+    @Test
+    void createOrder_whenOrderAmountExceedsStock_throwsApiException() {
+        // given
+        OrderCreateDTO orderCreateDTO = new OrderCreateDTO();
+        orderCreateDTO.setAmount(2);
+        orderCreateDTO.setItemId(1);
+        User user = new User();
+        int userId = 1;
+        user.setId(userId);
+        Item itemToOrder = new Item();
+        int itemToOrderId = 1;
+        itemToOrder.setId(1);
+        itemToOrder.setAmount(1);
+
+        // when
+        when(authService.getCurrentUser()).thenReturn(user);
+        when(itemRepository.findById(itemToOrderId)).thenReturn(Optional.of(itemToOrder));
+        when(orderRepository.findByUser(user)).thenReturn(Collections.emptyList());
+
+        // then
+        ApiException apiException = assertThrows(ApiException.class, () -> orderService.createOrder(orderCreateDTO));
+        assertEquals("You try to order more than is available in stock", apiException.getMessage());
+    }
+
+    @Test
+    void createOrder_whenValidRequest_createsOrder() {
+        // given
+        OrderCreateDTO orderCreateDTO = new OrderCreateDTO();
+        orderCreateDTO.setAmount(1);
+        orderCreateDTO.setItemId(1);
+        User user = new User();
+        int userId = 1;
+        user.setId(userId);
+        Item itemToOrder = new Item();
+        int itemToOrderId = 1;
+        itemToOrder.setId(1);
+        itemToOrder.setAmount(1);
+        Order newOrder = new Order();
+        newOrder.setId(1);
+
+        // when
+        when(authService.getCurrentUser()).thenReturn(user);
+        when(itemRepository.findById(itemToOrderId)).thenReturn(Optional.of(itemToOrder));
+        when(orderRepository.findByUser(user)).thenReturn(Collections.emptyList());
+        when(orderMapper.orderCreateDTOToOrder(orderCreateDTO, itemToOrder, user)).thenReturn(newOrder);
+        when(orderRepository.save(newOrder)).thenReturn(newOrder);
+
+        // then
+        assertEquals(newOrder, orderService.createOrder(orderCreateDTO));
     }
 }

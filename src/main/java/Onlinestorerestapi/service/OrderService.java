@@ -81,7 +81,6 @@ public class OrderService {
 
     @Transactional
     public void patchOrder(int orderId, OrderPatchDTO orderPatchDTO) {
-
         if (orderId != orderPatchDTO.getId()) {
             throw new ApiException(HttpStatus.BAD_REQUEST, "Order id in the path and in the body should match");
         }

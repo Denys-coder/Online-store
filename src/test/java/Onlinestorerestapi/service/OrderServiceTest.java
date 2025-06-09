@@ -1,6 +1,7 @@
 package Onlinestorerestapi.service;
 
 import Onlinestorerestapi.dto.order.OrderCreateDTO;
+import Onlinestorerestapi.dto.order.OrderPatchDTO;
 import Onlinestorerestapi.dto.order.OrderResponseDTO;
 import Onlinestorerestapi.dto.order.OrderUpdateDTO;
 import Onlinestorerestapi.entity.Item;
@@ -252,7 +253,7 @@ public class OrderServiceTest {
     }
 
     @Test
-    void updateOrder_whenOrderIdNotExists_throwsApiException() {
+    void updateOrder_whenUserHasNoSuchOrder_throwsApiException() {
         // given
         int orderId = 1;
         OrderUpdateDTO orderUpdateDTO = new OrderUpdateDTO();
@@ -294,6 +295,81 @@ public class OrderServiceTest {
         // then
         orderService.updateOrder(orderId, orderUpdateDTO);
         verify(orderMapper).mergeOrderUpdateDTOIntoOrder(orderUpdateDTO, order);
+        verify(orderRepository).save(order);
+    }
+
+    @Test
+    void patchOrder_whenIdsMismatch_throwsApiException() {
+        // given
+        int orderId = 1;
+        OrderPatchDTO orderPatchDTO = new OrderPatchDTO();
+        orderPatchDTO.setId(2);
+
+        // then
+        ApiException apiException = assertThrows(ApiException.class, () -> orderService.patchOrder(orderId, orderPatchDTO));
+        assertEquals("Order id in the path and in the body should match", apiException.getMessage());
+    }
+
+    @Test
+    void patchOrder_whenItemIdNotExists_throwsApiException() {
+        // given
+        int orderId = 1;
+        OrderPatchDTO orderPatchDTO = new OrderPatchDTO();
+        orderPatchDTO.setId(orderId);
+        int itemId = 1;
+        orderPatchDTO.setItemId(itemId);
+
+        // when
+        when(itemRepository.findById(itemId)).thenReturn(Optional.empty());
+
+        // then
+        ApiException apiException = assertThrows(ApiException.class, () -> orderService.patchOrder(orderId, orderPatchDTO));
+        assertEquals("There is no item with the specified id", apiException.getMessage());
+    }
+
+    @Test
+    void patchOrder_whenUserHasNoSuchOrder_throwsApiException() {
+        // given
+        int orderId = 1;
+        OrderPatchDTO orderPatchDTO = new OrderPatchDTO();
+        orderPatchDTO.setId(orderId);
+        int itemId = 1;
+        orderPatchDTO.setItemId(itemId);
+        Item item = new Item();
+
+        // when
+        when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
+        when(orderRepository.findById(orderId)).thenReturn(Optional.empty());
+
+        // then
+        ApiException apiException = assertThrows(ApiException.class, () -> orderService.patchOrder(orderId, orderPatchDTO));
+        assertEquals("You have no such order", apiException.getMessage());
+    }
+
+    @Test
+    void patchOrder_whenValidaRequest_updatesOrder() {
+        // given
+        int orderId = 1;
+        OrderPatchDTO orderPatchDTO = new OrderPatchDTO();
+        orderPatchDTO.setId(orderId);
+        int itemId = 1;
+        orderPatchDTO.setItemId(itemId);
+        Item item = new Item();
+        Order order = new Order();
+        User user = new User();
+        int userId = 1;
+        user.setId(userId);
+        order.setUser(user);
+
+        // when
+        when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
+        when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
+        when(orderRepository.save(order)).thenReturn(order);
+        when(authService.getCurrentUser()).thenReturn(user);
+
+        // then
+        orderService.patchOrder(orderId, orderPatchDTO);
+        verify(orderMapper).mergeOrderPatchDTOIntoOrder(orderPatchDTO, order);
         verify(orderRepository).save(order);
     }
 }

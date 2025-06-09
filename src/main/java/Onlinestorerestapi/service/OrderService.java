@@ -53,7 +53,11 @@ public class OrderService {
         }
 
         if (orderCreateDTO.getAmount() > item.getAmount()) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "You try to order more than is available in stock");
+            String exceptionMessage = String.format(
+                    "You try to order (%d), but available stock is (%d).",
+                    orderCreateDTO.getAmount(),
+                    item.getAmount());
+            throw new ApiException(HttpStatus.BAD_REQUEST, exceptionMessage);
         }
 
         Order newOrder = orderMapper.orderCreateDTOToOrder(orderCreateDTO, item, user);
@@ -132,7 +136,6 @@ public class OrderService {
     // ======= PRIVATE HELPERS =======
 
     private Order getOrderForCurrentUserOrThrow(int orderId) {
-
         return orderRepository.findById(orderId)
                 .filter(order -> order.getUser().getId().equals(authService.getCurrentUser().getId()))
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "You have no such order"));

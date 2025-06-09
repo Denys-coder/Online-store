@@ -2,6 +2,7 @@ package Onlinestorerestapi.service;
 
 import Onlinestorerestapi.dto.order.OrderCreateDTO;
 import Onlinestorerestapi.dto.order.OrderResponseDTO;
+import Onlinestorerestapi.dto.order.OrderUpdateDTO;
 import Onlinestorerestapi.entity.Item;
 import Onlinestorerestapi.entity.Order;
 import Onlinestorerestapi.entity.User;
@@ -22,6 +23,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -120,7 +122,7 @@ public class OrderServiceTest {
     }
 
     @Test
-    void createOrder_whenItemIdNonExisting_throwsApiException() {
+    void createOrder_whenItemIdNotExists_throwsApiException() {
         // given
         OrderCreateDTO orderCreateDTO = new OrderCreateDTO();
         int itemId = 1;
@@ -185,8 +187,12 @@ public class OrderServiceTest {
         when(orderRepository.findByUser(user)).thenReturn(Collections.emptyList());
 
         // then
+        String exceptionMessage = String.format(
+                "You try to order (%d), but available stock is (%d).",
+                orderCreateDTO.getAmount(),
+                itemToOrder.getAmount());
         ApiException apiException = assertThrows(ApiException.class, () -> orderService.createOrder(orderCreateDTO));
-        assertEquals("You try to order more than is available in stock", apiException.getMessage());
+        assertEquals(exceptionMessage, apiException.getMessage());
     }
 
     @Test
@@ -214,5 +220,80 @@ public class OrderServiceTest {
 
         // then
         assertEquals(newOrder, orderService.createOrder(orderCreateDTO));
+    }
+
+    @Test
+    void updateOrder_whenIdsMismatch_throwsApiException() {
+        // given
+        int orderId = 1;
+        OrderUpdateDTO orderUpdateDTO = new OrderUpdateDTO();
+        orderUpdateDTO.setId(2);
+
+        // then
+        ApiException apiException = assertThrows(ApiException.class, () -> orderService.updateOrder(orderId, orderUpdateDTO));
+        assertEquals("Order id in the path and in the body should match", apiException.getMessage());
+    }
+
+    @Test
+    void updateOrder_whenItemIdNotExists_throwsApiException() {
+        // given
+        int orderId = 1;
+        OrderUpdateDTO orderUpdateDTO = new OrderUpdateDTO();
+        orderUpdateDTO.setId(orderId);
+        int itemId = 1;
+        orderUpdateDTO.setItemId(itemId);
+
+        // when
+        when(itemRepository.findById(itemId)).thenReturn(Optional.empty());
+
+        // then
+        ApiException apiException = assertThrows(ApiException.class, () -> orderService.updateOrder(orderId, orderUpdateDTO));
+        assertEquals("There is no item with the specified id", apiException.getMessage());
+    }
+
+    @Test
+    void updateOrder_whenOrderIdNotExists_throwsApiException() {
+        // given
+        int orderId = 1;
+        OrderUpdateDTO orderUpdateDTO = new OrderUpdateDTO();
+        orderUpdateDTO.setId(orderId);
+        int itemId = 1;
+        orderUpdateDTO.setItemId(itemId);
+        Item item = new Item();
+
+        // when
+        when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
+        when(orderRepository.findById(orderId)).thenReturn(Optional.empty());
+
+        // then
+        ApiException apiException = assertThrows(ApiException.class, () -> orderService.updateOrder(orderId, orderUpdateDTO));
+        assertEquals("You have no such order", apiException.getMessage());
+    }
+
+    @Test
+    void updateOrder_whenValidaRequest_updatesOrder() {
+        // given
+        int orderId = 1;
+        OrderUpdateDTO orderUpdateDTO = new OrderUpdateDTO();
+        orderUpdateDTO.setId(orderId);
+        int itemId = 1;
+        orderUpdateDTO.setItemId(itemId);
+        Item item = new Item();
+        Order order = new Order();
+        User user = new User();
+        int userId = 1;
+        user.setId(userId);
+        order.setUser(user);
+
+        // when
+        when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
+        when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
+        when(orderRepository.save(order)).thenReturn(order);
+        when(authService.getCurrentUser()).thenReturn(user);
+
+        // then
+        orderService.updateOrder(orderId, orderUpdateDTO);
+        verify(orderMapper).mergeOrderUpdateDTOIntoOrder(orderUpdateDTO, order);
+        verify(orderRepository).save(order);
     }
 }

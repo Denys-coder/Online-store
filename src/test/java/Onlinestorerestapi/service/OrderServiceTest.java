@@ -24,8 +24,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class OrderServiceTest {
@@ -371,5 +370,37 @@ public class OrderServiceTest {
         orderService.patchOrder(orderId, orderPatchDTO);
         verify(orderMapper).mergeOrderPatchDTOIntoOrder(orderPatchDTO, order);
         verify(orderRepository).save(order);
+    }
+
+    @Test
+    void deleteOrder_whenUserHasNoSuchOrder_throwsApiException() {
+        // given
+        int orderId = 1;
+
+        // when
+        when(orderRepository.findById(orderId)).thenReturn(Optional.empty());
+
+        // then
+        ApiException apiException = assertThrows(ApiException.class, () -> orderService.deleteOrder(orderId));
+        assertEquals("You have no such order", apiException.getMessage());
+    }
+
+    @Test
+    void deleteOrder_whenValidRequest_deleteOrder() {
+        // given
+        int orderId = 1;
+        Order order = new Order();
+        User user = new User();
+        int userId = 1;
+        user.setId(userId);
+        order.setUser(user);
+
+        // when
+        when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
+        when(authService.getCurrentUser()).thenReturn(user);
+        doNothing().when(orderRepository).delete(order);
+
+        // then
+        orderService.deleteOrder(orderId);
     }
 }

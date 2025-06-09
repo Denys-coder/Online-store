@@ -386,7 +386,7 @@ public class OrderServiceTest {
     }
 
     @Test
-    void deleteOrder_whenValidRequest_deleteOrder() {
+    void deleteOrder_whenValidRequest_deletesOrder() {
         // given
         int orderId = 1;
         Order order = new Order();
@@ -402,5 +402,23 @@ public class OrderServiceTest {
 
         // then
         orderService.deleteOrder(orderId);
+        verify(orderRepository).delete(order);
     }
+
+    @Test
+    void deleteOrders_whenCalled_deletesOrders() {
+        // given
+        int userId = 1;
+        User user = new User();
+        user.setId(userId);
+
+        // when
+        when(authService.getCurrentUser()).thenReturn(user);
+
+        // then
+        orderService.deleteOrders();
+        verify(orderRepository).deleteOrdersByUser(user);
+    }
+
+
 }

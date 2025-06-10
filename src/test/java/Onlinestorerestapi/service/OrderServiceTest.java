@@ -420,5 +420,149 @@ public class OrderServiceTest {
         verify(orderRepository).deleteOrdersByUser(user);
     }
 
+    @Test
+    void fulfillOrders_whenAllOrdersFulfilled_fulfillOrders() {
+        // given
+        User user = new User();
+        List<Order> orders = new ArrayList<>();
+        Order order1 = new Order();
+        Order order2 = new Order();
+        order1.setAmount(1);
+        order2.setAmount(1);
+        orders.add(order1);
+        orders.add(order2);
+        Item item1 = new Item();
+        Item item2 = new Item();
+        item1.setAmount(2);
+        item2.setAmount(2);
+        order1.setItem(item1);
+        order2.setItem(item2);
 
+        // when
+        when(authService.getCurrentUser()).thenReturn(user);
+        when(orderRepository.findByUser(user)).thenReturn(orders);
+
+        // then
+        orderService.fulfillOrders();
+        verify(orderRepository).deleteAll(orders);
+        verify(itemRepository).saveAll(any());
+        assertEquals(1, item1.getAmount());
+        assertEquals(1, item2.getAmount());
+    }
+
+    @Test
+    void fulfillOrders_whenOneOrderCanNotBeFulfilled_throwsApiException() {
+        // given
+        User user = new User();
+        List<Order> orders = new ArrayList<>();
+        Order order1 = new Order();
+        Order order2 = new Order();
+        order1.setId(1);
+        order2.setId(2);
+        order1.setAmount(3);
+        order2.setAmount(1);
+        orders.add(order1);
+        orders.add(order2);
+        Item item1 = new Item();
+        Item item2 = new Item();
+        item1.setName("item name 1");
+        item2.setName("item name 2");
+        item1.setAmount(2);
+        item2.setAmount(2);
+        order1.setItem(item1);
+        order2.setItem(item2);
+
+        // when
+        when(authService.getCurrentUser()).thenReturn(user);
+        when(orderRepository.findByUser(user)).thenReturn(orders);
+
+        // then
+        ApiException apiException = assertThrows(ApiException.class, () -> orderService.fulfillOrders());
+        String errorMessage0 = "order: 1 Ordered amount (3) exceeds available stock (2) for item: item name 1.";
+        assertEquals(errorMessage0, apiException.getErrors().get(0));
+        assertEquals(2, item1.getAmount());
+        assertEquals(2, item2.getAmount());
+    }
+
+    @Test
+    void fulfillOrders_whenAllOrdersCanNotBeFulfilled_throwsException() {
+        // given
+        User user = new User();
+        List<Order> orders = new ArrayList<>();
+        Order order1 = new Order();
+        Order order2 = new Order();
+        order1.setId(1);
+        order2.setId(2);
+        order1.setAmount(3);
+        order2.setAmount(3);
+        orders.add(order1);
+        orders.add(order2);
+        Item item1 = new Item();
+        Item item2 = new Item();
+        item1.setName("item name 1");
+        item2.setName("item name 2");
+        item1.setAmount(2);
+        item2.setAmount(2);
+        order1.setItem(item1);
+        order2.setItem(item2);
+
+        // when
+        when(authService.getCurrentUser()).thenReturn(user);
+        when(orderRepository.findByUser(user)).thenReturn(orders);
+
+        // then
+        ApiException apiException = assertThrows(ApiException.class, () -> orderService.fulfillOrders());
+        String errorMessage0 = "order: 1 Ordered amount (3) exceeds available stock (2) for item: item name 1.";
+        assertEquals(errorMessage0, apiException.getErrors().get(0));
+        String errorMessage1 = "order: 2 Ordered amount (3) exceeds available stock (2) for item: item name 2.";
+        assertEquals(errorMessage1, apiException.getErrors().get(1));
+        assertEquals(2, item1.getAmount());
+        assertEquals(2, item2.getAmount());
+    }
+
+    @Test
+    void fulfillOrders_whenNoOrdersExistsForUser_doNothing() {
+        // given
+        User user = new User();
+        List<Order> noOrders = Collections.emptyList();
+
+        // when
+        when(authService.getCurrentUser()).thenReturn(user);
+        when(orderRepository.findByUser(user)).thenReturn(noOrders);
+
+        // then
+        orderService.fulfillOrders();
+        verify(orderRepository).deleteAll(noOrders);
+        verify(itemRepository).saveAll(any());
+    }
+
+    @Test
+    void fulfillOrders_whenExistingAmountEqualsAmountToOrder_fulfillOrders() {
+        // given
+        User user = new User();
+        List<Order> orders = new ArrayList<>();
+        Order order1 = new Order();
+        Order order2 = new Order();
+        order1.setAmount(2);
+        order2.setAmount(2);
+        orders.add(order1);
+        orders.add(order2);
+        Item item1 = new Item();
+        Item item2 = new Item();
+        item1.setAmount(2);
+        item2.setAmount(2);
+        order1.setItem(item1);
+        order2.setItem(item2);
+
+        // when
+        when(authService.getCurrentUser()).thenReturn(user);
+        when(orderRepository.findByUser(user)).thenReturn(orders);
+
+        // then
+        orderService.fulfillOrders();
+        verify(orderRepository).deleteAll(orders);
+        verify(itemRepository).saveAll(any());
+        assertEquals(0, item1.getAmount());
+        assertEquals(0, item2.getAmount());
+    }
 }

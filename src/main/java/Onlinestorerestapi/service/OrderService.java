@@ -116,16 +116,20 @@ public class OrderService {
 
             if (order.getAmount() > availableAmount) {
                 errors.add(String.format(
-                        "order: %s Ordered amount (%d) exceeds available stock (%d) for item: %s.",
+                        "order: %d Ordered amount (%d) exceeds available stock (%d) for item: %s.",
                         order.getId(), order.getAmount(), availableAmount, item.getName()
                 ));
-            } else {
-                item.setAmount(availableAmount - order.getAmount());
             }
         }
 
         if (!errors.isEmpty()) {
             throw new ApiException(HttpStatus.BAD_REQUEST, errors);
+        } else {
+            for (Order order : orders) {
+                Item item = order.getItem();
+                int availableAmount = item.getAmount();
+                item.setAmount(availableAmount - order.getAmount());
+            }
         }
 
         orderRepository.deleteAll(orders);

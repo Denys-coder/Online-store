@@ -1,6 +1,7 @@
 package Onlinestorerestapi.service;
 
 import Onlinestorerestapi.dto.user.UserCreateDTO;
+import Onlinestorerestapi.dto.user.UserPatchDTO;
 import Onlinestorerestapi.dto.user.UserResponseDTO;
 import Onlinestorerestapi.dto.user.UserUpdateDTO;
 import Onlinestorerestapi.entity.User;
@@ -160,6 +161,69 @@ public class UserServiceTest {
         // then
         userService.updateUser(userUpdateDTO);
         verify(userMapper).mergeUserUpdateDTOIntoUser(userUpdateDTO, currentUser);
+        verify(userRepository).save(currentUser);
+        verify(authService).refreshAuthenticatedUser(currentUser);
+    }
+
+    @Test
+    void patchUser_whenEmailIsInvalid_throwsApiException() {
+        // given
+        UserPatchDTO userPatchDTO = new UserPatchDTO();
+        String userPatchDTOEmail = "userPatchDTOEmail@email.com";
+        User currentUser = new User();
+        String userEmail = "userEmail@email.com";
+        userPatchDTO.setEmail(userPatchDTOEmail);
+        currentUser.setEmail(userEmail);
+
+        // when
+        when(authService.getCurrentUser()).thenReturn(currentUser);
+        when(userRepository.existsByEmail(userPatchDTOEmail)).thenReturn(true);
+
+        // then
+        ApiException apiException = assertThrows(ApiException.class, () -> userService.patchUser(userPatchDTO));
+        assertEquals("Email address should be unique or the same", apiException.getMessage());
+    }
+
+    @Test
+    void patchUser_whenTelephoneNumberIsInvalid_throwsApiException() {
+        // given
+        UserPatchDTO userPatchDTO = new UserPatchDTO();
+        User currentUser = new User();
+        String email = "email1@email.com";
+        userPatchDTO.setEmail(email);
+        currentUser.setEmail(email);
+        String userPatchDTOTelephoneNumber = "123456789";
+        String userTelephoneNumber = "987654321";
+        userPatchDTO.setTelephoneNumber(userPatchDTOTelephoneNumber);
+        currentUser.setTelephoneNumber(userTelephoneNumber);
+
+        // when
+        when(authService.getCurrentUser()).thenReturn(currentUser);
+        when(userRepository.existsByTelephoneNumber(userPatchDTOTelephoneNumber)).thenReturn(true);
+
+        // then
+        ApiException apiException = assertThrows(ApiException.class, () -> userService.patchUser(userPatchDTO));
+        assertEquals("Telephone number should be unique or the same", apiException.getMessage());
+    }
+
+    @Test
+    void patchUser_whenValidRequest_patchesUser() {
+        // given
+        UserPatchDTO userPatchDTO = new UserPatchDTO();
+        User currentUser = new User();
+        String email = "email1@email.com";
+        userPatchDTO.setEmail(email);
+        currentUser.setEmail(email);
+        String telephoneNumber = "123456789";
+        userPatchDTO.setTelephoneNumber(telephoneNumber);
+        currentUser.setTelephoneNumber(telephoneNumber);
+
+        // when
+        when(authService.getCurrentUser()).thenReturn(currentUser);
+
+        // then
+        userService.patchUser(userPatchDTO);
+        verify(userMapper).mergeUserPatchDTOIntoUser(userPatchDTO, currentUser);
         verify(userRepository).save(currentUser);
         verify(authService).refreshAuthenticatedUser(currentUser);
     }

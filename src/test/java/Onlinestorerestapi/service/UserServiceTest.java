@@ -2,6 +2,7 @@ package Onlinestorerestapi.service;
 
 import Onlinestorerestapi.dto.user.UserCreateDTO;
 import Onlinestorerestapi.dto.user.UserResponseDTO;
+import Onlinestorerestapi.dto.user.UserUpdateDTO;
 import Onlinestorerestapi.entity.User;
 import Onlinestorerestapi.exception.ApiException;
 import Onlinestorerestapi.mapper.UserMapper;
@@ -35,14 +36,14 @@ public class UserServiceTest {
     @Test
     void getUserResponseDTO_whenValidRequest_returnsUserResponseDTO() {
         // given
-        User user = new User();
+        User currentUser = new User();
         String userResponseDTOName = "name 1";
         UserResponseDTO userResponseDTO = new UserResponseDTO();
         userResponseDTO.setName(userResponseDTOName);
 
         // when
-        when(authService.getCurrentUser()).thenReturn(user);
-        when(userMapper.userToUserResponseDTO(user)).thenReturn(userResponseDTO);
+        when(authService.getCurrentUser()).thenReturn(currentUser);
+        when(userMapper.userToUserResponseDTO(currentUser)).thenReturn(userResponseDTO);
 
         // then
         UserResponseDTO userResponseDTOToReturn = userService.getUserResponseDTO();
@@ -85,18 +86,81 @@ public class UserServiceTest {
         UserCreateDTO userCreateDTO = new UserCreateDTO();
         userCreateDTO.setEmail("email1@email.com");
         userCreateDTO.setTelephoneNumber("123456789");
-        User user = new User();
+        User currentUser = new User();
         int userId = 1;
-        user.setId(userId);
+        currentUser.setId(userId);
 
         // when
         when(userRepository.existsByEmail(userCreateDTO.getEmail())).thenReturn(false);
         when(userRepository.existsByTelephoneNumber(userCreateDTO.getTelephoneNumber())).thenReturn(false);
-        when(userMapper.userCreateDTOToUserMapper(userCreateDTO)).thenReturn(user);
-        when(userRepository.save(user)).thenReturn(user);
+        when(userMapper.userCreateDTOToUserMapper(userCreateDTO)).thenReturn(currentUser);
+        when(userRepository.save(currentUser)).thenReturn(currentUser);
 
         // then
         userService.createUser(userCreateDTO);
-        verify(userRepository).save(user);
+        verify(userRepository).save(currentUser);
+    }
+
+    @Test
+    void updateUser_whenEmailIsInvalid_throwsApiException() {
+        // given
+        UserUpdateDTO userUpdateDTO = new UserUpdateDTO();
+        String userUpdateDTOEmail = "userUpdateDTOEmail@email.com";
+        User currentUser = new User();
+        String userEmail = "userEmail@email.com";
+        userUpdateDTO.setEmail(userUpdateDTOEmail);
+        currentUser.setEmail(userEmail);
+
+        // when
+        when(authService.getCurrentUser()).thenReturn(currentUser);
+        when(userRepository.existsByEmail(userUpdateDTOEmail)).thenReturn(true);
+
+        // then
+        ApiException apiException = assertThrows(ApiException.class, () -> userService.updateUser(userUpdateDTO));
+        assertEquals("Email address should be unique or the same", apiException.getMessage());
+    }
+
+    @Test
+    void updateUser_whenTelephoneNumberIsInvalid_throwsApiException() {
+        // given
+        UserUpdateDTO userUpdateDTO = new UserUpdateDTO();
+        User currentUser = new User();
+        String email = "email1@email.com";
+        userUpdateDTO.setEmail(email);
+        currentUser.setEmail(email);
+        String userUpdateDTOTelephoneNumber = "123456789";
+        String userTelephoneNumber = "987654321";
+        userUpdateDTO.setTelephoneNumber(userUpdateDTOTelephoneNumber);
+        currentUser.setTelephoneNumber(userTelephoneNumber);
+
+        // when
+        when(authService.getCurrentUser()).thenReturn(currentUser);
+        when(userRepository.existsByTelephoneNumber(userUpdateDTOTelephoneNumber)).thenReturn(true);
+
+        // then
+        ApiException apiException = assertThrows(ApiException.class, () -> userService.updateUser(userUpdateDTO));
+        assertEquals("Telephone number should be unique or the same", apiException.getMessage());
+    }
+
+    @Test
+    void updateUser_whenValidRequest_updatesUser() {
+        // given
+        UserUpdateDTO userUpdateDTO = new UserUpdateDTO();
+        User currentUser = new User();
+        String email = "email1@email.com";
+        userUpdateDTO.setEmail(email);
+        currentUser.setEmail(email);
+        String telephoneNumber = "123456789";
+        userUpdateDTO.setTelephoneNumber(telephoneNumber);
+        currentUser.setTelephoneNumber(telephoneNumber);
+
+        // when
+        when(authService.getCurrentUser()).thenReturn(currentUser);
+
+        // then
+        userService.updateUser(userUpdateDTO);
+        verify(userMapper).mergeUserUpdateDTOIntoUser(userUpdateDTO, currentUser);
+        verify(userRepository).save(currentUser);
+        verify(authService).refreshAuthenticatedUser(currentUser);
     }
 }

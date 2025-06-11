@@ -42,7 +42,7 @@ public class UserService {
     public void updateUser(UserUpdateDTO userUpdateDTO) {
         User currentUser = authService.getCurrentUser();
         validateEmail(userUpdateDTO.getEmail(), currentUser.getEmail());
-        validateTelephone(userUpdateDTO.getTelephoneNumber(), currentUser.getTelephoneNumber());
+        validateTelephoneNumber(userUpdateDTO.getTelephoneNumber(), currentUser.getTelephoneNumber());
 
         userMapper.mergeUserUpdateDTOIntoUser(userUpdateDTO, currentUser);
         userRepository.save(currentUser);
@@ -54,7 +54,7 @@ public class UserService {
     public void patchUser(UserPatchDTO userPatchDTO) {
         User currentUser = authService.getCurrentUser();
         validateEmail(userPatchDTO.getEmail(), currentUser.getEmail());
-        validateTelephone(userPatchDTO.getTelephoneNumber(), currentUser.getTelephoneNumber());
+        validateTelephoneNumber(userPatchDTO.getTelephoneNumber(), currentUser.getTelephoneNumber());
 
         userMapper.mergeUserPatchDTOIntoUser(userPatchDTO, currentUser);
         userRepository.save(currentUser);
@@ -79,7 +79,7 @@ public class UserService {
         }
     }
 
-    private void validateTelephone(String newNumber, String currentNumber) {
+    private void validateTelephoneNumber(String newNumber, String currentNumber) {
         if (newNumber != null && !newNumber.equals(currentNumber) && userRepository.existsByTelephoneNumber(newNumber)) {
             throw new ApiException(HttpStatus.BAD_REQUEST, "Telephone number should be unique or the same");
         }

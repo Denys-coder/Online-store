@@ -8,6 +8,8 @@ import Onlinestorerestapi.entity.User;
 import Onlinestorerestapi.exception.ApiException;
 import Onlinestorerestapi.mapper.UserMapper;
 import Onlinestorerestapi.repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,8 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
@@ -226,5 +227,20 @@ public class UserServiceTest {
         verify(userMapper).mergeUserPatchDTOIntoUser(userPatchDTO, currentUser);
         verify(userRepository).save(currentUser);
         verify(authService).refreshAuthenticatedUser(currentUser);
+    }
+
+    @Test
+    void deleteUser_whenValidRequest_deletesUser() {
+        // given
+        User user = new User();
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+
+        // when
+        when(authService.getCurrentUser()).thenReturn(user);
+
+        // then
+        userService.deleteUser(request, response);
+        verify(userRepository).delete(user);
     }
 }

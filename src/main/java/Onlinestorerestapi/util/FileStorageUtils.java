@@ -60,4 +60,9 @@ public class FileStorageUtils {
             }
         }
     }
+
+    // separate wrapper method used to mock static method from JDK
+    public void deleteFiles(Path path) throws IOException {
+        Files.deleteIfExists(path);
+    }
 }

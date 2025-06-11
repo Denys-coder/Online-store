@@ -46,7 +46,7 @@ public class ImageStorageService {
 
         try {
             for (String name : oldImageNames) {
-                Files.deleteIfExists(Paths.get(imagesDirectory).resolve(name).normalize());
+                fileStorageUtils.deleteFiles(Paths.get(imagesDirectory).resolve(name).normalize());
             }
             for (int i = 0; i < newImages.size(); i++) {
                 Path path = fileStorageUtils.saveImage(newImages.get(i), newImageNames.get(i));

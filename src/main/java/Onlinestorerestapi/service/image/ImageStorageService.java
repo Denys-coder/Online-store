@@ -64,7 +64,7 @@ public class ImageStorageService {
 
         try {
             for (Path path : backups.keySet()) {
-                Files.deleteIfExists(path);
+                fileStorageUtils.deleteFiles(path);
             }
         } catch (IOException e) {
             fileStorageUtils.restoreBackups(backups);
@@ -79,5 +79,4 @@ public class ImageStorageService {
             throw new IllegalArgumentException("List sizes must match.");
         }
     }
-
 }

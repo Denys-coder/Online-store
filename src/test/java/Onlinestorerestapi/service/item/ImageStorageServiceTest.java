@@ -12,7 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -156,28 +155,38 @@ public class ImageStorageServiceTest {
         verify(fileStorageUtils).saveImage(newImages.get(0), newImageNames.get(0));
     }
 
-//    @Test
-//    void deleteImagesFromFolder_whenDeleteFails_throwsUncheckedIOException() {
-//        // given
-//        List<String> imageNames = new ArrayList<>();
-//        imageNames.add("Name to delete 1");
-//        Map<Path, byte[]> oldBackups = new HashMap<>();
-//        Path emptyPath = Path.of(".");
-//        oldBackups.put(emptyPath, new byte[1]);
-//
-//        // when
-//        when(fileStorageUtils.backupImages(imageNames)).thenReturn(oldBackups);
-//
-//        // then
-//        try (MockedStatic<ImageStorageService> imageStorageServiceMockedStatic = Mockito.mockStatic(ImageStorageService.class)) {
-//            imageStorageServiceMockedStatic.when(() -> Files.deleteIfExists(emptyPath)).thenThrow(IOException.class);
-//        }
-//        UncheckedIOException uncheckedIOException = assertThrows(UncheckedIOException.class, () -> imageStorageService.deleteImagesFromFolder(imageNames));
-//        assertEquals("Failed to delete all images. Rolled back changes.", uncheckedIOException.getMessage());
-//    }
-//
-//    @Test
-//    void deleteImagesFromFolder_whenValidRequest_deletesImages() {
-//
-//    }
+    @Test
+    void deleteImagesFromFolder_whenDeleteFails_throwsUncheckedIOException() throws IOException {
+        // given
+        List<String> imageNames = new ArrayList<>();
+        imageNames.add("Name to delete 1");
+        Map<Path, byte[]> backups = new HashMap<>();
+        Path emptyPath = Path.of(".");
+        backups.put(emptyPath, new byte[1]);
+
+        // when
+        when(fileStorageUtils.backupImages(imageNames)).thenReturn(backups);
+        doThrow(IOException.class).when(fileStorageUtils).deleteFiles(any(Path.class));
+
+        // then
+        UncheckedIOException uncheckedIOException = assertThrows(UncheckedIOException.class, () -> imageStorageService.deleteImagesFromFolder(imageNames));
+        assertEquals("Failed to delete all images. Rolled back changes.", uncheckedIOException.getMessage());
+    }
+
+    @Test
+    void deleteImagesFromFolder_whenValidRequest_deletesImages() throws IOException {
+        // given
+        List<String> imageNames = new ArrayList<>();
+        imageNames.add("Name to delete 1");
+        Map<Path, byte[]> backups = new HashMap<>();
+        Path emptyPath = Path.of(".");
+        backups.put(emptyPath, new byte[1]);
+
+        // when
+        when(fileStorageUtils.backupImages(imageNames)).thenReturn(backups);
+
+        // then
+        imageStorageService.deleteImagesFromFolder(imageNames);
+        verify(fileStorageUtils).deleteFiles(emptyPath);
+    }
 }

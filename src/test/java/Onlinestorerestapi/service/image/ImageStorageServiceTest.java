@@ -1,6 +1,5 @@
-package Onlinestorerestapi.service.item;
+package Onlinestorerestapi.service.image;
 
-import Onlinestorerestapi.service.image.ImageStorageService;
 import Onlinestorerestapi.util.FileStorageUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

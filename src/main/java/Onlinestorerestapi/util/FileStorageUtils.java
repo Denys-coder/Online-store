@@ -56,12 +56,12 @@ public class FileStorageUtils {
         }
     }
 
-    public void rollbackSavedImages(List<Path> savedFiles) {
-        for (Path path : savedFiles) {
+    public void deleteFiles(List<Path> pathsToDelete) {
+        for (Path path : pathsToDelete) {
             try {
                 fileOperationsService.deleteIfExists(path);
             } catch (IOException ex) {
-                System.out.printf("Rollback failed for newly saved file: %s - %s%n", path, ex.getMessage());
+                System.out.printf("Failed to delete: %s - %s%n", path, ex.getMessage());
             }
         }
     }

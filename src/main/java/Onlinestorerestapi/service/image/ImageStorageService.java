@@ -37,7 +37,7 @@ public class ImageStorageService {
                 savedFiles.add(path);
             }
         } catch (IOException e) {
-            fileStorageUtils.rollbackSavedImages(savedFiles);
+            fileStorageUtils.deleteFiles(savedFiles);
             throw new UncheckedIOException("Failed to save images to folder", e);
         }
     }
@@ -56,7 +56,7 @@ public class ImageStorageService {
                 newSavedFiles.add(path);
             }
         } catch (IOException e) {
-            fileStorageUtils.rollbackSavedImages(newSavedFiles);
+            fileStorageUtils.deleteFiles(newSavedFiles);
             fileStorageUtils.saveFiles(oldBackups);
             throw new UncheckedIOException("Failed to swap images", e);
         }

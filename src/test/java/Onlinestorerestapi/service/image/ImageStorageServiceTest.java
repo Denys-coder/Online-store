@@ -75,7 +75,7 @@ public class ImageStorageServiceTest {
         // then
         UncheckedIOException uncheckedIOException = assertThrows(UncheckedIOException.class, () -> imageStorageService.saveImagesToFolder(images, imageNames));
         assertEquals("Failed to save images to folder", uncheckedIOException.getMessage());
-        verify(fileStorageUtils).rollbackSavedImages(argumentCaptor.capture());
+        verify(fileStorageUtils).deleteFiles(argumentCaptor.capture());
         assertEquals(savedFile, argumentCaptor.getValue().get(0));
     }
 
@@ -132,7 +132,7 @@ public class ImageStorageServiceTest {
         // then
         UncheckedIOException uncheckedIOException = assertThrows(UncheckedIOException.class, () -> imageStorageService.swapImages(oldImageNames, newImages, newImageNames));
         assertEquals("Failed to swap images", uncheckedIOException.getMessage());
-        verify(fileStorageUtils).rollbackSavedImages(argumentCaptor.capture());
+        verify(fileStorageUtils).deleteFiles(argumentCaptor.capture());
         assertEquals(newSavedFile1, argumentCaptor.getValue().get(0));
         verify(fileStorageUtils).saveFiles(oldBackups);
     }

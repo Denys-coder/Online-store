@@ -103,18 +103,20 @@ public class FileStorageServiceTest {
         String exceptionMessage = String.format("Failed to save file: %s", filePath.toString());
 
         // when
-        when(fileOperationsService.write(filePath, fileContent, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)).thenThrow(new IOException());
+        doThrow(new IOException()).when(fileOperationsService).write(
+                eq(filePath), eq(fileContent), eq(StandardOpenOption.CREATE), eq(StandardOpenOption.TRUNCATE_EXISTING)
+        );
 
         // then
-        PrintStream originalOut = System.out;
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outContent));
+        PrintStream originalErr = System.err;
+        ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+        System.setErr(new PrintStream(errContent));
         try {
             fileStorageService.saveFiles(files);
-            String output = outContent.toString().trim();
+            String output = errContent.toString().trim();
             assertEquals(exceptionMessage, output);
         } finally {
-            System.setOut(originalOut);
+            System.setErr(originalErr);
         }
     }
 
@@ -143,15 +145,15 @@ public class FileStorageServiceTest {
         doThrow(new IOException()).when(fileOperationsService).deleteIfExists(filePath);
 
         // then
-        PrintStream originalOut = System.out;
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outContent));
+        PrintStream originalErr = System.err;
+        ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+        System.setErr(new PrintStream(errContent));
         try {
             fileStorageService.deleteFiles(pathsToDelete);
-            String output = outContent.toString().trim();
+            String output = errContent.toString().trim();
             assertEquals(exceptionMessage, output);
         } finally {
-            System.setOut(originalOut);
+            System.setErr(originalErr);
         }
     }
 
@@ -161,8 +163,6 @@ public class FileStorageServiceTest {
         List<Path> pathsToDelete = new ArrayList<>();
         Path filePath = tempPath.resolve("file name 1").normalize();
         pathsToDelete.add(filePath);
-
-        // when
 
         // then
         fileStorageService.deleteFiles(pathsToDelete);

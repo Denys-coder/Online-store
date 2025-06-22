@@ -1,17 +1,23 @@
 package Onlinestorerestapi.util;
 
+import Onlinestorerestapi.service.FileOperationsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
@@ -25,6 +31,9 @@ public class FileStorageUtilsTest {
 
     @InjectMocks
     FileStorageUtils fileStorageUtils;
+
+    @Mock
+    FileOperationsService fileOperationsService;
 
     @BeforeEach
     public void setUpImagesDirectory() {
@@ -44,5 +53,40 @@ public class FileStorageUtilsTest {
         // then
         fileStorageUtils.saveImage(image, imageName);
         assertTrue(Files.exists(tempDir.resolve(imageName).normalize()));
+    }
+
+    @Test
+    public void getFileBytes_whenPathExistsButCouldNotReadBytes_throwsUncheckedIOException() throws IOException {
+        // given
+        String fileName = "file name 1";
+        List<String> fileNames = List.of(fileName);
+        byte[] fileContent = "file-content".getBytes();
+        Path path = Paths.get(tempDir.toString()).resolve(fileName).normalize();
+        Files.write(path, fileContent);
+        String exceptionMessage = "Failed to get bytes of file: " + fileName;
+
+        // when
+        when(fileOperationsService.readAllBytes(path)).thenThrow(new IOException(exceptionMessage));
+
+        // then
+        UncheckedIOException uncheckedIOException = assertThrows(UncheckedIOException.class, () -> fileStorageUtils.getFileBytes(fileNames));
+        assertEquals(exceptionMessage, uncheckedIOException.getMessage());
+    }
+
+    @Test
+    public void getFileBytes_successfullyGersFileBytes() throws IOException {
+        // given
+        String fileName = "file name 1";
+        List<String> fileNames = List.of(fileName);
+        byte[] fileContent = "file-content".getBytes();
+        Path path = Paths.get(tempDir.toString()).resolve(fileName).normalize();
+        Files.write(path, fileContent);
+
+        // when
+        when(fileOperationsService.readAllBytes(path)).thenReturn(fileContent);
+
+        // then
+        Map<Path, byte[]> fileBytes = fileStorageUtils.getFileBytes(fileNames);
+        assertEquals(fileBytes.get(path), fileBytes.get(path));
     }
 }

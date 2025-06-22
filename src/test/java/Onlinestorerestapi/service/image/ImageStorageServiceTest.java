@@ -1,7 +1,7 @@
 package Onlinestorerestapi.service.image;
 
 import Onlinestorerestapi.service.FileOperationsService;
-import Onlinestorerestapi.util.FileStorageUtils;
+import Onlinestorerestapi.service.FileStorageService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,7 +30,7 @@ public class ImageStorageServiceTest {
     Path tempDir;
 
     @Mock
-    FileStorageUtils fileStorageUtils;
+    FileStorageService fileStorageService;
 
     @Mock
     FileOperationsService fileOperationsService;
@@ -69,13 +69,13 @@ public class ImageStorageServiceTest {
         ArgumentCaptor<List<Path>> argumentCaptor = ArgumentCaptor.forClass(List.class);
 
         // when
-        when(fileStorageUtils.saveFiles(images.get(0), imageNames.get(0))).thenReturn(savedFile);
-        when(fileStorageUtils.saveFiles(images.get(1), imageNames.get(1))).thenThrow(IOException.class);
+        when(fileStorageService.saveFiles(images.get(0), imageNames.get(0))).thenReturn(savedFile);
+        when(fileStorageService.saveFiles(images.get(1), imageNames.get(1))).thenThrow(IOException.class);
 
         // then
         UncheckedIOException uncheckedIOException = assertThrows(UncheckedIOException.class, () -> imageStorageService.saveImagesToFolder(images, imageNames));
         assertEquals("Failed to save images to folder", uncheckedIOException.getMessage());
-        verify(fileStorageUtils).deleteFiles(argumentCaptor.capture());
+        verify(fileStorageService).deleteFiles(argumentCaptor.capture());
         assertEquals(savedFile, argumentCaptor.getValue().get(0));
     }
 
@@ -89,7 +89,7 @@ public class ImageStorageServiceTest {
         Path savedFile = Paths.get(tempDir.toString(), imageNames.get(0));
 
         // when
-        when(fileStorageUtils.saveFiles(images.get(0), imageNames.get(0))).thenReturn(savedFile);
+        when(fileStorageService.saveFiles(images.get(0), imageNames.get(0))).thenReturn(savedFile);
 
         // then
         imageStorageService.saveImagesToFolder(images, imageNames);
@@ -125,16 +125,16 @@ public class ImageStorageServiceTest {
         ArgumentCaptor<List<Path>> argumentCaptor = ArgumentCaptor.forClass(List.class);
 
         // when
-        when(fileStorageUtils.getFileBytes(oldImageNames)).thenReturn(oldBackups);
-        when(fileStorageUtils.saveFiles(newImages.get(0), newImageNames.get(0))).thenReturn(newSavedFile1);
-        when(fileStorageUtils.saveFiles(newImages.get(1), newImageNames.get(1))).thenThrow(IOException.class);
+        when(fileStorageService.getFileBytes(oldImageNames)).thenReturn(oldBackups);
+        when(fileStorageService.saveFiles(newImages.get(0), newImageNames.get(0))).thenReturn(newSavedFile1);
+        when(fileStorageService.saveFiles(newImages.get(1), newImageNames.get(1))).thenThrow(IOException.class);
 
         // then
         UncheckedIOException uncheckedIOException = assertThrows(UncheckedIOException.class, () -> imageStorageService.swapImages(oldImageNames, newImages, newImageNames));
         assertEquals("Failed to swap images", uncheckedIOException.getMessage());
-        verify(fileStorageUtils).deleteFiles(argumentCaptor.capture());
+        verify(fileStorageService).deleteFiles(argumentCaptor.capture());
         assertEquals(newSavedFile1, argumentCaptor.getValue().get(0));
-        verify(fileStorageUtils).saveFiles(oldBackups);
+        verify(fileStorageService).saveFiles(oldBackups);
     }
 
     @Test
@@ -150,12 +150,12 @@ public class ImageStorageServiceTest {
         Path newSavedFile1 = Paths.get(tempDir.toString(), newImageNames.get(0));
 
         // when
-        when(fileStorageUtils.getFileBytes(oldImageNames)).thenReturn(oldBackups);
-        when(fileStorageUtils.saveFiles(newImages.get(0), newImageNames.get(0))).thenReturn(newSavedFile1);
+        when(fileStorageService.getFileBytes(oldImageNames)).thenReturn(oldBackups);
+        when(fileStorageService.saveFiles(newImages.get(0), newImageNames.get(0))).thenReturn(newSavedFile1);
 
         // then
         imageStorageService.swapImages(oldImageNames, newImages, newImageNames);
-        verify(fileStorageUtils).saveFiles(newImages.get(0), newImageNames.get(0));
+        verify(fileStorageService).saveFiles(newImages.get(0), newImageNames.get(0));
     }
 
     @Test
@@ -168,7 +168,7 @@ public class ImageStorageServiceTest {
         backups.put(emptyPath, new byte[1]);
 
         // when
-        when(fileStorageUtils.getFileBytes(imageNames)).thenReturn(backups);
+        when(fileStorageService.getFileBytes(imageNames)).thenReturn(backups);
         doThrow(IOException.class).when(fileOperationsService).deleteIfExists(any(Path.class));
 
         // then
@@ -186,7 +186,7 @@ public class ImageStorageServiceTest {
         backups.put(emptyPath, new byte[1]);
 
         // when
-        when(fileStorageUtils.getFileBytes(imageNames)).thenReturn(backups);
+        when(fileStorageService.getFileBytes(imageNames)).thenReturn(backups);
 
         // then
         imageStorageService.deleteImagesFromFolder(imageNames);

@@ -1,7 +1,7 @@
 package Onlinestorerestapi.service.image;
 
 import Onlinestorerestapi.service.FileOperationsService;
-import Onlinestorerestapi.util.FileStorageUtils;
+import Onlinestorerestapi.service.FileStorageService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -23,7 +23,7 @@ public class ImageStorageService {
     @Setter
     private String imagesDirectory;
 
-    private final FileStorageUtils fileStorageUtils;
+    private final FileStorageService fileStorageService;
 
     private final FileOperationsService fileOperationsService;
 
@@ -33,11 +33,11 @@ public class ImageStorageService {
 
         try {
             for (int i = 0; i < images.size(); i++) {
-                Path path = fileStorageUtils.saveFiles(images.get(i), imageNames.get(i));
+                Path path = fileStorageService.saveFiles(images.get(i), imageNames.get(i));
                 savedFiles.add(path);
             }
         } catch (IOException e) {
-            fileStorageUtils.deleteFiles(savedFiles);
+            fileStorageService.deleteFiles(savedFiles);
             throw new UncheckedIOException("Failed to save images to folder", e);
         }
     }
@@ -45,32 +45,32 @@ public class ImageStorageService {
     public void swapImages(List<String> oldImageNames, List<MultipartFile> newImages, List<String> newImageNames) {
         validateMatchingSizes(newImages.size(), newImageNames.size());
         List<Path> newSavedFiles = new ArrayList<>();
-        Map<Path, byte[]> oldBackups = fileStorageUtils.getFileBytes(oldImageNames);
+        Map<Path, byte[]> oldBackups = fileStorageService.getFileBytes(oldImageNames);
 
         try {
             for (String name : oldImageNames) {
                 fileOperationsService.deleteIfExists(Paths.get(imagesDirectory).resolve(name).normalize());
             }
             for (int i = 0; i < newImages.size(); i++) {
-                Path path = fileStorageUtils.saveFiles(newImages.get(i), newImageNames.get(i));
+                Path path = fileStorageService.saveFiles(newImages.get(i), newImageNames.get(i));
                 newSavedFiles.add(path);
             }
         } catch (IOException e) {
-            fileStorageUtils.deleteFiles(newSavedFiles);
-            fileStorageUtils.saveFiles(oldBackups);
+            fileStorageService.deleteFiles(newSavedFiles);
+            fileStorageService.saveFiles(oldBackups);
             throw new UncheckedIOException("Failed to swap images", e);
         }
     }
 
     public void deleteImagesFromFolder(List<String> imageNames) {
-        Map<Path, byte[]> backups = fileStorageUtils.getFileBytes(imageNames);
+        Map<Path, byte[]> backups = fileStorageService.getFileBytes(imageNames);
 
         try {
             for (Path path : backups.keySet()) {
                 fileOperationsService.deleteIfExists(path);
             }
         } catch (IOException e) {
-            fileStorageUtils.saveFiles(backups);
+            fileStorageService.saveFiles(backups);
             throw new UncheckedIOException("Failed to delete all images. Rolled back changes.", e);
         }
     }

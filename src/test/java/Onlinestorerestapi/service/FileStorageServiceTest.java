@@ -1,6 +1,5 @@
-package Onlinestorerestapi.util;
+package Onlinestorerestapi.service;
 
-import Onlinestorerestapi.service.FileOperationsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,20 +23,20 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class FileStorageUtilsTest {
+public class FileStorageServiceTest {
 
     @TempDir
     Path tempDir;
 
     @InjectMocks
-    FileStorageUtils fileStorageUtils;
+    FileStorageService fileStorageService;
 
     @Mock
     FileOperationsService fileOperationsService;
 
     @BeforeEach
     public void setUpImagesDirectory() {
-        ReflectionTestUtils.setField(fileStorageUtils, "imagesDirectory", tempDir.toString());
+        ReflectionTestUtils.setField(fileStorageService, "imagesDirectory", tempDir.toString());
     }
 
     @Test
@@ -51,7 +50,7 @@ public class FileStorageUtilsTest {
         when(image.getBytes()).thenReturn(fileContent);
 
         // then
-        fileStorageUtils.saveFiles(image, imageName);
+        fileStorageService.saveFiles(image, imageName);
         assertTrue(Files.exists(tempDir.resolve(imageName).normalize()));
     }
 
@@ -69,7 +68,7 @@ public class FileStorageUtilsTest {
         when(fileOperationsService.readAllBytes(path)).thenThrow(new IOException(exceptionMessage));
 
         // then
-        UncheckedIOException uncheckedIOException = assertThrows(UncheckedIOException.class, () -> fileStorageUtils.getFileBytes(fileNames));
+        UncheckedIOException uncheckedIOException = assertThrows(UncheckedIOException.class, () -> fileStorageService.getFileBytes(fileNames));
         assertEquals(exceptionMessage, uncheckedIOException.getMessage());
     }
 
@@ -86,7 +85,7 @@ public class FileStorageUtilsTest {
         when(fileOperationsService.readAllBytes(path)).thenReturn(fileContent);
 
         // then
-        Map<Path, byte[]> fileBytes = fileStorageUtils.getFileBytes(fileNames);
+        Map<Path, byte[]> fileBytes = fileStorageService.getFileBytes(fileNames);
         assertEquals(fileBytes.get(path), fileBytes.get(path));
     }
 }

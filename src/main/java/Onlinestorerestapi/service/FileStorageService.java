@@ -1,6 +1,5 @@
-package Onlinestorerestapi.util;
+package Onlinestorerestapi.service;
 
-import Onlinestorerestapi.service.FileOperationsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -18,7 +17,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class FileStorageUtils {
+public class FileStorageService {
 
     @Value("${images.directory}")
     private String imagesDirectory;

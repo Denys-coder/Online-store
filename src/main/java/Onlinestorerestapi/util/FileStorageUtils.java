@@ -25,9 +25,9 @@ public class FileStorageUtils {
 
     private final FileOperationsService fileOperationsService;
 
-    public Path saveImage(MultipartFile image, String imageName) throws IOException {
-        Path path = Path.of(imagesDirectory).resolve(imageName).normalize();
-        Files.write(path, image.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+    public Path saveFiles(MultipartFile file, String fileName) throws IOException {
+        Path path = Path.of(imagesDirectory).resolve(fileName).normalize();
+        Files.write(path, file.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
         return path;
     }
 

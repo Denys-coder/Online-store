@@ -33,7 +33,7 @@ public class ImageStorageService {
 
         try {
             for (int i = 0; i < images.size(); i++) {
-                Path path = fileStorageUtils.saveImage(images.get(i), imageNames.get(i));
+                Path path = fileStorageUtils.saveFiles(images.get(i), imageNames.get(i));
                 savedFiles.add(path);
             }
         } catch (IOException e) {
@@ -52,7 +52,7 @@ public class ImageStorageService {
                 fileOperationsService.deleteIfExists(Paths.get(imagesDirectory).resolve(name).normalize());
             }
             for (int i = 0; i < newImages.size(); i++) {
-                Path path = fileStorageUtils.saveImage(newImages.get(i), newImageNames.get(i));
+                Path path = fileStorageUtils.saveFiles(newImages.get(i), newImageNames.get(i));
                 newSavedFiles.add(path);
             }
         } catch (IOException e) {

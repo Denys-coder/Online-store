@@ -41,7 +41,7 @@ public class FileStorageUtilsTest {
     }
 
     @Test
-    public void saveImages_successfullySavesImages() throws IOException {
+    public void saveFiles_successfullySavesImages() throws IOException {
         // given
         MultipartFile image = mock(MultipartFile.class);
         byte[] fileContent = "file-content".getBytes();
@@ -51,7 +51,7 @@ public class FileStorageUtilsTest {
         when(image.getBytes()).thenReturn(fileContent);
 
         // then
-        fileStorageUtils.saveImage(image, imageName);
+        fileStorageUtils.saveFiles(image, imageName);
         assertTrue(Files.exists(tempDir.resolve(imageName).normalize()));
     }
 

@@ -69,8 +69,8 @@ public class ImageStorageServiceTest {
         ArgumentCaptor<List<Path>> argumentCaptor = ArgumentCaptor.forClass(List.class);
 
         // when
-        when(fileStorageUtils.saveImage(images.get(0), imageNames.get(0))).thenReturn(savedFile);
-        when(fileStorageUtils.saveImage(images.get(1), imageNames.get(1))).thenThrow(IOException.class);
+        when(fileStorageUtils.saveFiles(images.get(0), imageNames.get(0))).thenReturn(savedFile);
+        when(fileStorageUtils.saveFiles(images.get(1), imageNames.get(1))).thenThrow(IOException.class);
 
         // then
         UncheckedIOException uncheckedIOException = assertThrows(UncheckedIOException.class, () -> imageStorageService.saveImagesToFolder(images, imageNames));
@@ -89,7 +89,7 @@ public class ImageStorageServiceTest {
         Path savedFile = Paths.get(tempDir.toString(), imageNames.get(0));
 
         // when
-        when(fileStorageUtils.saveImage(images.get(0), imageNames.get(0))).thenReturn(savedFile);
+        when(fileStorageUtils.saveFiles(images.get(0), imageNames.get(0))).thenReturn(savedFile);
 
         // then
         imageStorageService.saveImagesToFolder(images, imageNames);
@@ -126,8 +126,8 @@ public class ImageStorageServiceTest {
 
         // when
         when(fileStorageUtils.getFileBytes(oldImageNames)).thenReturn(oldBackups);
-        when(fileStorageUtils.saveImage(newImages.get(0), newImageNames.get(0))).thenReturn(newSavedFile1);
-        when(fileStorageUtils.saveImage(newImages.get(1), newImageNames.get(1))).thenThrow(IOException.class);
+        when(fileStorageUtils.saveFiles(newImages.get(0), newImageNames.get(0))).thenReturn(newSavedFile1);
+        when(fileStorageUtils.saveFiles(newImages.get(1), newImageNames.get(1))).thenThrow(IOException.class);
 
         // then
         UncheckedIOException uncheckedIOException = assertThrows(UncheckedIOException.class, () -> imageStorageService.swapImages(oldImageNames, newImages, newImageNames));
@@ -151,11 +151,11 @@ public class ImageStorageServiceTest {
 
         // when
         when(fileStorageUtils.getFileBytes(oldImageNames)).thenReturn(oldBackups);
-        when(fileStorageUtils.saveImage(newImages.get(0), newImageNames.get(0))).thenReturn(newSavedFile1);
+        when(fileStorageUtils.saveFiles(newImages.get(0), newImageNames.get(0))).thenReturn(newSavedFile1);
 
         // then
         imageStorageService.swapImages(oldImageNames, newImages, newImageNames);
-        verify(fileStorageUtils).saveImage(newImages.get(0), newImageNames.get(0));
+        verify(fileStorageUtils).saveFiles(newImages.get(0), newImageNames.get(0));
     }
 
     @Test

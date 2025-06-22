@@ -134,7 +134,7 @@ public class ImageStorageServiceTest {
         assertEquals("Failed to swap images", uncheckedIOException.getMessage());
         verify(fileStorageUtils).rollbackSavedImages(argumentCaptor.capture());
         assertEquals(newSavedFile1, argumentCaptor.getValue().get(0));
-        verify(fileStorageUtils).restoreBackups(oldBackups);
+        verify(fileStorageUtils).saveFiles(oldBackups);
     }
 
     @Test

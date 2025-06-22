@@ -57,7 +57,7 @@ public class ImageStorageService {
             }
         } catch (IOException e) {
             fileStorageUtils.rollbackSavedImages(newSavedFiles);
-            fileStorageUtils.restoreBackups(oldBackups);
+            fileStorageUtils.saveFiles(oldBackups);
             throw new UncheckedIOException("Failed to swap images", e);
         }
     }
@@ -70,7 +70,7 @@ public class ImageStorageService {
                 fileOperationsService.deleteIfExists(path);
             }
         } catch (IOException e) {
-            fileStorageUtils.restoreBackups(backups);
+            fileStorageUtils.saveFiles(backups);
             throw new UncheckedIOException("Failed to delete all images. Rolled back changes.", e);
         }
     }

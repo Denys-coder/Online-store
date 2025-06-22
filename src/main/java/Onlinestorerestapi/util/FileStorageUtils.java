@@ -46,12 +46,12 @@ public class FileStorageUtils {
         return fileBytes;
     }
 
-    public void restoreBackups(Map<Path, byte[]> backups) {
-        for (Map.Entry<Path, byte[]> entry : backups.entrySet()) {
+    public void saveFiles(Map<Path, byte[]> files) {
+        for (Map.Entry<Path, byte[]> entry : files.entrySet()) {
             try {
                 fileOperationsService.write(entry.getKey(), entry.getValue(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
             } catch (IOException ex) {
-                System.out.printf("Failed to restore backup: %s - %s%n", entry.getKey(), ex.getMessage());
+                System.out.printf("Failed to save files: %s - %s%n", entry.getKey(), ex.getMessage());
             }
         }
     }

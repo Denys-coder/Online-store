@@ -50,7 +50,7 @@ public class FileStorageService {
             try {
                 fileOperationsService.write(entry.getKey(), entry.getValue(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
             } catch (IOException ex) {
-                System.out.printf("Failed to save files: %s - %s%n", entry.getKey(), ex.getMessage());
+                System.out.printf("Failed to save file: %s", entry.getKey().toString());
             }
         }
     }
@@ -60,7 +60,7 @@ public class FileStorageService {
             try {
                 fileOperationsService.deleteIfExists(path);
             } catch (IOException ex) {
-                System.out.printf("Failed to delete: %s - %s%n", path, ex.getMessage());
+                System.out.printf("Failed to delete file: %s", path.toString());
             }
         }
     }

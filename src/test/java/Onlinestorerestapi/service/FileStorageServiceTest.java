@@ -10,23 +10,26 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class FileStorageServiceTest {
 
     @TempDir
-    Path tempDir;
+    Path tempPath;
 
     @InjectMocks
     FileStorageService fileStorageService;
@@ -36,7 +39,7 @@ public class FileStorageServiceTest {
 
     @BeforeEach
     public void setUpImagesDirectory() {
-        ReflectionTestUtils.setField(fileStorageService, "imagesDirectory", tempDir.toString());
+        ReflectionTestUtils.setField(fileStorageService, "imagesDirectory", tempPath.toString());
     }
 
     @Test
@@ -51,7 +54,7 @@ public class FileStorageServiceTest {
 
         // then
         fileStorageService.saveFiles(image, imageName);
-        assertTrue(Files.exists(tempDir.resolve(imageName).normalize()));
+        assertTrue(Files.exists(tempPath.resolve(imageName).normalize()));
     }
 
     @Test
@@ -60,7 +63,7 @@ public class FileStorageServiceTest {
         String fileName = "file name 1";
         List<String> fileNames = List.of(fileName);
         byte[] fileContent = "file-content".getBytes();
-        Path path = Paths.get(tempDir.toString()).resolve(fileName).normalize();
+        Path path = Paths.get(tempPath.toString()).resolve(fileName).normalize();
         Files.write(path, fileContent);
         String exceptionMessage = "Failed to get bytes of file: " + fileName;
 
@@ -78,7 +81,7 @@ public class FileStorageServiceTest {
         String fileName = "file name 1";
         List<String> fileNames = List.of(fileName);
         byte[] fileContent = "file-content".getBytes();
-        Path path = Paths.get(tempDir.toString()).resolve(fileName).normalize();
+        Path path = Paths.get(tempPath.toString()).resolve(fileName).normalize();
         Files.write(path, fileContent);
 
         // when
@@ -87,5 +90,43 @@ public class FileStorageServiceTest {
         // then
         Map<Path, byte[]> fileBytes = fileStorageService.getFileBytes(fileNames);
         assertEquals(fileBytes.get(path), fileBytes.get(path));
+    }
+
+    @Test
+    public void saveFiles_whenWriteFails_throwsIOException() throws IOException {
+        // given
+        byte[] fileContent = new byte[10];
+        Path filePath = tempPath.resolve("file name 1").normalize();
+        Map<Path, byte[]> files = new HashMap<>();
+        files.put(filePath, fileContent);
+        String exceptionMessage = String.format("Failed to save file: %s", filePath.toString());
+
+        // when
+        when(fileOperationsService.write(filePath, fileContent, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)).thenThrow(new IOException());
+
+        // then
+        PrintStream originalOut = System.out;
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+        try {
+            fileStorageService.saveFiles(files);
+            String output = outContent.toString().trim();
+            assertEquals(exceptionMessage, output);
+        } finally {
+            System.setOut(originalOut);
+        }
+    }
+
+    @Test
+    public void saveFiles_successfullySavesFiles() throws IOException {
+        // given
+        byte[] fileContent = new byte[10];
+        Path filePath = tempPath.resolve("file name 1").normalize();
+        Map<Path, byte[]> files = new HashMap<>();
+        files.put(filePath, fileContent);
+
+        // then
+        fileStorageService.saveFiles(files);
+        verify(fileOperationsService).write(filePath, fileContent, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
     }
 }

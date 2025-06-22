@@ -1,5 +1,6 @@
 package Onlinestorerestapi.service.image;
 
+import Onlinestorerestapi.service.FileOperationsService;
 import Onlinestorerestapi.util.FileStorageUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,6 +31,9 @@ public class ImageStorageServiceTest {
 
     @Mock
     FileStorageUtils fileStorageUtils;
+
+    @Mock
+    FileOperationsService fileOperationsService;
 
     @InjectMocks
     ImageStorageService imageStorageService;
@@ -165,7 +169,7 @@ public class ImageStorageServiceTest {
 
         // when
         when(fileStorageUtils.backupImages(imageNames)).thenReturn(backups);
-        doThrow(IOException.class).when(fileStorageUtils).deleteFiles(any(Path.class));
+        doThrow(IOException.class).when(fileOperationsService).deleteIfExists(any(Path.class));
 
         // then
         UncheckedIOException uncheckedIOException = assertThrows(UncheckedIOException.class, () -> imageStorageService.deleteImagesFromFolder(imageNames));
@@ -186,6 +190,6 @@ public class ImageStorageServiceTest {
 
         // then
         imageStorageService.deleteImagesFromFolder(imageNames);
-        verify(fileStorageUtils).deleteFiles(emptyPath);
+        verify(fileOperationsService).deleteIfExists(emptyPath);
     }
 }

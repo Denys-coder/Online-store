@@ -1,5 +1,6 @@
 package Onlinestorerestapi.service.image;
 
+import Onlinestorerestapi.service.FileOperationsService;
 import Onlinestorerestapi.util.FileStorageUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,8 @@ public class ImageStorageService {
 
     private final FileStorageUtils fileStorageUtils;
 
+    private final FileOperationsService fileOperationsService;
+
     public void saveImagesToFolder(List<MultipartFile> images, List<String> imageNames) {
         validateMatchingSizes(images.size(), imageNames.size());
         List<Path> savedFiles = new ArrayList<>();
@@ -46,7 +49,7 @@ public class ImageStorageService {
 
         try {
             for (String name : oldImageNames) {
-                fileStorageUtils.deleteFiles(Paths.get(imagesDirectory).resolve(name).normalize());
+                fileOperationsService.deleteIfExists(Paths.get(imagesDirectory).resolve(name).normalize());
             }
             for (int i = 0; i < newImages.size(); i++) {
                 Path path = fileStorageUtils.saveImage(newImages.get(i), newImageNames.get(i));
@@ -64,7 +67,7 @@ public class ImageStorageService {
 
         try {
             for (Path path : backups.keySet()) {
-                fileStorageUtils.deleteFiles(path);
+                fileOperationsService.deleteIfExists(path);
             }
         } catch (IOException e) {
             fileStorageUtils.restoreBackups(backups);

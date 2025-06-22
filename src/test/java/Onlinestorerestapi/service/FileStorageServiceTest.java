@@ -18,6 +18,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -93,7 +94,7 @@ public class FileStorageServiceTest {
     }
 
     @Test
-    public void saveFiles_whenWriteFails_throwsIOException() throws IOException {
+    public void saveFiles_whenWriteFails_printsError() throws IOException {
         // given
         byte[] fileContent = new byte[10];
         Path filePath = tempPath.resolve("file name 1").normalize();
@@ -128,5 +129,43 @@ public class FileStorageServiceTest {
         // then
         fileStorageService.saveFiles(files);
         verify(fileOperationsService).write(filePath, fileContent, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+    }
+
+    @Test
+    public void deleteFiles_whenDeleteFails_printsError() throws IOException {
+        // given
+        List<Path> pathsToDelete = new ArrayList<>();
+        Path filePath = tempPath.resolve("file name 1").normalize();
+        pathsToDelete.add(filePath);
+        String exceptionMessage = String.format("Failed to delete file: %s", filePath.toString());
+
+        // when
+        doThrow(new IOException()).when(fileOperationsService).deleteIfExists(filePath);
+
+        // then
+        PrintStream originalOut = System.out;
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+        try {
+            fileStorageService.deleteFiles(pathsToDelete);
+            String output = outContent.toString().trim();
+            assertEquals(exceptionMessage, output);
+        } finally {
+            System.setOut(originalOut);
+        }
+    }
+
+    @Test
+    public void deleteFiles_successfullyDeleteFiles() throws IOException {
+        // given
+        List<Path> pathsToDelete = new ArrayList<>();
+        Path filePath = tempPath.resolve("file name 1").normalize();
+        pathsToDelete.add(filePath);
+
+        // when
+
+        // then
+        fileStorageService.deleteFiles(pathsToDelete);
+        verify(fileOperationsService).deleteIfExists(filePath);
     }
 }

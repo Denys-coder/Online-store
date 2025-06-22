@@ -125,7 +125,7 @@ public class ImageStorageServiceTest {
         ArgumentCaptor<List<Path>> argumentCaptor = ArgumentCaptor.forClass(List.class);
 
         // when
-        when(fileStorageUtils.backupImages(oldImageNames)).thenReturn(oldBackups);
+        when(fileStorageUtils.getFileBytes(oldImageNames)).thenReturn(oldBackups);
         when(fileStorageUtils.saveImage(newImages.get(0), newImageNames.get(0))).thenReturn(newSavedFile1);
         when(fileStorageUtils.saveImage(newImages.get(1), newImageNames.get(1))).thenThrow(IOException.class);
 
@@ -150,7 +150,7 @@ public class ImageStorageServiceTest {
         Path newSavedFile1 = Paths.get(tempDir.toString(), newImageNames.get(0));
 
         // when
-        when(fileStorageUtils.backupImages(oldImageNames)).thenReturn(oldBackups);
+        when(fileStorageUtils.getFileBytes(oldImageNames)).thenReturn(oldBackups);
         when(fileStorageUtils.saveImage(newImages.get(0), newImageNames.get(0))).thenReturn(newSavedFile1);
 
         // then
@@ -168,7 +168,7 @@ public class ImageStorageServiceTest {
         backups.put(emptyPath, new byte[1]);
 
         // when
-        when(fileStorageUtils.backupImages(imageNames)).thenReturn(backups);
+        when(fileStorageUtils.getFileBytes(imageNames)).thenReturn(backups);
         doThrow(IOException.class).when(fileOperationsService).deleteIfExists(any(Path.class));
 
         // then
@@ -186,7 +186,7 @@ public class ImageStorageServiceTest {
         backups.put(emptyPath, new byte[1]);
 
         // when
-        when(fileStorageUtils.backupImages(imageNames)).thenReturn(backups);
+        when(fileStorageUtils.getFileBytes(imageNames)).thenReturn(backups);
 
         // then
         imageStorageService.deleteImagesFromFolder(imageNames);

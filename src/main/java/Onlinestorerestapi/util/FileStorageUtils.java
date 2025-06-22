@@ -31,19 +31,19 @@ public class FileStorageUtils {
         return path;
     }
 
-    public Map<Path, byte[]> backupImages(List<String> imageNames) {
-        Map<Path, byte[]> backups = new HashMap<>();
-        for (String imageName : imageNames) {
-            Path path = Paths.get(imagesDirectory).resolve(imageName).normalize();
+    public Map<Path, byte[]> getFileBytes(List<String> fileNames) {
+        Map<Path, byte[]> fileBytes = new HashMap<>();
+        for (String fileName : fileNames) {
+            Path path = Paths.get(imagesDirectory).resolve(fileName).normalize();
             if (Files.exists(path)) {
                 try {
-                    backups.put(path, fileOperationsService.readAllBytes(path));
+                    fileBytes.put(path, fileOperationsService.readAllBytes(path));
                 } catch (IOException e) {
-                    throw new UncheckedIOException("Failed to backup image: " + imageName, e);
+                    throw new UncheckedIOException("Failed to get bytes of file: " + fileName, e);
                 }
             }
         }
-        return backups;
+        return fileBytes;
     }
 
     public void restoreBackups(Map<Path, byte[]> backups) {

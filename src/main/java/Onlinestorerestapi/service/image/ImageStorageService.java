@@ -45,7 +45,7 @@ public class ImageStorageService {
     public void swapImages(List<String> oldImageNames, List<MultipartFile> newImages, List<String> newImageNames) {
         validateMatchingSizes(newImages.size(), newImageNames.size());
         List<Path> newSavedFiles = new ArrayList<>();
-        Map<Path, byte[]> oldBackups = fileStorageUtils.backupImages(oldImageNames);
+        Map<Path, byte[]> oldBackups = fileStorageUtils.getFileBytes(oldImageNames);
 
         try {
             for (String name : oldImageNames) {
@@ -63,7 +63,7 @@ public class ImageStorageService {
     }
 
     public void deleteImagesFromFolder(List<String> imageNames) {
-        Map<Path, byte[]> backups = fileStorageUtils.backupImages(imageNames);
+        Map<Path, byte[]> backups = fileStorageUtils.getFileBytes(imageNames);
 
         try {
             for (Path path : backups.keySet()) {

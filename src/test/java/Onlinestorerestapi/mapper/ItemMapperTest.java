@@ -2,6 +2,7 @@ package Onlinestorerestapi.mapper;
 
 import Onlinestorerestapi.dto.item.ItemCreateDTO;
 import Onlinestorerestapi.dto.item.ItemResponseDTO;
+import Onlinestorerestapi.dto.item.ItemUpdateDTO;
 import Onlinestorerestapi.entity.Item;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
@@ -60,6 +61,31 @@ public class ItemMapperTest {
 
         // then
         Item item = itemMapper.itemCreateDTOToItem(itemCreateDTO, pictureAmount);
+        assertEquals(itemName, item.getName());
+        assertEquals(itemPrice, item.getPrice());
+        assertNotNull(item.getLogoName());
+        assertDoesNotThrow(() -> UUID.fromString(item.getLogoName()));
+        List<String> pictureNames = item.getPictureNames();
+        assertNotNull(pictureNames);
+        assertEquals(pictureAmount, pictureNames.size());
+        pictureNames.forEach(name -> assertDoesNotThrow(() -> UUID.fromString(name)));
+    }
+
+    @Test
+    void itemUpdateDTOToItem_setsFieldsCorrectly() {
+        // given
+        ItemUpdateDTO itemUpdateDTO = new ItemUpdateDTO();
+        String itemName = "item name";
+        itemUpdateDTO.setName(itemName);
+        double itemPrice = 10.0;
+        itemUpdateDTO.setPrice(itemPrice);
+        Item item = new Item();
+        String itemLogoName = "item logo name";
+        item.setLogoName(itemLogoName);
+        int pictureAmount = 2;
+
+        // then
+        itemMapper.itemUpdateDTOToItem(itemUpdateDTO, item, pictureAmount);
         assertEquals(itemName, item.getName());
         assertEquals(itemPrice, item.getPrice());
         assertNotNull(item.getLogoName());

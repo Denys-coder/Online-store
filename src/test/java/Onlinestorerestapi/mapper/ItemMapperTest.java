@@ -9,11 +9,14 @@ import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 
 @SpringBootTest
 @RequiredArgsConstructor
@@ -92,7 +95,6 @@ public class ItemMapperTest {
         assertNotNull(item.getLogoName());
         assertDoesNotThrow(() -> UUID.fromString(item.getLogoName()));
         List<String> pictureNames = item.getPictureNames();
-        assertNotNull(pictureNames);
         assertEquals(pictureAmount, pictureNames.size());
         pictureNames.forEach(name -> assertDoesNotThrow(() -> UUID.fromString(name)));
     }
@@ -112,5 +114,40 @@ public class ItemMapperTest {
         itemMapper.patchItemBase(itemPatchDTO, item);
         assertEquals(newName, item.getName());
         assertEquals(itemAmount, item.getAmount());
+    }
+
+    @Test
+    void itemPatchDTOToItem_whenLogoIsNotNullAndPicturesIsNull_setsFieldsAndRegeneratesLogo() {
+        // given
+        ItemPatchDTO itemPatchDTO = new ItemPatchDTO();
+        Item item = new Item();
+        List<String> pictureNames = List.of("picture name 1", "picture name 2");
+        item.setPictureNames(pictureNames);
+        MultipartFile logo = mock(MultipartFile.class);
+
+        // then
+        itemMapper.itemPatchDTOToItem(itemPatchDTO, item, logo, null);
+        assertNotNull(item.getLogoName());
+        assertDoesNotThrow(() -> UUID.fromString(item.getLogoName()));
+        assertEquals(pictureNames, item.getPictureNames());
+    }
+
+    @Test
+    void itemPatchDTOToItem_whenLogoIsNullAndPicturesIsNotNull_setsFieldsAndRegeneratesPictures() {
+        // given
+        ItemPatchDTO itemPatchDTO = new ItemPatchDTO();
+        Item item = new Item();
+        String logoName = "logo name";
+        item.setLogoName(logoName);
+        List<MultipartFile> pictures = new ArrayList<>();
+        pictures.add(mock(MultipartFile.class));
+        pictures.add(mock(MultipartFile.class));
+
+        // then
+        itemMapper.itemPatchDTOToItem(itemPatchDTO, item, null, pictures);
+        assertEquals(pictures.size(), item.getPictureNames().size());
+        item.getPictureNames().forEach(name -> assertDoesNotThrow(() -> UUID.fromString(name)));
+        assertEquals(pictures.size(), item.getPictureNames().size());
+        assertEquals(logoName, item.getLogoName());
     }
 }

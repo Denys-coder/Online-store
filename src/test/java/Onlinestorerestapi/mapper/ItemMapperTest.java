@@ -150,4 +150,35 @@ public class ItemMapperTest {
         assertEquals(pictures.size(), item.getPictureNames().size());
         assertEquals(logoName, item.getLogoName());
     }
+
+    @Test
+    void populatePictureNames_returnsCorrectNumberOfUUIDs() {
+        int count = 5;
+        List<String> names = itemMapper.populatePictureNames(count);
+
+        assertNotNull(names);
+        assertEquals(count, names.size());
+        names.forEach(name -> assertDoesNotThrow(() -> UUID.fromString(name)));
+    }
+
+    @Test
+    void populatePictureNames_returnsEmptyListWhenCountIsZero() {
+        List<String> names = itemMapper.populatePictureNames(0);
+
+        assertNotNull(names);
+        assertTrue(names.isEmpty());
+    }
+
+    @Test
+    void populatePictureNames_handlesSingleUUID() {
+        List<String> names = itemMapper.populatePictureNames(1);
+
+        assertEquals(1, names.size());
+        assertDoesNotThrow(() -> UUID.fromString(names.get(0)));
+    }
+
+    @Test
+    void populatePictureNames_throwsExceptionWhenCountNegative() {
+        assertThrows(IllegalArgumentException.class, () -> itemMapper.populatePictureNames(-1));
+    }
 }

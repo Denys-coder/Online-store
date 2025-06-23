@@ -42,6 +42,9 @@ public abstract class ItemMapper {
     }
 
     public List<String> populatePictureNames(int pictureAmount) {
+        if (pictureAmount < 0) {
+            throw new IllegalArgumentException("pictureAmount parameter could not be less than 0");
+        }
         List<String> pictureNames = new ArrayList<>();
         while (pictureNames.size() < pictureAmount) {
             pictureNames.add(UUID.randomUUID().toString());

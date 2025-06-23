@@ -1,6 +1,7 @@
 package Onlinestorerestapi.mapper;
 
 import Onlinestorerestapi.dto.item.ItemCreateDTO;
+import Onlinestorerestapi.dto.item.ItemPatchDTO;
 import Onlinestorerestapi.dto.item.ItemResponseDTO;
 import Onlinestorerestapi.dto.item.ItemUpdateDTO;
 import Onlinestorerestapi.entity.Item;
@@ -94,5 +95,22 @@ public class ItemMapperTest {
         assertNotNull(pictureNames);
         assertEquals(pictureAmount, pictureNames.size());
         pictureNames.forEach(name -> assertDoesNotThrow(() -> UUID.fromString(name)));
+    }
+
+    @Test
+    void patchItem_setsFieldsCorrectly() {
+        // given
+        ItemPatchDTO itemPatchDTO = new ItemPatchDTO();
+        String newName = "new name";
+        itemPatchDTO.setName(newName);
+        Item item = new Item();
+        item.setName("old name");
+        int itemAmount = 10;
+        item.setAmount(itemAmount);
+
+        // then
+        itemMapper.patchItemBase(itemPatchDTO, item);
+        assertEquals(newName, item.getName());
+        assertEquals(itemAmount, item.getAmount());
     }
 }

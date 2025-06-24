@@ -23,3 +23,4 @@ Used technologies:
 * Lombok
 * MapStruct
 * Apache Tika (validate that received file is an image)
+* JUnit 5 + Mockito

@@ -9,6 +9,7 @@ import Onlinestorerestapi.service.item.ItemService;
 import Onlinestorerestapi.validation.annotation.item.Image;
 import Onlinestorerestapi.validation.annotation.item.ImageArray;
 import Onlinestorerestapi.validation.annotation.item.MaxFileCount;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,7 @@ public class ItemController {
 
     private final ItemService itemService;
 
+    @Operation(summary = "Get item by id")
     @GetMapping({"/{itemId}"})
     public ResponseEntity<?> getItem(@PathVariable int itemId) {
 
@@ -33,6 +35,7 @@ public class ItemController {
         return ResponseEntity.ok(itemResponseDTO);
     }
 
+    @Operation(summary = "Get all items")
     @GetMapping
     public ResponseEntity<?> getItems() {
 
@@ -40,6 +43,7 @@ public class ItemController {
         return ResponseEntity.ok(itemResponseDTOs);
     }
 
+    @Operation(summary = "Create new item")
     @PostMapping
     public ResponseEntity<?> createItem(@RequestPart("item") @Valid ItemCreateDTO itemCreateDTO,
                                       @RequestPart("logo") @Image MultipartFile logo,
@@ -50,6 +54,7 @@ public class ItemController {
         return ResponseEntity.created(new URI("/items/" + item.getId())).build();
     }
 
+    @Operation(summary = "Update item (need to specify all fields)")
     @PutMapping("/{itemId}")
     public ResponseEntity<?> updateItem(@PathVariable int itemId,
                                         @RequestPart("item") @Valid ItemUpdateDTO itemUpdateDTO,
@@ -61,6 +66,7 @@ public class ItemController {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "Update item (need to specify only fields being updated")
     @PatchMapping("/{itemId}")
     public ResponseEntity<?> patchItem(@PathVariable int itemId,
                                        @RequestPart(name = "item", required = false) @Valid ItemPatchDTO itemPatchDTO,
@@ -72,6 +78,7 @@ public class ItemController {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "Delete item")
     @DeleteMapping({"/{itemId}"})
     public ResponseEntity<?> deleteItem(@PathVariable int itemId) {
 

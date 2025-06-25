@@ -3,6 +3,7 @@ package Onlinestorerestapi.controller;
 import Onlinestorerestapi.dto.order.*;
 import Onlinestorerestapi.entity.Order;
 import Onlinestorerestapi.service.OrderService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ public class OrderController {
 
     private final OrderService orderService;
 
+    @Operation(summary = "Get order by id")
     @GetMapping("/{orderId}")
     public ResponseEntity<?> getOrder(@PathVariable int orderId) {
 
@@ -26,6 +28,7 @@ public class OrderController {
         return ResponseEntity.ok(orderResponseDTO);
     }
 
+    @Operation(summary = "Get all orders")
     @GetMapping
     public ResponseEntity<?> getOrders() {
 
@@ -33,6 +36,7 @@ public class OrderController {
         return ResponseEntity.ok(orderResponseDTOs);
     }
 
+    @Operation(summary = "Create order")
     @PostMapping
     public ResponseEntity<?> createOrder(@Valid @RequestBody OrderCreateDTO orderCreateDTO) throws URISyntaxException {
 
@@ -40,6 +44,7 @@ public class OrderController {
         return ResponseEntity.created(new URI("/users/me/orders/" + newOrder.getId())).build();
     }
 
+    @Operation(summary = "Update order (need to specify all fields")
     @PutMapping("/{orderId}")
     public ResponseEntity<?> updateOrder(@PathVariable int orderId, @Valid @RequestBody OrderUpdateDTO orderUpdateDTO) {
 
@@ -47,6 +52,7 @@ public class OrderController {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "Update order (need to specify only fields being updated")
     @PatchMapping("/{orderId}")
     public ResponseEntity<?> patchOrder(@PathVariable int orderId, @Valid @RequestBody OrderPatchDTO orderPatchDTO) {
 
@@ -54,6 +60,7 @@ public class OrderController {
         return ResponseEntity.ok("Order fields updated");
     }
 
+    @Operation(summary = "Delete order")
     @DeleteMapping("/{orderId}")
     public ResponseEntity<?> deleteOrder(@PathVariable int orderId) {
 
@@ -61,6 +68,7 @@ public class OrderController {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "Delete all orders for current user")
     @DeleteMapping
     public ResponseEntity<?> deleteOrders() {
 
@@ -68,6 +76,7 @@ public class OrderController {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "Fulfill all orders for current user")
     @PostMapping("/fulfill")
     public ResponseEntity<?> fulfillOrders() {
 

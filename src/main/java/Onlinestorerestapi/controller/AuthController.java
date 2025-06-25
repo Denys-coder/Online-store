@@ -3,6 +3,7 @@ package Onlinestorerestapi.controller;
 import Onlinestorerestapi.dto.auth.AuthStatusDTO;
 import Onlinestorerestapi.dto.auth.LoginRequestDTO;
 import Onlinestorerestapi.service.AuthService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import jakarta.validation.Valid;
 public class AuthController {
     private final AuthService authService;
 
+    @Operation(summary = "Logs into the system")
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO, HttpServletRequest request) {
 
@@ -23,6 +25,7 @@ public class AuthController {
         return ResponseEntity.ok("User logged in");
     }
 
+    @Operation(summary = "Check whether client is authenticated and its role")
     @GetMapping("/status")
     public ResponseEntity<?> getAuthStatus() {
 

@@ -2,6 +2,7 @@ package Onlinestorerestapi.controller;
 
 import Onlinestorerestapi.dto.image.ImageResponseDTO;
 import Onlinestorerestapi.service.image.ImageService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -19,6 +20,7 @@ public class ImageController {
 
     private final ImageService imageService;
 
+    @Operation(summary = "Get an image by its name, which is its id")
     @GetMapping("/{imageName}")
     public ResponseEntity<Resource> getImage(@PathVariable String imageName) {
 

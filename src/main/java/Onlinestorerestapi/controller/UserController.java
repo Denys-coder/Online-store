@@ -5,6 +5,7 @@ import Onlinestorerestapi.dto.user.UserPatchDTO;
 import Onlinestorerestapi.dto.user.UserResponseDTO;
 import Onlinestorerestapi.dto.user.UserUpdateDTO;
 import Onlinestorerestapi.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -19,6 +20,7 @@ public class UserController {
 
     private final UserService userService;
 
+    @Operation(summary = "Get current user (which is logged in)")
     @GetMapping("/me")
     public ResponseEntity<?> getUser() {
 
@@ -27,6 +29,7 @@ public class UserController {
         return ResponseEntity.ok(userResponseDTO);
     }
 
+    @Operation(summary = "Create new user")
     @PostMapping
     public ResponseEntity<?> createUser(@Valid @RequestBody UserCreateDTO userCreateDTO) {
 
@@ -35,6 +38,7 @@ public class UserController {
         return ResponseEntity.ok("User created");
     }
 
+    @Operation(summary = "Update current user (need to specify all fields")
     @PutMapping("/me")
     public ResponseEntity<?> updateUser(@Valid @RequestBody UserUpdateDTO userUpdateDTO) {
 
@@ -43,6 +47,7 @@ public class UserController {
         return ResponseEntity.ok("User updated");
     }
 
+    @Operation(summary = "Update current user (need to specify only fields being updated")
     @PatchMapping("/me")
     public ResponseEntity<?> patchUser(@Valid @RequestBody UserPatchDTO userPatchDTO) {
 
@@ -51,6 +56,7 @@ public class UserController {
         return ResponseEntity.ok("User fields updated");
     }
 
+    @Operation(summary = "Log out and delete current user")
     @DeleteMapping("/me")
     public ResponseEntity<?> deleteUser(HttpServletRequest request, HttpServletResponse response) {
 

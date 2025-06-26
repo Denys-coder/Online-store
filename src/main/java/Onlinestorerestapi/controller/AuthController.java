@@ -4,12 +4,17 @@ import Onlinestorerestapi.dto.auth.AuthStatusDTO;
 import Onlinestorerestapi.dto.auth.LoginRequestDTO;
 import Onlinestorerestapi.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
+@Tag(name = "auth", description = "Operations related to authentication")
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor

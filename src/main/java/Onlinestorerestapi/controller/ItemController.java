@@ -10,6 +10,7 @@ import Onlinestorerestapi.validation.annotation.item.Image;
 import Onlinestorerestapi.validation.annotation.item.ImageArray;
 import Onlinestorerestapi.validation.annotation.item.MaxFileCount;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
 
+@Tag(name = "item", description = "Operations related to items")
 @RestController
 @RequestMapping("/api/v1/items")
 @RequiredArgsConstructor

@@ -37,7 +37,7 @@ public class GlobalExceptionHandler {
     // Spring Boot fails to parse or map json
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<?> handleHttpMessageNotReadableException(HttpMessageNotReadableException exception) {
-        return ResponseEntity.badRequest().body("invalid json");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("invalid json");
     }
 
     // Spring Boot fails to parse or map query parameters or path variables

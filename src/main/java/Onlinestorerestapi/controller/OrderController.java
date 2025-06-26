@@ -4,6 +4,7 @@ import Onlinestorerestapi.dto.order.*;
 import Onlinestorerestapi.entity.Order;
 import Onlinestorerestapi.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
+@Tag(name = "auth", description = "Operations related to orders")
 @RestController
 @RequestMapping("/api/v1/users/me/orders")
 @RequiredArgsConstructor

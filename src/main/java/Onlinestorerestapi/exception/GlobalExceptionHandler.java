@@ -26,6 +26,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleMaxUploadSizeException(MaxUploadSizeExceededException exception) {
         return ResponseEntity
                 .status(HttpStatus.PAYLOAD_TOO_LARGE)
+                .contentType(MediaType.APPLICATION_JSON)
                 .body("One or more file exceed the maximum allowed size limit");
     }
 
@@ -35,13 +36,17 @@ public class GlobalExceptionHandler {
         String errorMessage = String.format("Required part '%s' is missing", ex.getRequestPartName());
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
                 .body(errorMessage);
     }
 
     // Spring Boot fails to parse or map json
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<?> handleHttpMessageNotReadableException(HttpMessageNotReadableException exception) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("invalid json");
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body("invalid json");
     }
 
     // Spring Boot fails to parse or map query parameters or path variables
@@ -56,7 +61,10 @@ public class GlobalExceptionHandler {
                 parameterName, expectedType, invalidValue
         );
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(errorMessage);
     }
 
     // Spring Boot fails to validate @RequestBody fields
@@ -68,7 +76,10 @@ public class GlobalExceptionHandler {
             errors.computeIfAbsent(error.getField(), key -> new java.util.ArrayList<>()).add(error.getDefaultMessage());
         }
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(errors);
     }
 
     // Spring Boot fails to validate @RequestParam, @PathVariable or direct method parameters
@@ -86,7 +97,10 @@ public class GlobalExceptionHandler {
             });
         });
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(errors);
     }
 
     // when the request body has an unsupported format
@@ -95,7 +109,10 @@ public class GlobalExceptionHandler {
         Map<String, String> errors = Map.of(
                 "error", "Unsupported media type",
                 "supported media types", ex.getSupportedMediaTypes().toString());
-        return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body(errors);
+        return ResponseEntity
+                .status(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(errors);
     }
 
     // handle ApiException
@@ -103,6 +120,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleApiException(ApiException exception) {
         return ResponseEntity
                 .status(exception.getStatus())
+                .contentType(MediaType.APPLICATION_JSON)
                 .body(exception.getErrors());
     }
 

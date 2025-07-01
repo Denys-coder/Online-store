@@ -14,7 +14,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
-@Tag(name = "auth", description = "Operations related to orders")
+@Tag(name = "order", description = "Operations related to orders")
 @RestController
 @RequestMapping("/api/v1/users/me/orders")
 @RequiredArgsConstructor

@@ -1,9 +1,12 @@
 package Onlinestorerestapi.exception;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -101,6 +104,30 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(exception.getStatus())
                 .body(exception.getErrors());
+    }
+
+    // returned value could not be serialized into what the user needs
+    @ExceptionHandler(HttpMediaTypeNotAcceptableException.class)
+    public ResponseEntity<Map<String, String>> handleHttpMediaTypeNotAcceptableException(HttpMediaTypeNotAcceptableException ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("error", "Not Acceptable");
+        error.put("message", "Supported media type is application/json");
+        return ResponseEntity
+                .status(HttpStatus.NOT_ACCEPTABLE)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(error);
+    }
+
+    // returned value could be serialized into what the user needs, but failed
+    @ExceptionHandler(HttpMessageNotWritableException.class)
+    public ResponseEntity<Map<String, String>> handleHttpMessageNotWritableException(HttpMessageNotWritableException ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("error", "Not Acceptable");
+        error.put("message", "Supported media type is application/json");
+        return ResponseEntity
+                .status(HttpStatus.NOT_ACCEPTABLE)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(error);
     }
 
 }

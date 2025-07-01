@@ -32,15 +32,12 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth -> auth
                         // Public endpoints
                         .requestMatchers(API_V1 + "/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, API_V1 + "/users/**").permitAll()
                         .requestMatchers(HttpMethod.GET, API_V1 + "/items/**", API_V1 + "/images/**").permitAll()
-                        .requestMatchers(
-                                "/v3/api-docs/**",
-                                "/swagger-ui/**",
-                                "/swagger-ui.html"
-                        ).permitAll()
+                        .requestMatchers(HttpMethod.GET, API_V1 + "/images/**").permitAll()
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
+                        .permitAll()
 
-                        // Authenticated user endpoints
+                        // Authenticated user endpoints (both ROLE_ADMIN and ROLE_USER)
                         .requestMatchers(API_V1 + "/users/me/orders/**").authenticated()
                         .requestMatchers(API_V1 + "/users/**").authenticated()
 

@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "user", description = "Operations related to users")
@@ -22,6 +23,7 @@ public class UserController {
 
     private final UserService userService;
 
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Get current user (which is logged in)")
     @GetMapping("/me")
     public ResponseEntity<?> getUser() {
@@ -40,6 +42,7 @@ public class UserController {
         return ResponseEntity.ok("User created");
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Update current user (need to specify all fields")
     @PutMapping("/me")
     public ResponseEntity<?> updateUser(@Valid @RequestBody UserUpdateDTO userUpdateDTO) {
@@ -49,6 +52,7 @@ public class UserController {
         return ResponseEntity.ok("User updated");
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Update current user (need to specify only fields being updated")
     @PatchMapping("/me")
     public ResponseEntity<?> patchUser(@Valid @RequestBody UserPatchDTO userPatchDTO) {
@@ -58,6 +62,7 @@ public class UserController {
         return ResponseEntity.ok("User fields updated");
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Log out and delete current user")
     @DeleteMapping("/me")
     public ResponseEntity<?> deleteUser(HttpServletRequest request, HttpServletResponse response) {

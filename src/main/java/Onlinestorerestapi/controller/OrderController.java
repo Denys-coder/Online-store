@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -24,12 +25,14 @@ public class OrderController {
 
     @Operation(summary = "Get order by id")
     @GetMapping("/{orderId}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getOrder(@PathVariable int orderId) {
 
         OrderResponseDTO orderResponseDTO = orderService.getOrderResponseDTO(orderId);
         return ResponseEntity.ok(orderResponseDTO);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Get all orders")
     @GetMapping
     public ResponseEntity<?> getOrders() {
@@ -38,6 +41,7 @@ public class OrderController {
         return ResponseEntity.ok(orderResponseDTOs);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Create order")
     @PostMapping
     public ResponseEntity<?> createOrder(@Valid @RequestBody OrderCreateDTO orderCreateDTO) throws URISyntaxException {
@@ -46,6 +50,7 @@ public class OrderController {
         return ResponseEntity.created(new URI("/users/me/orders/" + newOrder.getId())).build();
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Update order (need to specify all fields")
     @PutMapping("/{orderId}")
     public ResponseEntity<?> updateOrder(@PathVariable int orderId, @Valid @RequestBody OrderUpdateDTO orderUpdateDTO) {
@@ -54,6 +59,7 @@ public class OrderController {
         return ResponseEntity.ok().build();
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Update order (need to specify only fields being updated")
     @PatchMapping("/{orderId}")
     public ResponseEntity<?> patchOrder(@PathVariable int orderId, @Valid @RequestBody OrderPatchDTO orderPatchDTO) {
@@ -62,6 +68,7 @@ public class OrderController {
         return ResponseEntity.ok("Order fields updated");
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Delete order")
     @DeleteMapping("/{orderId}")
     public ResponseEntity<?> deleteOrder(@PathVariable int orderId) {
@@ -70,6 +77,7 @@ public class OrderController {
         return ResponseEntity.noContent().build();
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Delete all orders for current user")
     @DeleteMapping
     public ResponseEntity<?> deleteOrders() {
@@ -78,6 +86,7 @@ public class OrderController {
         return ResponseEntity.noContent().build();
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Fulfill all orders for current user")
     @PostMapping("/fulfill")
     public ResponseEntity<?> fulfillOrders() {

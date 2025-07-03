@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,6 +28,7 @@ public class ImageStorageService {
 
     private final FileOperationsService fileOperationsService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     public void saveImagesToFolder(List<MultipartFile> images, List<String> imageNames) {
         validateMatchingSizes(images.size(), imageNames.size());
         List<Path> savedFiles = new ArrayList<>();
@@ -42,6 +44,7 @@ public class ImageStorageService {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public void swapImages(List<String> oldImageNames, List<MultipartFile> newImages, List<String> newImageNames) {
         validateMatchingSizes(newImages.size(), newImageNames.size());
         List<Path> newSavedFiles = new ArrayList<>();
@@ -62,6 +65,7 @@ public class ImageStorageService {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteImagesFromFolder(List<String> imageNames) {
         Map<Path, byte[]> backups = fileStorageService.getFileBytes(imageNames);
 

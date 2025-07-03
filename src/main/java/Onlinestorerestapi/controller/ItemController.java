@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -45,6 +46,7 @@ public class ItemController {
         return ResponseEntity.ok(itemResponseDTOs);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Create new item")
     @PostMapping
     public ResponseEntity<?> createItem(@RequestPart("item") @Valid ItemCreateDTO itemCreateDTO,
@@ -56,6 +58,7 @@ public class ItemController {
         return ResponseEntity.created(new URI("/items/" + item.getId())).build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Update item (need to specify all fields)")
     @PutMapping("/{itemId}")
     public ResponseEntity<?> updateItem(@PathVariable int itemId,
@@ -68,6 +71,7 @@ public class ItemController {
         return ResponseEntity.ok().build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Update item (need to specify only fields being updated")
     @PatchMapping("/{itemId}")
     public ResponseEntity<?> patchItem(@PathVariable int itemId,
@@ -80,6 +84,7 @@ public class ItemController {
         return ResponseEntity.ok().build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Delete item")
     @DeleteMapping({"/{itemId}"})
     public ResponseEntity<?> deleteItem(@PathVariable int itemId) {

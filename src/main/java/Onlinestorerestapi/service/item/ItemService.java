@@ -13,6 +13,7 @@ import Onlinestorerestapi.util.ImageUtils;
 import Onlinestorerestapi.exception.ApiException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -41,6 +42,7 @@ public class ItemService {
         return itemResponseBuilderService.getItemResponseDTOsByItems(itemRepository.findAll());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public Item createItem(ItemCreateDTO itemCreateDTO, MultipartFile logo, List<MultipartFile> pictures) {
         if (itemRepository.existsByName(itemCreateDTO.getName())) {
@@ -57,6 +59,7 @@ public class ItemService {
         return item;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public void updateItem(int itemId, ItemUpdateDTO itemUpdateDTO, MultipartFile logo, List<MultipartFile> pictures) {
         validateItemIdMatch(itemId, itemUpdateDTO.getId());
@@ -75,6 +78,7 @@ public class ItemService {
         imageStorageService.swapImages(oldLogoAndPictureNames, newLogoAndPictures, newLogoAndPictureNames);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public void patchItem(int itemId, ItemPatchDTO itemPatchDTO, MultipartFile logo, List<MultipartFile> pictures) {
         validateItemIdMatch(itemId, itemPatchDTO.getId());
@@ -98,6 +102,7 @@ public class ItemService {
         imageStorageService.swapImages(oldLogoAndPicturesNames, newLogoAndPictures, newLogoAndPictureNames);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public void deleteItem(int itemId) {
         Item item = getItemByIdOrThrow(itemId);

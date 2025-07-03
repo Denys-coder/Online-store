@@ -13,6 +13,7 @@ import Onlinestorerestapi.repository.OrderRepository;
 import Onlinestorerestapi.exception.ApiException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,11 +29,13 @@ public class OrderService {
     private final ItemRepository itemRepository;
     private final AuthService authService;
 
+    @PreAuthorize("isAuthenticated()")
     public OrderResponseDTO getOrderResponseDTO(int orderId) {
         Order order = getOrderForCurrentUserOrThrow(orderId);
         return orderMapper.orderToOrderResponseDTO(order);
     }
 
+    @PreAuthorize("isAuthenticated()")
     public List<OrderResponseDTO> getOrderResponseDTOs() {
         User user = authService.getCurrentUser();
         return orderRepository.findByUser(user).stream()
@@ -40,6 +43,7 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Transactional
     public Order createOrder(OrderCreateDTO orderCreateDTO) {
         User user = authService.getCurrentUser();
@@ -64,6 +68,7 @@ public class OrderService {
         return orderRepository.save(newOrder);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Transactional
     public void updateOrder(int orderId, OrderUpdateDTO orderUpdateDTO) {
         if (orderId != orderUpdateDTO.getId()) {
@@ -79,6 +84,7 @@ public class OrderService {
         orderRepository.save(order);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Transactional
     public void patchOrder(int orderId, OrderPatchDTO orderPatchDTO) {
         if (orderId != orderPatchDTO.getId()) {
@@ -95,6 +101,7 @@ public class OrderService {
         orderRepository.save(order);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Transactional
     public void deleteOrder(int orderId) {
         Order order = getOrderForCurrentUserOrThrow(orderId);
@@ -105,6 +112,7 @@ public class OrderService {
         orderRepository.deleteOrdersByUser(authService.getCurrentUser());
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Transactional
     public void fulfillOrders() {
         List<Order> orders = orderRepository.findByUser(authService.getCurrentUser());

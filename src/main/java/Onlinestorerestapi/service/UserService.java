@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Service;
@@ -38,6 +39,7 @@ public class UserService {
         userRepository.save(user);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Transactional
     public void updateUser(UserUpdateDTO userUpdateDTO) {
         User currentUser = authService.getCurrentUser();
@@ -50,6 +52,7 @@ public class UserService {
         authService.refreshAuthenticatedUser(currentUser);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Transactional
     public void patchUser(UserPatchDTO userPatchDTO) {
         User currentUser = authService.getCurrentUser();
@@ -62,6 +65,7 @@ public class UserService {
         authService.refreshAuthenticatedUser(currentUser);
     }
 
+    @PreAuthorize("isAuthenticated()")
     public void deleteUser(HttpServletRequest request, HttpServletResponse response) {
         userRepository.delete(authService.getCurrentUser());
         new SecurityContextLogoutHandler().logout(

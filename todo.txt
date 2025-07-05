@@ -1,14 +1,20 @@
 // FIX
+• always return 201 created with Location header with an id of the resource and with newly created resource in the body
+• replace /me in UserController with /{userId} and check that id from user got using credentials is the same as the received one,
+if not return 400. Also amend tests
+• always return json
+• always return the same response schema per response code
 
 
 // REFACTOR
 
 
 // IMPLEMENT
-• add all kinds of tests (more than JUnit and Mockito)
+• add Swagger support
 • add logging
 • use Spring Boot AOP
-• add pagination
+• make user id as UUID to make number of users confidential
+• add all kinds of tests (more than JUnit and Mockito)
 • make Order == cart, add boolean order.fulfilled, add CartItem
 • add pagination for all endpoints that can return a lot of data
 • share and add Postman collection

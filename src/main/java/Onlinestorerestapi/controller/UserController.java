@@ -15,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
+
 @Tag(name = "user", description = "Operations related to users")
 @RestController
 @RequestMapping("/api/v1/users")
@@ -37,9 +39,12 @@ public class UserController {
     @PostMapping
     public ResponseEntity<?> createUser(@Valid @RequestBody UserCreateDTO userCreateDTO) {
 
-        userService.createUser(userCreateDTO);
+        UserResponseDTO userResponseDTO = userService.createUser(userCreateDTO);
 
-        return ResponseEntity.ok("User created");
+        URI location = URI.create("/api/v1/users/" + userResponseDTO.getId());
+        return ResponseEntity
+                .created(location)
+                .body(userResponseDTO);
     }
 
     @PreAuthorize("isAuthenticated()")

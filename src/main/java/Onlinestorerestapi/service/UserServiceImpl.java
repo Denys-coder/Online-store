@@ -28,7 +28,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional
-    public void createUser(UserCreateDTO userCreateDTO) {
+    public UserResponseDTO createUser(UserCreateDTO userCreateDTO) {
         if (userRepository.existsByEmail(userCreateDTO.getEmail())) {
             throw new ApiException(HttpStatus.BAD_REQUEST, "Email address already in use");
         }
@@ -37,6 +37,8 @@ public class UserServiceImpl implements UserService {
         }
         User user = userMapper.userCreateDTOToUserMapper(userCreateDTO);
         userRepository.save(user);
+
+        return userMapper.userToUserResponseDTO(user);
     }
 
     @PreAuthorize("isAuthenticated()")

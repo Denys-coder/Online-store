@@ -10,7 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public interface UserService {
     UserResponseDTO getUserResponseDTO();
 
-    void createUser(UserCreateDTO userCreateDTO);
+    UserResponseDTO createUser(UserCreateDTO userCreateDTO);
 
     void updateUser(UserUpdateDTO userUpdateDTO);
 

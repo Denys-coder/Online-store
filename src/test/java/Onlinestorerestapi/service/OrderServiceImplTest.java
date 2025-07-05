@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class OrderServiceTest {
+public class OrderServiceImplTest {
 
     @Mock
     OrderRepository orderRepository;
@@ -42,7 +42,7 @@ public class OrderServiceTest {
     AuthService authService;
 
     @InjectMocks
-    OrderService orderService;
+    OrderServiceImpl orderService;
 
     @Test
     void getOrderResponseDTO_whenOrderNotExist_throwsApiException() {

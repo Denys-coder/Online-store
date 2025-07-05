@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
-public class ItemServiceTest {
+public class ItemServiceImplTest {
 
     @Mock
     private ItemRepository itemRepository;
@@ -50,7 +50,7 @@ public class ItemServiceTest {
     private OrderRepository orderRepository;
 
     @InjectMocks
-    private ItemService itemService;
+    private ItemServiceImpl itemService;
 
     @Test
     void getItemResponseDTO_whenItemDoesNotExists_throwsApiException() {

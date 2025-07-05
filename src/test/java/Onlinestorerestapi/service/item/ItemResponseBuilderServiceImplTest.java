@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class ItemResponseBuilderServiceTest {
+public class ItemResponseBuilderServiceImplTest {
 
     @Mock
     AuthService authService;
@@ -32,7 +32,7 @@ public class ItemResponseBuilderServiceTest {
     ItemMapper itemMapper;
 
     @InjectMocks
-    ItemResponseBuilderService itemResponseBuilderService;
+    ItemResponseBuilderServiceImpl itemResponseBuilderService;
 
     @Test
     void getItemResponseDTOsByItems_whenItemsIsEmptyAndUserIsNotAuthenticated_returnsEmptyItemDTOsList() {

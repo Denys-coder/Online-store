@@ -17,13 +17,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class ImageValidationServiceTest {
+class ImageValidationServiceImplTest {
 
     @Mock
     private Tika tika;
 
     @InjectMocks
-    private ImageValidationService imageValidationService;
+    private ImageValidationServiceImpl imageValidationService;
 
     @Test
     void isImage_nullFile_returnsTrue() {

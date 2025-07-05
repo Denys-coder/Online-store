@@ -27,13 +27,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class FileStorageServiceTest {
+public class FileStorageServiceImplTest {
 
     @TempDir
     Path tempPath;
 
     @InjectMocks
-    FileStorageService fileStorageService;
+    FileStorageServiceImpl fileStorageService;
 
     @Mock
     FileOperationsService fileOperationsService;

@@ -2,12 +2,10 @@
 
 
 // REFACTOR
-• use @PreAuthorized for methods used only by authenticated users
-• use Interfaces as references where all service classes are used
 
 
 // IMPLEMENT
-• add all kinds of tests (at least JUnit and Mockito)
+• add all kinds of tests (more than JUnit and Mockito)
 • add logging
 • use Spring Boot AOP
 • add pagination

@@ -25,7 +25,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class ImageServiceTest {
+public class ImageServiceImplTest {
 
     @Mock
     Tika tika;
@@ -34,7 +34,7 @@ public class ImageServiceTest {
     Path tempDir;
 
     @InjectMocks
-    ImageService imageService;
+    ImageServiceImpl imageService;
 
     @BeforeEach
     void setUp() {

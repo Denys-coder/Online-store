@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class ImageStorageServiceTest {
+public class ImageStorageServiceImplTest {
 
     @TempDir
     Path tempDir;
@@ -36,7 +36,7 @@ public class ImageStorageServiceTest {
     FileOperationsService fileOperationsService;
 
     @InjectMocks
-    ImageStorageService imageStorageService;
+    ImageStorageServiceImpl imageStorageService;
 
     @BeforeEach
     void setUp() {

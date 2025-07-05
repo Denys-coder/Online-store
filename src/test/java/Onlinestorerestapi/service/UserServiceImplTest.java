@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class UserServiceTest {
+public class UserServiceImplTest {
 
     @Mock
     UserMapper userMapper;
@@ -33,7 +33,7 @@ public class UserServiceTest {
     AuthService authService;
 
     @InjectMocks
-    UserService userService;
+    UserServiceImpl userService;
 
     @Test
     void getUserResponseDTO_whenValidRequest_returnsUserResponseDTO() {

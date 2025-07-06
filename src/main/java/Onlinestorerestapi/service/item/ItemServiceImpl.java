@@ -44,7 +44,7 @@ public class ItemServiceImpl implements ItemService {
 
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
-    public Item createItem(ItemCreateDTO itemCreateDTO, MultipartFile logo, List<MultipartFile> pictures) {
+    public ItemResponseDTO createItem(ItemCreateDTO itemCreateDTO, MultipartFile logo, List<MultipartFile> pictures) {
         if (itemRepository.existsByName(itemCreateDTO.getName())) {
             throw new ApiException(HttpStatus.CONFLICT, "Item name should be unique");
         }
@@ -56,7 +56,7 @@ public class ItemServiceImpl implements ItemService {
         itemRepository.save(item);
         imageStorageService.saveImagesToFolder(logoAndPictures, logoAndPicturesNames);
 
-        return item;
+        return itemMapper.itemToItemResponseDTO(item, false);
     }
 
     @PreAuthorize("hasRole('ADMIN')")

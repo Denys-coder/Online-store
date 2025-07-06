@@ -120,6 +120,8 @@ public class ItemServiceImplTest {
         List<String> logoAndPictureNames = new ArrayList<>();
         logoAndPictureNames.add(item.getLogoName());
         logoAndPictureNames.addAll(item.getPictureNames());
+        ItemResponseDTO itemResponseDTO = new ItemResponseDTO();
+        itemResponseDTO.setName(itemName);
 
         // when
         when(itemRepository.existsByName(itemName)).thenReturn(false);
@@ -127,6 +129,7 @@ public class ItemServiceImplTest {
         when(imageUtils.combineLogoAndPictures(logo, pictures)).thenReturn(logoAndPictures);
         when(imageUtils.combineLogoAndPictureNames(item.getLogoName(), item.getPictureNames())).thenReturn(logoAndPictureNames);
         when(itemRepository.save(item)).thenReturn(item);
+        when(itemMapper.itemToItemResponseDTO(item, false)).thenReturn(itemResponseDTO);
 
         // then
         assertEquals(item.getName(), itemService.createItem(itemCreateDTO, logo, pictures).getName());

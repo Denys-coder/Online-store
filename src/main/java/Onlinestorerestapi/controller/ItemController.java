@@ -4,7 +4,6 @@ import Onlinestorerestapi.dto.item.ItemCreateDTO;
 import Onlinestorerestapi.dto.item.ItemResponseDTO;
 import Onlinestorerestapi.dto.item.ItemPatchDTO;
 import Onlinestorerestapi.dto.item.ItemUpdateDTO;
-import Onlinestorerestapi.entity.Item;
 import Onlinestorerestapi.service.item.ItemService;
 import Onlinestorerestapi.validation.annotation.item.Image;
 import Onlinestorerestapi.validation.annotation.item.ImageArray;
@@ -53,9 +52,12 @@ public class ItemController {
                                       @RequestPart("logo") @Image MultipartFile logo,
                                       @RequestPart("images") @ImageArray @MaxFileCount(maxFileAmount = 10) List<MultipartFile> pictures) throws URISyntaxException {
 
-        Item item = itemService.createItem(itemCreateDTO, logo, pictures);
+        ItemResponseDTO itemResponseDTO = itemService.createItem(itemCreateDTO, logo, pictures);
 
-        return ResponseEntity.created(new URI("/items/" + item.getId())).build();
+        URI uri = new URI("/api/v1/items/" + itemResponseDTO.getId());
+        return ResponseEntity
+                .created(uri)
+                .body(itemResponseDTO);
     }
 
     @PreAuthorize("hasRole('ADMIN')")

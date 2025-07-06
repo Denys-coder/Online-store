@@ -1,7 +1,6 @@
 package Onlinestorerestapi.controller;
 
 import Onlinestorerestapi.dto.order.*;
-import Onlinestorerestapi.entity.Order;
 import Onlinestorerestapi.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -46,8 +45,12 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<?> createOrder(@Valid @RequestBody OrderCreateDTO orderCreateDTO) throws URISyntaxException {
 
-        Order newOrder = orderService.createOrder(orderCreateDTO);
-        return ResponseEntity.created(new URI("/users/me/orders/" + newOrder.getId())).build();
+        OrderResponseDTO orderResponseDTO = orderService.createOrder(orderCreateDTO);
+
+        URI location = new URI("/api/v1/users/me/orders/" + orderResponseDTO.getId());
+        return ResponseEntity
+                .created(location)
+                .body(orderResponseDTO);
     }
 
     @PreAuthorize("isAuthenticated()")

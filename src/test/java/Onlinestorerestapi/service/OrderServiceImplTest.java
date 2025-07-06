@@ -208,18 +208,22 @@ public class OrderServiceImplTest {
         int itemToOrderId = 1;
         itemToOrder.setId(1);
         itemToOrder.setAmount(1);
-        Order newOrder = new Order();
-        newOrder.setId(1);
+        int orderId = 1;
+        Order order = new Order();
+        order.setId(orderId);
+        OrderResponseDTO orderResponseDTO = new OrderResponseDTO();
+        orderResponseDTO.setId(orderId);
 
         // when
         when(authService.getCurrentUser()).thenReturn(user);
         when(itemRepository.findById(itemToOrderId)).thenReturn(Optional.of(itemToOrder));
         when(orderRepository.findByUser(user)).thenReturn(Collections.emptyList());
-        when(orderMapper.orderCreateDTOToOrder(orderCreateDTO, itemToOrder, user)).thenReturn(newOrder);
-        when(orderRepository.save(newOrder)).thenReturn(newOrder);
+        when(orderMapper.orderCreateDTOToOrder(orderCreateDTO, itemToOrder, user)).thenReturn(order);
+        when(orderRepository.save(order)).thenReturn(order);
+        when(orderMapper.orderToOrderResponseDTO(order)).thenReturn(orderResponseDTO);
 
         // then
-        assertEquals(newOrder, orderService.createOrder(orderCreateDTO));
+        assertEquals(orderResponseDTO, orderService.createOrder(orderCreateDTO));
     }
 
     @Test

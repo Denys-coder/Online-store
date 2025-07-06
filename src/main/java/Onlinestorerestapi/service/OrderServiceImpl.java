@@ -45,7 +45,7 @@ public class OrderServiceImpl implements OrderService {
 
     @PreAuthorize("isAuthenticated()")
     @Transactional
-    public Order createOrder(OrderCreateDTO orderCreateDTO) {
+    public OrderResponseDTO createOrder(OrderCreateDTO orderCreateDTO) {
         User user = authService.getCurrentUser();
         Item item = getItemOrThrow(orderCreateDTO.getItemId());
 
@@ -64,8 +64,10 @@ public class OrderServiceImpl implements OrderService {
             throw new ApiException(HttpStatus.BAD_REQUEST, exceptionMessage);
         }
 
-        Order newOrder = orderMapper.orderCreateDTOToOrder(orderCreateDTO, item, user);
-        return orderRepository.save(newOrder);
+        Order order = orderMapper.orderCreateDTOToOrder(orderCreateDTO, item, user);
+        orderRepository.save(order);
+
+        return orderMapper.orderToOrderResponseDTO(order);
     }
 
     @PreAuthorize("isAuthenticated()")

@@ -54,9 +54,9 @@ public class ItemController {
 
         ItemResponseDTO itemResponseDTO = itemService.createItem(itemCreateDTO, logo, pictures);
 
-        URI uri = new URI("/api/v1/items/" + itemResponseDTO.getId());
+        URI location = new URI("/api/v1/items/" + itemResponseDTO.getId());
         return ResponseEntity
-                .created(uri)
+                .created(location)
                 .body(itemResponseDTO);
     }
 

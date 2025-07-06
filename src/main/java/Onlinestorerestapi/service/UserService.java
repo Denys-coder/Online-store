@@ -14,7 +14,7 @@ public interface UserService {
 
     void updateUser(UserUpdateDTO userUpdateDTO, int userId);
 
-    void patchUser(UserPatchDTO userPatchDTO);
+    void patchUser(UserPatchDTO userPatchDTO, int userId);
 
     void deleteUser(HttpServletRequest request, HttpServletResponse response);
 }

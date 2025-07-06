@@ -59,10 +59,10 @@ public class UserController {
 
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Update current user (need to specify only fields being updated")
-    @PatchMapping("/me")
-    public ResponseEntity<?> patchUser(@Valid @RequestBody UserPatchDTO userPatchDTO) {
+    @PatchMapping("/{userId}")
+    public ResponseEntity<?> patchUser(@Valid @RequestBody UserPatchDTO userPatchDTO, @PathVariable int userId) {
 
-        userService.patchUser(userPatchDTO);
+        userService.patchUser(userPatchDTO, userId);
 
         return ResponseEntity.ok("User fields updated");
     }

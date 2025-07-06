@@ -68,8 +68,13 @@ public class UserServiceImpl implements UserService {
 
     @PreAuthorize("isAuthenticated()")
     @Transactional
-    public void patchUser(UserPatchDTO userPatchDTO) {
+    public void patchUser(UserPatchDTO userPatchDTO, int userId) {
+
         User currentUser = authService.getCurrentUser();
+        if (currentUser.getId() != userId) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "User id in path does not match with user id from session");
+        }
+
         validateEmail(userPatchDTO.getEmail(), currentUser.getEmail());
         validateTelephoneNumber(userPatchDTO.getTelephoneNumber(), currentUser.getTelephoneNumber());
 

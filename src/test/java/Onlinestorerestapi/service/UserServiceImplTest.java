@@ -291,9 +291,28 @@ public class UserServiceImplTest {
     }
 
     @Test
+    void deleteUser_whenIdInPathAndFromSessionMismatch_throwsException() {
+        // given
+        User currentUser = new User();
+        int userId = 1;
+        currentUser.setId(userId);
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+
+        // when
+        when(authService.getCurrentUser()).thenReturn(currentUser);
+
+        // then
+        ApiException apiException = assertThrows(ApiException.class, () -> userService.deleteUser(request, response, 2));
+        assertEquals("User id in path does not match with user id from session", apiException.getMessage());
+    }
+
+    @Test
     void deleteUser_whenValidRequest_deletesUser() {
         // given
         User user = new User();
+        int userId = 1;
+        user.setId(userId);
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
 
@@ -301,7 +320,7 @@ public class UserServiceImplTest {
         when(authService.getCurrentUser()).thenReturn(user);
 
         // then
-        userService.deleteUser(request, response);
+        userService.deleteUser(request, response, userId);
         verify(userRepository).delete(user);
     }
 }

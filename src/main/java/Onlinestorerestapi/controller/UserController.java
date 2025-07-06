@@ -69,10 +69,10 @@ public class UserController {
 
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Log out and delete current user")
-    @DeleteMapping("/me")
-    public ResponseEntity<?> deleteUser(HttpServletRequest request, HttpServletResponse response) {
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<?> deleteUser(HttpServletRequest request, HttpServletResponse response, @PathVariable int userId) {
 
-        userService.deleteUser(request, response);
+        userService.deleteUser(request, response, userId);
 
         return ResponseEntity.noContent().build();
     }

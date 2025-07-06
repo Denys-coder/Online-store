@@ -12,7 +12,7 @@ public interface UserService {
 
     UserResponseDTO createUser(UserCreateDTO userCreateDTO);
 
-    void updateUser(UserUpdateDTO userUpdateDTO);
+    void updateUser(UserUpdateDTO userUpdateDTO, int userId);
 
     void patchUser(UserPatchDTO userPatchDTO);
 

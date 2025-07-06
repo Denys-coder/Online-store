@@ -28,7 +28,7 @@ public class UserServiceImpl implements UserService {
         User currentUser = authService.getCurrentUser();
 
         if (currentUser.getId() != userId) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "User id id path does not match with user id from session");
+            throw new ApiException(HttpStatus.BAD_REQUEST, "User id in path does not match with user id from session");
         }
 
         return userMapper.userToUserResponseDTO(currentUser);
@@ -50,8 +50,13 @@ public class UserServiceImpl implements UserService {
 
     @PreAuthorize("isAuthenticated()")
     @Transactional
-    public void updateUser(UserUpdateDTO userUpdateDTO) {
+    public void updateUser(UserUpdateDTO userUpdateDTO, int userId) {
+
         User currentUser = authService.getCurrentUser();
+        if (currentUser.getId() != userId) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "User id in path does not match with user id from session");
+        }
+
         validateEmail(userUpdateDTO.getEmail(), currentUser.getEmail());
         validateTelephoneNumber(userUpdateDTO.getTelephoneNumber(), currentUser.getTelephoneNumber());
 

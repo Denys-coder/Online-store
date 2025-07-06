@@ -47,7 +47,7 @@ public class UserServiceImplTest {
 
         // then
         ApiException apiException = assertThrows(ApiException.class, () -> userService.getUserResponseDTO(2));
-        assertEquals("User id id path does not match with user id from session", apiException.getMessage());
+        assertEquals("User id in path does not match with user id from session", apiException.getMessage());
     }
 
     @Test
@@ -121,11 +121,29 @@ public class UserServiceImplTest {
     }
 
     @Test
+    void updateUser_whenIdInPathAndFromSessionMismatch_throwsException() {
+        // given
+        User currentUser = new User();
+        int userId = 1;
+        currentUser.setId(userId);
+        UserUpdateDTO userUpdateDTO = new UserUpdateDTO();
+
+        // when
+        when(authService.getCurrentUser()).thenReturn(currentUser);
+
+        // then
+        ApiException apiException = assertThrows(ApiException.class, () -> userService.updateUser(userUpdateDTO, 2));
+        assertEquals("User id in path does not match with user id from session", apiException.getMessage());
+    }
+
+    @Test
     void updateUser_whenEmailIsInvalid_throwsApiException() {
         // given
         UserUpdateDTO userUpdateDTO = new UserUpdateDTO();
         String userUpdateDTOEmail = "userUpdateDTOEmail@email.com";
         User currentUser = new User();
+        int userId = 1;
+        currentUser.setId(userId);
         String userEmail = "userEmail@email.com";
         userUpdateDTO.setEmail(userUpdateDTOEmail);
         currentUser.setEmail(userEmail);
@@ -135,7 +153,7 @@ public class UserServiceImplTest {
         when(userRepository.existsByEmail(userUpdateDTOEmail)).thenReturn(true);
 
         // then
-        ApiException apiException = assertThrows(ApiException.class, () -> userService.updateUser(userUpdateDTO));
+        ApiException apiException = assertThrows(ApiException.class, () -> userService.updateUser(userUpdateDTO, userId));
         assertEquals("Email address should be unique or the same", apiException.getMessage());
     }
 
@@ -144,6 +162,8 @@ public class UserServiceImplTest {
         // given
         UserUpdateDTO userUpdateDTO = new UserUpdateDTO();
         User currentUser = new User();
+        int userId = 1;
+        currentUser.setId(userId);
         String email = "email1@email.com";
         userUpdateDTO.setEmail(email);
         currentUser.setEmail(email);
@@ -157,7 +177,7 @@ public class UserServiceImplTest {
         when(userRepository.existsByTelephoneNumber(userUpdateDTOTelephoneNumber)).thenReturn(true);
 
         // then
-        ApiException apiException = assertThrows(ApiException.class, () -> userService.updateUser(userUpdateDTO));
+        ApiException apiException = assertThrows(ApiException.class, () -> userService.updateUser(userUpdateDTO, userId));
         assertEquals("Telephone number should be unique or the same", apiException.getMessage());
     }
 
@@ -166,6 +186,8 @@ public class UserServiceImplTest {
         // given
         UserUpdateDTO userUpdateDTO = new UserUpdateDTO();
         User currentUser = new User();
+        int userId = 1;
+        currentUser.setId(userId);
         String email = "email1@email.com";
         userUpdateDTO.setEmail(email);
         currentUser.setEmail(email);
@@ -177,7 +199,7 @@ public class UserServiceImplTest {
         when(authService.getCurrentUser()).thenReturn(currentUser);
 
         // then
-        userService.updateUser(userUpdateDTO);
+        userService.updateUser(userUpdateDTO, userId);
         verify(userMapper).mergeUserUpdateDTOIntoUser(userUpdateDTO, currentUser);
         verify(userRepository).save(currentUser);
         verify(authService).refreshAuthenticatedUser(currentUser);

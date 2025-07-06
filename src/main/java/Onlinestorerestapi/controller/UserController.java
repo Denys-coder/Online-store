@@ -49,10 +49,10 @@ public class UserController {
 
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Update current user (need to specify all fields")
-    @PutMapping("/me")
-    public ResponseEntity<?> updateUser(@Valid @RequestBody UserUpdateDTO userUpdateDTO) {
+    @PutMapping("/{userId}")
+    public ResponseEntity<?> updateUser(@Valid @RequestBody UserUpdateDTO userUpdateDTO, @PathVariable int userId) {
 
-        userService.updateUser(userUpdateDTO);
+        userService.updateUser(userUpdateDTO, userId);
 
         return ResponseEntity.ok("User updated");
     }

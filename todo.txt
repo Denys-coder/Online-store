@@ -1,5 +1,4 @@
 // FIX
-• always return 201 created with Location header with an id of the resource and with newly created resource in the body
 • replace /me in UserController with /{userId} and check that id from user got using credentials is the same as the received one,
 if not return 400. Also amend tests
 • always return json

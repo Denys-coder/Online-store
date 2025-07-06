@@ -27,10 +27,10 @@ public class UserController {
 
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Get current user (which is logged in)")
-    @GetMapping("/me")
-    public ResponseEntity<?> getUser() {
+    @GetMapping("/{userId}")
+    public ResponseEntity<?> getUser(@PathVariable int userId) {
 
-        UserResponseDTO userResponseDTO = userService.getUserResponseDTO();
+        UserResponseDTO userResponseDTO = userService.getUserResponseDTO(userId);
 
         return ResponseEntity.ok(userResponseDTO);
     }

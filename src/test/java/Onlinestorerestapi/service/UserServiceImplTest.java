@@ -36,9 +36,26 @@ public class UserServiceImplTest {
     UserServiceImpl userService;
 
     @Test
+    void getUserResponseDTO_whenIdInPathAndFromSessionMismatch_throwsException() {
+        // given
+        User currentUser = new User();
+        int userId = 1;
+        currentUser.setId(userId);
+
+        // when
+        when(authService.getCurrentUser()).thenReturn(currentUser);
+
+        // then
+        ApiException apiException = assertThrows(ApiException.class, () -> userService.getUserResponseDTO(2));
+        assertEquals("User id id path does not match with user id from session", apiException.getMessage());
+    }
+
+    @Test
     void getUserResponseDTO_whenValidRequest_returnsUserResponseDTO() {
         // given
         User currentUser = new User();
+        int userId = 1;
+        currentUser.setId(userId);
         String userResponseDTOName = "name 1";
         UserResponseDTO userResponseDTO = new UserResponseDTO();
         userResponseDTO.setName(userResponseDTOName);
@@ -48,7 +65,7 @@ public class UserServiceImplTest {
         when(userMapper.userToUserResponseDTO(currentUser)).thenReturn(userResponseDTO);
 
         // then
-        UserResponseDTO userResponseDTOToReturn = userService.getUserResponseDTO();
+        UserResponseDTO userResponseDTOToReturn = userService.getUserResponseDTO(userId);
         assertEquals(userResponseDTOName, userResponseDTOToReturn.getName());
     }
 

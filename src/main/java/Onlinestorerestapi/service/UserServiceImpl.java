@@ -23,8 +23,15 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final AuthService authService;
 
-    public UserResponseDTO getUserResponseDTO() {
-        return userMapper.userToUserResponseDTO(authService.getCurrentUser());
+    @PreAuthorize("isAuthenticated()")
+    public UserResponseDTO getUserResponseDTO(int userId) {
+        User currentUser = authService.getCurrentUser();
+
+        if (currentUser.getId() != userId) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "User id id path does not match with user id from session");
+        }
+
+        return userMapper.userToUserResponseDTO(currentUser);
     }
 
     @Transactional

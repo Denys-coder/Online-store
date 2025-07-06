@@ -8,19 +8,19 @@ import Onlinestorerestapi.dto.order.OrderUpdateDTO;
 import java.util.List;
 
 public interface OrderService {
-    OrderResponseDTO getOrderResponseDTO(int orderId);
+    OrderResponseDTO getOrderResponseDTO(int orderId, int userId);
 
-    List<OrderResponseDTO> getOrderResponseDTOs();
+    List<OrderResponseDTO> getOrderResponseDTOs(int userId);
 
-    OrderResponseDTO createOrder(OrderCreateDTO orderCreateDTO);
+    OrderResponseDTO createOrder(OrderCreateDTO orderCreateDTO, int userId);
 
-    void updateOrder(int orderId, OrderUpdateDTO orderUpdateDTO);
+    void updateOrder(int orderId, OrderUpdateDTO orderUpdateDTO, int userId);
 
-    void patchOrder(int orderId, OrderPatchDTO orderPatchDTO);
+    void patchOrder(int orderId, OrderPatchDTO orderPatchDTO, int userId);
 
-    void deleteOrder(int orderId);
+    void deleteOrder(int orderId, int userId);
 
-    void deleteOrders();
+    void deleteOrders(int userId);
 
-    void fulfillOrders();
+    void fulfillOrders(int userId);
 }

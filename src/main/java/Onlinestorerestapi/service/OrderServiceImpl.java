@@ -30,14 +30,23 @@ public class OrderServiceImpl implements OrderService {
     private final AuthService authService;
 
     @PreAuthorize("isAuthenticated()")
-    public OrderResponseDTO getOrderResponseDTO(int orderId) {
+    public OrderResponseDTO getOrderResponseDTO(int orderId, int userId) {
+        User currentUser = authService.getCurrentUser();
+        if (currentUser.getId() != userId) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "User id in path does not match with user id from session");
+        }
+
         Order order = getOrderForCurrentUserOrThrow(orderId);
         return orderMapper.orderToOrderResponseDTO(order);
     }
 
     @PreAuthorize("isAuthenticated()")
-    public List<OrderResponseDTO> getOrderResponseDTOs() {
+    public List<OrderResponseDTO> getOrderResponseDTOs(int userId) {
         User user = authService.getCurrentUser();
+        if (user.getId() != userId) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "User id in path does not match with user id from session");
+        }
+
         return orderRepository.findByUser(user).stream()
                 .map(orderMapper::orderToOrderResponseDTO)
                 .collect(Collectors.toList());
@@ -45,8 +54,12 @@ public class OrderServiceImpl implements OrderService {
 
     @PreAuthorize("isAuthenticated()")
     @Transactional
-    public OrderResponseDTO createOrder(OrderCreateDTO orderCreateDTO) {
+    public OrderResponseDTO createOrder(OrderCreateDTO orderCreateDTO, int userId) {
         User user = authService.getCurrentUser();
+        if (user.getId() != userId) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "User id in path does not match with user id from session");
+        }
+
         Item item = getItemOrThrow(orderCreateDTO.getItemId());
 
         boolean ordered = orderRepository.findByUser(user).stream()
@@ -72,7 +85,12 @@ public class OrderServiceImpl implements OrderService {
 
     @PreAuthorize("isAuthenticated()")
     @Transactional
-    public void updateOrder(int orderId, OrderUpdateDTO orderUpdateDTO) {
+    public void updateOrder(int orderId, OrderUpdateDTO orderUpdateDTO, int userId) {
+        User user = authService.getCurrentUser();
+        if (user.getId() != userId) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "User id in path does not match with user id from session");
+        }
+
         if (orderId != orderUpdateDTO.getId()) {
             throw new ApiException(HttpStatus.BAD_REQUEST, "Order id in the path and in the body should match");
         }
@@ -88,7 +106,12 @@ public class OrderServiceImpl implements OrderService {
 
     @PreAuthorize("isAuthenticated()")
     @Transactional
-    public void patchOrder(int orderId, OrderPatchDTO orderPatchDTO) {
+    public void patchOrder(int orderId, OrderPatchDTO orderPatchDTO, int userId) {
+        User user = authService.getCurrentUser();
+        if (user.getId() != userId) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "User id in path does not match with user id from session");
+        }
+
         if (orderId != orderPatchDTO.getId()) {
             throw new ApiException(HttpStatus.BAD_REQUEST, "Order id in the path and in the body should match");
         }
@@ -105,18 +128,33 @@ public class OrderServiceImpl implements OrderService {
 
     @PreAuthorize("isAuthenticated()")
     @Transactional
-    public void deleteOrder(int orderId) {
+    public void deleteOrder(int orderId, int userId) {
+        User user = authService.getCurrentUser();
+        if (user.getId() != userId) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "User id in path does not match with user id from session");
+        }
+
         Order order = getOrderForCurrentUserOrThrow(orderId);
         orderRepository.delete(order);
     }
 
-    public void deleteOrders() {
-        orderRepository.deleteOrdersByUser(authService.getCurrentUser());
+    public void deleteOrders(int userId) {
+        User user = authService.getCurrentUser();
+        if (user.getId() != userId) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "User id in path does not match with user id from session");
+        }
+
+        orderRepository.deleteOrdersByUser(user);
     }
 
     @PreAuthorize("isAuthenticated()")
     @Transactional
-    public void fulfillOrders() {
+    public void fulfillOrders(int userId) {
+        User user = authService.getCurrentUser();
+        if (user.getId() != userId) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "User id in path does not match with user id from session");
+        }
+
         List<Order> orders = orderRepository.findByUser(authService.getCurrentUser());
 
         List<String> errors = new ArrayList<>();

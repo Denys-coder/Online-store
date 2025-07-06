@@ -16,7 +16,7 @@ import java.util.List;
 
 @Tag(name = "order", description = "Operations related to orders")
 @RestController
-@RequestMapping("/api/v1/users/me/orders")
+@RequestMapping("/api/v1/users/{userId}/orders")
 @RequiredArgsConstructor
 public class OrderController {
 
@@ -25,27 +25,27 @@ public class OrderController {
     @Operation(summary = "Get order by id")
     @GetMapping("/{orderId}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> getOrder(@PathVariable int orderId) {
+    public ResponseEntity<?> getOrder(@PathVariable int userId, @PathVariable int orderId) {
 
-        OrderResponseDTO orderResponseDTO = orderService.getOrderResponseDTO(orderId);
+        OrderResponseDTO orderResponseDTO = orderService.getOrderResponseDTO(orderId, userId);
         return ResponseEntity.ok(orderResponseDTO);
     }
 
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Get all orders")
     @GetMapping
-    public ResponseEntity<?> getOrders() {
+    public ResponseEntity<?> getOrders(@PathVariable int userId) {
 
-        List<OrderResponseDTO> orderResponseDTOs = orderService.getOrderResponseDTOs();
+        List<OrderResponseDTO> orderResponseDTOs = orderService.getOrderResponseDTOs(userId);
         return ResponseEntity.ok(orderResponseDTOs);
     }
 
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Create order")
     @PostMapping
-    public ResponseEntity<?> createOrder(@Valid @RequestBody OrderCreateDTO orderCreateDTO) throws URISyntaxException {
+    public ResponseEntity<?> createOrder(@PathVariable int userId, @Valid @RequestBody OrderCreateDTO orderCreateDTO) throws URISyntaxException {
 
-        OrderResponseDTO orderResponseDTO = orderService.createOrder(orderCreateDTO);
+        OrderResponseDTO orderResponseDTO = orderService.createOrder(orderCreateDTO, userId);
 
         URI location = new URI("/api/v1/users/me/orders/" + orderResponseDTO.getId());
         return ResponseEntity
@@ -56,45 +56,45 @@ public class OrderController {
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Update order (need to specify all fields")
     @PutMapping("/{orderId}")
-    public ResponseEntity<?> updateOrder(@PathVariable int orderId, @Valid @RequestBody OrderUpdateDTO orderUpdateDTO) {
+    public ResponseEntity<?> updateOrder(@PathVariable int userId, @PathVariable int orderId, @Valid @RequestBody OrderUpdateDTO orderUpdateDTO) {
 
-        orderService.updateOrder(orderId, orderUpdateDTO);
+        orderService.updateOrder(orderId, orderUpdateDTO, userId);
         return ResponseEntity.ok().build();
     }
 
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Update order (need to specify only fields being updated")
     @PatchMapping("/{orderId}")
-    public ResponseEntity<?> patchOrder(@PathVariable int orderId, @Valid @RequestBody OrderPatchDTO orderPatchDTO) {
+    public ResponseEntity<?> patchOrder(@PathVariable int userId, @PathVariable int orderId, @Valid @RequestBody OrderPatchDTO orderPatchDTO) {
 
-        orderService.patchOrder(orderId, orderPatchDTO);
+        orderService.patchOrder(orderId, orderPatchDTO, userId);
         return ResponseEntity.ok("Order fields updated");
     }
 
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Delete order")
     @DeleteMapping("/{orderId}")
-    public ResponseEntity<?> deleteOrder(@PathVariable int orderId) {
+    public ResponseEntity<?> deleteOrder(@PathVariable int userId, @PathVariable int orderId) {
 
-        orderService.deleteOrder(orderId);
+        orderService.deleteOrder(orderId, userId);
         return ResponseEntity.noContent().build();
     }
 
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Delete all orders for current user")
     @DeleteMapping
-    public ResponseEntity<?> deleteOrders() {
+    public ResponseEntity<?> deleteOrders(@PathVariable int userId) {
 
-        orderService.deleteOrders();
+        orderService.deleteOrders(userId);
         return ResponseEntity.noContent().build();
     }
 
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Fulfill all orders for current user")
     @PostMapping("/fulfill")
-    public ResponseEntity<?> fulfillOrders() {
+    public ResponseEntity<?> fulfillOrders(@PathVariable int userId) {
 
-        orderService.fulfillOrders();
+        orderService.fulfillOrders(userId);
         return ResponseEntity.noContent().build();
     }
 }

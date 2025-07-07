@@ -230,7 +230,7 @@ public class ItemServiceImplTest {
 
         // then
         Item updatedItem = itemService.updateItem(itemId, itemUpdateDTO, logo, pictures);
-        assertEquals(itemId, updatedItem.getId());
+        assertEquals(item, updatedItem);
         assertEquals(itemId, itemRepository.save(item).getId());
         verify(imageStorageService).swapImages(oldLogoAndPictureNames, newLogoAndPictures, newLogoAndPictureNames);
     }
@@ -347,7 +347,7 @@ public class ItemServiceImplTest {
 
         // then
         Item patchedItem = itemService.patchItem(itemId, itemPatchDTO, null, null);
-        assertEquals(itemId, patchedItem.getId());
+        assertEquals(item, patchedItem);
         assertEquals(item, itemRepository.save(item));
         verify(imageStorageService).swapImages(oldLogoAndPicturesNames, newLogoAndPictures, newLogoAndPictureNames);
     }

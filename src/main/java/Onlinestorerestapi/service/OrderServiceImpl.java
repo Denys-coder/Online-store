@@ -85,7 +85,7 @@ public class OrderServiceImpl implements OrderService {
 
     @PreAuthorize("isAuthenticated()")
     @Transactional
-    public void updateOrder(int orderId, OrderUpdateDTO orderUpdateDTO, int userId) {
+    public Order updateOrder(int orderId, OrderUpdateDTO orderUpdateDTO, int userId) {
         User user = authService.getCurrentUser();
         if (user.getId() != userId) {
             throw new ApiException(HttpStatus.BAD_REQUEST, "User id in path does not match with user id from session");
@@ -102,6 +102,8 @@ public class OrderServiceImpl implements OrderService {
 
         orderMapper.mergeOrderUpdateDTOIntoOrder(orderUpdateDTO, order);
         orderRepository.save(order);
+
+        return order;
     }
 
     @PreAuthorize("isAuthenticated()")

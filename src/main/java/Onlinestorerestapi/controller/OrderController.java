@@ -1,6 +1,7 @@
 package Onlinestorerestapi.controller;
 
 import Onlinestorerestapi.dto.order.*;
+import Onlinestorerestapi.entity.Order;
 import Onlinestorerestapi.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -58,8 +59,8 @@ public class OrderController {
     @PutMapping("/{orderId}")
     public ResponseEntity<?> updateOrder(@PathVariable int userId, @PathVariable int orderId, @Valid @RequestBody OrderUpdateDTO orderUpdateDTO) {
 
-        orderService.updateOrder(orderId, orderUpdateDTO, userId);
-        return ResponseEntity.ok().build();
+        Order order = orderService.updateOrder(orderId, orderUpdateDTO, userId);
+        return ResponseEntity.ok().body(order);
     }
 
     @PreAuthorize("isAuthenticated()")

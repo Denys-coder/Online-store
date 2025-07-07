@@ -68,8 +68,8 @@ public class OrderController {
     @PatchMapping("/{orderId}")
     public ResponseEntity<?> patchOrder(@PathVariable int userId, @PathVariable int orderId, @Valid @RequestBody OrderPatchDTO orderPatchDTO) {
 
-        orderService.patchOrder(orderId, orderPatchDTO, userId);
-        return ResponseEntity.ok("Order fields updated");
+        Order order = orderService.patchOrder(orderId, orderPatchDTO, userId);
+        return ResponseEntity.ok().body(order);
     }
 
     @PreAuthorize("isAuthenticated()")

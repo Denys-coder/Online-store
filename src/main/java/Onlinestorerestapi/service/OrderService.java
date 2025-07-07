@@ -17,7 +17,7 @@ public interface OrderService {
 
     Order updateOrder(int orderId, OrderUpdateDTO orderUpdateDTO, int userId);
 
-    void patchOrder(int orderId, OrderPatchDTO orderPatchDTO, int userId);
+    Order patchOrder(int orderId, OrderPatchDTO orderPatchDTO, int userId);
 
     void deleteOrder(int orderId, int userId);
 

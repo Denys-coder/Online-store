@@ -470,7 +470,8 @@ public class OrderServiceImplTest {
         when(authService.getCurrentUser()).thenReturn(user);
 
         // then
-        orderService.patchOrder(orderId, orderPatchDTO, userId);
+        Order patchedOrder = orderService.patchOrder(orderId, orderPatchDTO, userId);
+        assertEquals(order, patchedOrder);
         verify(orderMapper).mergeOrderPatchDTOIntoOrder(orderPatchDTO, order);
         verify(orderRepository).save(order);
     }

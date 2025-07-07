@@ -2,6 +2,7 @@ package Onlinestorerestapi.controller;
 
 import Onlinestorerestapi.dto.auth.AuthStatusDTO;
 import Onlinestorerestapi.dto.auth.LoginRequestDTO;
+import Onlinestorerestapi.dto.user.UserResponseDTO;
 import Onlinestorerestapi.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -10,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
+
+import java.util.Map;
 
 @Tag(name = "auth", description = "Operations related to authentication")
 @RestController
@@ -21,10 +24,11 @@ public class AuthController {
     @Operation(summary = "Logs into the system")
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO, HttpServletRequest request) {
+        UserResponseDTO userResponseDTO = authService.login(loginRequestDTO, request);
 
-        authService.login(loginRequestDTO, request);
+        Map<String, Object> response = Map.of("user", userResponseDTO);
 
-        return ResponseEntity.ok("User logged in");
+        return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "Check whether client is authenticated and its role")

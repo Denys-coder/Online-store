@@ -2,8 +2,10 @@ package Onlinestorerestapi.service;
 
 import Onlinestorerestapi.dto.auth.AuthStatusDTO;
 import Onlinestorerestapi.dto.auth.LoginRequestDTO;
+import Onlinestorerestapi.dto.user.UserResponseDTO;
 import Onlinestorerestapi.entity.RoleName;
 import Onlinestorerestapi.entity.User;
+import Onlinestorerestapi.mapper.UserMapper;
 import Onlinestorerestapi.repository.UserRepository;
 import Onlinestorerestapi.security.UserPrincipal;
 import Onlinestorerestapi.exception.ApiException;
@@ -24,8 +26,9 @@ import org.springframework.stereotype.Service;
 public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
-    public void login(LoginRequestDTO loginRequestDTO, HttpServletRequest request) {
+    public UserResponseDTO login(LoginRequestDTO loginRequestDTO, HttpServletRequest request) {
         String username = loginRequestDTO.getEmail();
         String password = loginRequestDTO.getPassword();
 
@@ -37,6 +40,10 @@ public class AuthServiceImpl implements AuthService {
             SecurityContextHolder.setContext(context);
             request.getSession(true).setAttribute("SPRING_SECURITY_CONTEXT", context);
 
+            Object principal = authentication.getPrincipal();
+            String authenticatedUsername = ((UserDetails) principal).getUsername();
+            User user = userRepository.findUserByEmail(authenticatedUsername);
+            return userMapper.userToUserResponseDTO(user);
         } catch (AuthenticationException e) {
             throw new ApiException(HttpStatus.UNAUTHORIZED, "Invalid username or password");
         }

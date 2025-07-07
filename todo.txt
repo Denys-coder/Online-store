@@ -1,6 +1,4 @@
 // FIX
-• replace /me in UserController with /{userId} and check that id from user got using credentials is the same as the received one,
-if not return 400. Also amend tests
 • always return json
 • always return the same response schema per response code
 

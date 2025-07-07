@@ -346,7 +346,8 @@ public class ItemServiceImplTest {
         doNothing().when(imageStorageService).swapImages(oldLogoAndPicturesNames, newLogoAndPictures, newLogoAndPictureNames);
 
         // then
-        itemService.patchItem(itemId, itemPatchDTO, null, null);
+        Item patchedItem = itemService.patchItem(itemId, itemPatchDTO, null, null);
+        assertEquals(itemId, patchedItem.getId());
         assertEquals(item, itemRepository.save(item));
         verify(imageStorageService).swapImages(oldLogoAndPicturesNames, newLogoAndPictures, newLogoAndPictureNames);
     }

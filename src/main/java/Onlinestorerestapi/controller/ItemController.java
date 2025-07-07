@@ -82,9 +82,9 @@ public class ItemController {
                                        @RequestPart(name = "logo", required = false) @Image MultipartFile logo,
                                        @RequestPart(name = "pictures", required = false) @ImageArray @MaxFileCount(maxFileAmount = 10) List<MultipartFile> pictures) {
 
-        itemService.patchItem(itemId, itemPatchDTO, logo, pictures);
+        Item item = itemService.patchItem(itemId, itemPatchDTO, logo, pictures);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(item);
     }
 
     @PreAuthorize("hasRole('ADMIN')")

@@ -82,7 +82,7 @@ public class ItemServiceImpl implements ItemService {
 
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
-    public void patchItem(int itemId, ItemPatchDTO itemPatchDTO, MultipartFile logo, List<MultipartFile> pictures) {
+    public Item patchItem(int itemId, ItemPatchDTO itemPatchDTO, MultipartFile logo, List<MultipartFile> pictures) {
         validateItemIdMatch(itemId, itemPatchDTO.getId());
 
         if (itemPatchDTO.getName() != null) {
@@ -102,6 +102,8 @@ public class ItemServiceImpl implements ItemService {
         );
 
         imageStorageService.swapImages(oldLogoAndPicturesNames, newLogoAndPictures, newLogoAndPictureNames);
+
+        return item;
     }
 
     @PreAuthorize("hasRole('ADMIN')")

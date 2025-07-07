@@ -56,9 +56,10 @@ public class SecurityConfiguration {
                         .expiredUrl(API_V1 + "/auth/login") // Redirect when the session expires
                 )
                 .logout(logout -> logout
-                        .logoutUrl(API_V1 + "/auth/logout")  // Enable logout on /auth/logout
+                        .logoutUrl(API_V1 + "/auth/logout") // Enable logout on /auth/logout
                         .logoutSuccessHandler((request, response, authentication) -> {
                             response.setStatus(HttpServletResponse.SC_OK);
+                            response.setContentType("application/json");
                             response.getWriter().write("{\"message\": \"Logout successful\"}");
                             response.getWriter().flush();
                         })

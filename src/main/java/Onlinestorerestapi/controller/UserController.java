@@ -63,9 +63,9 @@ public class UserController {
     @PatchMapping("/{userId}")
     public ResponseEntity<?> patchUser(@Valid @RequestBody UserPatchDTO userPatchDTO, @PathVariable int userId) {
 
-        userService.patchUser(userPatchDTO, userId);
+        User user = userService.patchUser(userPatchDTO, userId);
 
-        return ResponseEntity.ok("User fields updated");
+        return ResponseEntity.ok().body(user);
     }
 
     @PreAuthorize("isAuthenticated()")

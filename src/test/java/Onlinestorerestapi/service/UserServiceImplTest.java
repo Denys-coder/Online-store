@@ -285,7 +285,8 @@ public class UserServiceImplTest {
         when(authService.getCurrentUser()).thenReturn(currentUser);
 
         // then
-        userService.patchUser(userPatchDTO, userId);
+        User patchedUser = userService.patchUser(userPatchDTO, userId);
+        assertEquals(currentUser, patchedUser);
         verify(userMapper).mergeUserPatchDTOIntoUser(userPatchDTO, currentUser);
         verify(userRepository).save(currentUser);
         verify(authService).refreshAuthenticatedUser(currentUser);

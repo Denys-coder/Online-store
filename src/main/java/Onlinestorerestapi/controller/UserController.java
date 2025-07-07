@@ -4,6 +4,7 @@ import Onlinestorerestapi.dto.user.UserCreateDTO;
 import Onlinestorerestapi.dto.user.UserPatchDTO;
 import Onlinestorerestapi.dto.user.UserResponseDTO;
 import Onlinestorerestapi.dto.user.UserUpdateDTO;
+import Onlinestorerestapi.entity.User;
 import Onlinestorerestapi.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -52,9 +53,9 @@ public class UserController {
     @PutMapping("/{userId}")
     public ResponseEntity<?> updateUser(@Valid @RequestBody UserUpdateDTO userUpdateDTO, @PathVariable int userId) {
 
-        userService.updateUser(userUpdateDTO, userId);
+        User user = userService.updateUser(userUpdateDTO, userId);
 
-        return ResponseEntity.ok("User updated");
+        return ResponseEntity.ok().body(user);
     }
 
     @PreAuthorize("isAuthenticated()")

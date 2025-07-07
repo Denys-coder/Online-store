@@ -199,7 +199,8 @@ public class UserServiceImplTest {
         when(authService.getCurrentUser()).thenReturn(currentUser);
 
         // then
-        userService.updateUser(userUpdateDTO, userId);
+        User updatedUser = userService.updateUser(userUpdateDTO, userId);
+        assertEquals(currentUser, updatedUser);
         verify(userMapper).mergeUserUpdateDTOIntoUser(userUpdateDTO, currentUser);
         verify(userRepository).save(currentUser);
         verify(authService).refreshAuthenticatedUser(currentUser);

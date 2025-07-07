@@ -4,6 +4,7 @@ import Onlinestorerestapi.dto.item.ItemCreateDTO;
 import Onlinestorerestapi.dto.item.ItemResponseDTO;
 import Onlinestorerestapi.dto.item.ItemPatchDTO;
 import Onlinestorerestapi.dto.item.ItemUpdateDTO;
+import Onlinestorerestapi.entity.Item;
 import Onlinestorerestapi.service.item.ItemService;
 import Onlinestorerestapi.validation.annotation.item.Image;
 import Onlinestorerestapi.validation.annotation.item.ImageArray;
@@ -68,9 +69,9 @@ public class ItemController {
                                         @RequestPart("logo") @Image MultipartFile logo,
                                         @RequestPart("pictures") @ImageArray @MaxFileCount(maxFileAmount = 10) List<MultipartFile> pictures) {
 
-        itemService.updateItem(itemId, itemUpdateDTO, logo, pictures);
+        Item item = itemService.updateItem(itemId, itemUpdateDTO, logo, pictures);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(item);
     }
 
     @PreAuthorize("hasRole('ADMIN')")

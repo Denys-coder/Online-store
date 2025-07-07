@@ -10,10 +10,10 @@ public class ApiException extends RuntimeException {
     private final HttpStatus status;
     private final List<String> errors;
 
-    public ApiException(HttpStatus status, String message) {
-        super(message);
+    public ApiException(HttpStatus status, String errors) {
+        super(errors);
         this.status = status;
-        this.errors = List.of(message);
+        this.errors = List.of(errors);
     }
 
     public ApiException(HttpStatus status, List<String> errors) {

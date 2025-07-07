@@ -4,6 +4,7 @@ import Onlinestorerestapi.dto.item.ItemCreateDTO;
 import Onlinestorerestapi.dto.item.ItemPatchDTO;
 import Onlinestorerestapi.dto.item.ItemResponseDTO;
 import Onlinestorerestapi.dto.item.ItemUpdateDTO;
+import Onlinestorerestapi.entity.Item;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -15,7 +16,7 @@ public interface ItemService {
 
     ItemResponseDTO createItem(ItemCreateDTO itemCreateDTO, MultipartFile logo, List<MultipartFile> pictures);
 
-    void updateItem(int itemId, ItemUpdateDTO itemUpdateDTO, MultipartFile logo, List<MultipartFile> pictures);
+    Item updateItem(int itemId, ItemUpdateDTO itemUpdateDTO, MultipartFile logo, List<MultipartFile> pictures);
 
     void patchItem(int itemId, ItemPatchDTO itemPatchDTO, MultipartFile logo, List<MultipartFile> pictures);
 

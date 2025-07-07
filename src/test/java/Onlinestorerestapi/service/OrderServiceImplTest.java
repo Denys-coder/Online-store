@@ -709,7 +709,8 @@ public class OrderServiceImplTest {
         when(orderRepository.findByUser(user)).thenReturn(orders);
 
         // then
-        orderService.fulfillOrders(userId);
+        List<Order> fulfilledOrders = orderService.fulfillOrders(userId);
+        assertEquals(orders, fulfilledOrders);
         verify(orderRepository).deleteAll(orders);
         verify(itemRepository).saveAll(any());
         assertEquals(0, item1.getAmount());

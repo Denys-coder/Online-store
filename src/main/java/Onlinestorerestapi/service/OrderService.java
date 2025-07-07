@@ -23,5 +23,5 @@ public interface OrderService {
 
     void deleteOrders(int userId);
 
-    void fulfillOrders(int userId);
+    List<Order> fulfillOrders(int userId);
 }

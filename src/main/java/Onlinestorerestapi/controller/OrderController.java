@@ -95,7 +95,7 @@ public class OrderController {
     @PostMapping("/fulfill")
     public ResponseEntity<?> fulfillOrders(@PathVariable int userId) {
 
-        orderService.fulfillOrders(userId);
-        return ResponseEntity.noContent().build();
+        List<Order> orders = orderService.fulfillOrders(userId);
+        return ResponseEntity.ok().body(orders);
     }
 }

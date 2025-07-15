@@ -10,6 +10,7 @@ import Onlinestorerestapi.validation.annotation.item.Image;
 import Onlinestorerestapi.validation.annotation.item.ImageArray;
 import Onlinestorerestapi.validation.annotation.item.MaxFileCount;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -47,11 +48,14 @@ public class ItemController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Create new item")
+    @Operation(
+            summary = "Create new item",
+            security = @SecurityRequirement(name = "sessionAuth")
+    )
     @PostMapping
     public ResponseEntity<?> createItem(@RequestPart("item") @Valid ItemCreateDTO itemCreateDTO,
-                                      @RequestPart("logo") @Image MultipartFile logo,
-                                      @RequestPart("images") @ImageArray @MaxFileCount(maxFileAmount = 10) List<MultipartFile> pictures) throws URISyntaxException {
+                                        @RequestPart("logo") @Image MultipartFile logo,
+                                        @RequestPart("images") @ImageArray @MaxFileCount(maxFileAmount = 10) List<MultipartFile> pictures) throws URISyntaxException {
 
         ItemResponseDTO itemResponseDTO = itemService.createItem(itemCreateDTO, logo, pictures);
 
@@ -62,7 +66,10 @@ public class ItemController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Update item (need to specify all fields)")
+    @Operation(
+            summary = "Update item (need to specify all fields)",
+            security = @SecurityRequirement(name = "sessionAuth")
+    )
     @PutMapping("/{itemId}")
     public ResponseEntity<?> updateItem(@PathVariable int itemId,
                                         @RequestPart("item") @Valid ItemUpdateDTO itemUpdateDTO,
@@ -75,7 +82,10 @@ public class ItemController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Update item (need to specify only fields being updated")
+    @Operation(
+            summary = "Update item (need to specify only fields being updated",
+            security = @SecurityRequirement(name = "sessionAuth")
+    )
     @PatchMapping("/{itemId}")
     public ResponseEntity<?> patchItem(@PathVariable int itemId,
                                        @RequestPart(name = "item", required = false) @Valid ItemPatchDTO itemPatchDTO,
@@ -88,7 +98,10 @@ public class ItemController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Delete item")
+    @Operation(
+            summary = "Delete item",
+            security = @SecurityRequirement(name = "sessionAuth")
+    )
     @DeleteMapping({"/{itemId}"})
     public ResponseEntity<?> deleteItem(@PathVariable int itemId) {
 

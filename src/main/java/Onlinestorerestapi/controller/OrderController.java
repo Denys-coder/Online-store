@@ -4,6 +4,7 @@ import Onlinestorerestapi.dto.order.*;
 import Onlinestorerestapi.entity.Order;
 import Onlinestorerestapi.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,10 @@ public class OrderController {
 
     private final OrderService orderService;
 
-    @Operation(summary = "Get order by id")
+    @Operation(
+            summary = "Get order by id",
+            security = @SecurityRequirement(name = "sessionAuth")
+    )
     @GetMapping("/{orderId}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getOrder(@PathVariable int userId, @PathVariable int orderId) {
@@ -33,7 +37,10 @@ public class OrderController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @Operation(summary = "Get all orders")
+    @Operation(
+            summary = "Get all orders",
+            security = @SecurityRequirement(name = "sessionAuth")
+    )
     @GetMapping
     public ResponseEntity<?> getOrders(@PathVariable int userId) {
 
@@ -42,7 +49,10 @@ public class OrderController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @Operation(summary = "Create order")
+    @Operation(
+            summary = "Create order",
+            security = @SecurityRequirement(name = "sessionAuth")
+    )
     @PostMapping
     public ResponseEntity<?> createOrder(@PathVariable int userId, @Valid @RequestBody OrderCreateDTO orderCreateDTO) throws URISyntaxException {
 
@@ -55,7 +65,10 @@ public class OrderController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @Operation(summary = "Update order (need to specify all fields")
+    @Operation(
+            summary = "Update order (need to specify all fields",
+            security = @SecurityRequirement(name = "sessionAuth")
+    )
     @PutMapping("/{orderId}")
     public ResponseEntity<?> updateOrder(@PathVariable int userId, @PathVariable int orderId, @Valid @RequestBody OrderUpdateDTO orderUpdateDTO) {
 
@@ -64,7 +77,10 @@ public class OrderController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @Operation(summary = "Update order (need to specify only fields being updated")
+    @Operation(
+            summary = "Update order (need to specify only fields being updated",
+            security = @SecurityRequirement(name = "sessionAuth")
+    )
     @PatchMapping("/{orderId}")
     public ResponseEntity<?> patchOrder(@PathVariable int userId, @PathVariable int orderId, @Valid @RequestBody OrderPatchDTO orderPatchDTO) {
 
@@ -73,7 +89,10 @@ public class OrderController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @Operation(summary = "Delete order")
+    @Operation(
+            summary = "Delete order",
+            security = @SecurityRequirement(name = "sessionAuth")
+    )
     @DeleteMapping("/{orderId}")
     public ResponseEntity<?> deleteOrder(@PathVariable int userId, @PathVariable int orderId) {
 
@@ -82,7 +101,10 @@ public class OrderController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @Operation(summary = "Delete all orders for current user")
+    @Operation(
+            summary = "Delete all orders for current user",
+            security = @SecurityRequirement(name = "sessionAuth")
+    )
     @DeleteMapping
     public ResponseEntity<?> deleteOrders(@PathVariable int userId) {
 
@@ -91,7 +113,10 @@ public class OrderController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @Operation(summary = "Fulfill all orders for current user")
+    @Operation(
+            summary = "Fulfill all orders for current user",
+            security = @SecurityRequirement(name = "sessionAuth")
+    )
     @PostMapping("/fulfill")
     public ResponseEntity<?> fulfillOrders(@PathVariable int userId) {
 

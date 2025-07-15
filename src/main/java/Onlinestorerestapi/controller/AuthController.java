@@ -5,6 +5,7 @@ import Onlinestorerestapi.dto.auth.LoginRequestDTO;
 import Onlinestorerestapi.dto.user.UserResponseDTO;
 import Onlinestorerestapi.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,10 @@ import java.util.Map;
 public class AuthController {
     private final AuthService authService;
 
-    @Operation(summary = "Logs into the system")
+    @Operation(
+            summary = "Logs into the system",
+            security = @SecurityRequirement(name = "sessionAuth")
+    )
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO, HttpServletRequest request) {
         UserResponseDTO userResponseDTO = authService.login(loginRequestDTO, request);

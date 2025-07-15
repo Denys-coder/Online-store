@@ -1,6 +1,4 @@
 // FIX
-• always return json
-• always return the same response schema per response code
 
 
 // REFACTOR

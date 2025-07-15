@@ -7,6 +7,7 @@ import Onlinestorerestapi.dto.user.UserUpdateDTO;
 import Onlinestorerestapi.entity.User;
 import Onlinestorerestapi.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -27,7 +28,10 @@ public class UserController {
     private final UserService userService;
 
     @PreAuthorize("isAuthenticated()")
-    @Operation(summary = "Get current user (which is logged in)")
+    @Operation(
+            summary = "Get current user (which is logged in)",
+            security = @SecurityRequirement(name = "sessionAuth")
+    )
     @GetMapping("/{userId}")
     public ResponseEntity<?> getUser(@PathVariable int userId) {
 
@@ -36,7 +40,10 @@ public class UserController {
         return ResponseEntity.ok(userResponseDTO);
     }
 
-    @Operation(summary = "Create new user")
+    @Operation(
+            summary = "Create new user",
+            security = @SecurityRequirement(name = "sessionAuth")
+    )
     @PostMapping
     public ResponseEntity<?> createUser(@Valid @RequestBody UserCreateDTO userCreateDTO) {
 
@@ -49,7 +56,10 @@ public class UserController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @Operation(summary = "Update current user (need to specify all fields")
+    @Operation(
+            summary = "Update current user (need to specify all fields",
+            security = @SecurityRequirement(name = "sessionAuth")
+    )
     @PutMapping("/{userId}")
     public ResponseEntity<?> updateUser(@Valid @RequestBody UserUpdateDTO userUpdateDTO, @PathVariable int userId) {
 
@@ -59,7 +69,10 @@ public class UserController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @Operation(summary = "Update current user (need to specify only fields being updated")
+    @Operation(
+            summary = "Update current user (need to specify only fields being updated",
+            security = @SecurityRequirement(name = "sessionAuth")
+    )
     @PatchMapping("/{userId}")
     public ResponseEntity<?> patchUser(@Valid @RequestBody UserPatchDTO userPatchDTO, @PathVariable int userId) {
 
@@ -69,7 +82,10 @@ public class UserController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @Operation(summary = "Log out and delete current user")
+    @Operation(
+            summary = "Log out and delete current user",
+            security = @SecurityRequirement(name = "sessionAuth")
+    )
     @DeleteMapping("/{userId}")
     public ResponseEntity<?> deleteUser(HttpServletRequest request, HttpServletResponse response, @PathVariable int userId) {
 

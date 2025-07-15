@@ -13,8 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
-import java.util.Map;
-
 @Tag(name = "auth", description = "Operations related to authentication")
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -30,9 +28,7 @@ public class AuthController {
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO, HttpServletRequest request) {
         UserResponseDTO userResponseDTO = authService.login(loginRequestDTO, request);
 
-        Map<String, Object> response = Map.of("user", userResponseDTO);
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(userResponseDTO);
     }
 
     @Operation(summary = "Check whether client is authenticated and its role")

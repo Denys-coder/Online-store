@@ -2,18 +2,19 @@ package Onlinestorerestapi.service;
 
 import Onlinestorerestapi.dto.user.*;
 import Onlinestorerestapi.entity.User;
+import Onlinestorerestapi.exception.BadRequestException;
 import Onlinestorerestapi.mapper.UserMapper;
 import Onlinestorerestapi.repository.UserRepository;
-import Onlinestorerestapi.exception.ApiException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collections;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +29,7 @@ public class UserServiceImpl implements UserService {
         User currentUser = authService.getCurrentUser();
 
         if (currentUser.getId() != userId) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "User id in path does not match with user id from session");
+            throw new BadRequestException("User id in path does not match with user id from session", Collections.emptyMap());
         }
 
         return userMapper.userToUserResponseDTO(currentUser);
@@ -37,10 +38,10 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserResponseDTO createUser(UserCreateDTO userCreateDTO) {
         if (userRepository.existsByEmail(userCreateDTO.getEmail())) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "Email address already in use");
+            throw new BadRequestException("Email address already in use", Collections.emptyMap());
         }
         if (userRepository.existsByTelephoneNumber(userCreateDTO.getTelephoneNumber())) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "Telephone number already in use");
+            throw new BadRequestException("Telephone number already in use", Collections.emptyMap());
         }
         User user = userMapper.userCreateDTOToUserMapper(userCreateDTO);
         userRepository.save(user);
@@ -54,7 +55,7 @@ public class UserServiceImpl implements UserService {
 
         User currentUser = authService.getCurrentUser();
         if (currentUser.getId() != userId) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "User id in path does not match with user id from session");
+            throw new BadRequestException("User id in path does not match with user id from session", Collections.emptyMap());
         }
 
         validateEmail(userUpdateDTO.getEmail(), currentUser.getEmail());
@@ -74,7 +75,7 @@ public class UserServiceImpl implements UserService {
 
         User currentUser = authService.getCurrentUser();
         if (currentUser.getId() != userId) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "User id in path does not match with user id from session");
+            throw new BadRequestException("User id in path does not match with user id from session", Collections.emptyMap());
         }
 
         validateEmail(userPatchDTO.getEmail(), currentUser.getEmail());
@@ -93,7 +94,7 @@ public class UserServiceImpl implements UserService {
 
         User currentUser = authService.getCurrentUser();
         if (currentUser.getId() != userId) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "User id in path does not match with user id from session");
+            throw new BadRequestException("User id in path does not match with user id from session", Collections.emptyMap());
         }
 
         userRepository.delete(currentUser);
@@ -108,13 +109,13 @@ public class UserServiceImpl implements UserService {
 
     private void validateEmail(String newEmail, String currentEmail) {
         if (newEmail != null && !newEmail.equals(currentEmail) && userRepository.existsByEmail(newEmail)) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "Email address should be unique or the same");
+            throw new BadRequestException("Email address should be unique or the same", Collections.emptyMap());
         }
     }
 
     private void validateTelephoneNumber(String newNumber, String currentNumber) {
         if (newNumber != null && !newNumber.equals(currentNumber) && userRepository.existsByTelephoneNumber(newNumber)) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "Telephone number should be unique or the same");
+            throw new BadRequestException("Telephone number should be unique or the same", Collections.emptyMap());
         }
     }
 }

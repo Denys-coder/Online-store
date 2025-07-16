@@ -7,12 +7,12 @@ import Onlinestorerestapi.dto.order.OrderUpdateDTO;
 import Onlinestorerestapi.entity.Item;
 import Onlinestorerestapi.entity.Order;
 import Onlinestorerestapi.entity.User;
+import Onlinestorerestapi.exception.BadRequestException;
+import Onlinestorerestapi.exception.NotFoundException;
 import Onlinestorerestapi.mapper.OrderMapper;
 import Onlinestorerestapi.repository.ItemRepository;
 import Onlinestorerestapi.repository.OrderRepository;
-import Onlinestorerestapi.exception.ApiException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +33,7 @@ public class OrderServiceImpl implements OrderService {
     public OrderResponseDTO getOrderResponseDTO(int orderId, int userId) {
         User currentUser = authService.getCurrentUser();
         if (currentUser.getId() != userId) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "User id in path does not match with user id from session");
+            throw new BadRequestException("User id in path does not match with user id from session", Collections.emptyMap());
         }
 
         Order order = getOrderForCurrentUserOrThrow(orderId);
@@ -44,7 +44,7 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderResponseDTO> getOrderResponseDTOs(int userId) {
         User user = authService.getCurrentUser();
         if (user.getId() != userId) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "User id in path does not match with user id from session");
+            throw new BadRequestException("User id in path does not match with user id from session", Collections.emptyMap());
         }
 
         return orderRepository.findByUser(user).stream()
@@ -57,7 +57,7 @@ public class OrderServiceImpl implements OrderService {
     public OrderResponseDTO createOrder(OrderCreateDTO orderCreateDTO, int userId) {
         User user = authService.getCurrentUser();
         if (user.getId() != userId) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "User id in path does not match with user id from session");
+            throw new BadRequestException("User id in path does not match with user id from session", Collections.emptyMap());
         }
 
         Item item = getItemOrThrow(orderCreateDTO.getItemId());
@@ -66,7 +66,7 @@ public class OrderServiceImpl implements OrderService {
                 .map(Order::getItem)
                 .anyMatch(currentItem -> currentItem.getId().equals(item.getId()));
         if (ordered) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "This item was already ordered");
+            throw new BadRequestException("This item was already ordered", Collections.emptyMap());
         }
 
         if (orderCreateDTO.getAmount() > item.getAmount()) {
@@ -74,7 +74,7 @@ public class OrderServiceImpl implements OrderService {
                     "You try to order (%d), but available stock is (%d).",
                     orderCreateDTO.getAmount(),
                     item.getAmount());
-            throw new ApiException(HttpStatus.BAD_REQUEST, exceptionMessage);
+            throw new BadRequestException(exceptionMessage, Collections.emptyMap());
         }
 
         Order order = orderMapper.orderCreateDTOToOrder(orderCreateDTO, item, user);
@@ -88,11 +88,11 @@ public class OrderServiceImpl implements OrderService {
     public Order updateOrder(int orderId, OrderUpdateDTO orderUpdateDTO, int userId) {
         User user = authService.getCurrentUser();
         if (user.getId() != userId) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "User id in path does not match with user id from session");
+            throw new BadRequestException("User id in path does not match with user id from session", Collections.emptyMap());
         }
 
         if (orderId != orderUpdateDTO.getId()) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "Order id in the path and in the body should match");
+            throw new BadRequestException("Order id in the path and in the body should match", Collections.emptyMap());
         }
 
         // verify that item with specified id exists
@@ -111,11 +111,11 @@ public class OrderServiceImpl implements OrderService {
     public Order patchOrder(int orderId, OrderPatchDTO orderPatchDTO, int userId) {
         User user = authService.getCurrentUser();
         if (user.getId() != userId) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "User id in path does not match with user id from session");
+            throw new BadRequestException("User id in path does not match with user id from session", Collections.emptyMap());
         }
 
         if (orderId != orderPatchDTO.getId()) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "Order id in the path and in the body should match");
+            throw new BadRequestException("Order id in the path and in the body should match", Collections.emptyMap());
         }
 
         // verify that item with specified id exists
@@ -135,7 +135,7 @@ public class OrderServiceImpl implements OrderService {
     public void deleteOrder(int orderId, int userId) {
         User user = authService.getCurrentUser();
         if (user.getId() != userId) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "User id in path does not match with user id from session");
+            throw new BadRequestException("User id in path does not match with user id from session", Collections.emptyMap());
         }
 
         Order order = getOrderForCurrentUserOrThrow(orderId);
@@ -145,7 +145,7 @@ public class OrderServiceImpl implements OrderService {
     public void deleteOrders(int userId) {
         User user = authService.getCurrentUser();
         if (user.getId() != userId) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "User id in path does not match with user id from session");
+            throw new BadRequestException("User id in path does not match with user id from session", Collections.emptyMap());
         }
 
         orderRepository.deleteOrdersByUser(user);
@@ -156,26 +156,25 @@ public class OrderServiceImpl implements OrderService {
     public List<Order> fulfillOrders(int userId) {
         User user = authService.getCurrentUser();
         if (user.getId() != userId) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "User id in path does not match with user id from session");
+            throw new BadRequestException("User id in path does not match with user id from session", Collections.emptyMap());
         }
 
         List<Order> orders = orderRepository.findByUser(authService.getCurrentUser());
 
-        List<String> errors = new ArrayList<>();
+        Map<String, List<String>> errors = new HashMap<>();
         for (Order order : orders) {
             Item item = order.getItem();
             int availableAmount = item.getAmount();
 
             if (order.getAmount() > availableAmount) {
-                errors.add(String.format(
-                        "order: %d Ordered amount (%d) exceeds available stock (%d) for item: %s.",
-                        order.getId(), order.getAmount(), availableAmount, item.getName()
-                ));
+                String key = String.format("order: %d", order.getId());
+                String value = String.format("Ordered amount (%d) exceeds available stock (%d) for item: %s.", order.getAmount(), availableAmount, item.getName());
+                errors.put(key, List.of(value));
             }
         }
 
         if (!errors.isEmpty()) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, errors);
+            throw new BadRequestException("Some orders could not be fulfilled", errors);
         } else {
             for (Order order : orders) {
                 Item item = order.getItem();
@@ -195,11 +194,11 @@ public class OrderServiceImpl implements OrderService {
     private Order getOrderForCurrentUserOrThrow(int orderId) {
         return orderRepository.findById(orderId)
                 .filter(order -> order.getUser().getId().equals(authService.getCurrentUser().getId()))
-                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "You have no such order"));
+                .orElseThrow(() -> new NotFoundException("You have no such order"));
     }
 
     private Item getItemOrThrow(int itemId) {
         return itemRepository.findById(itemId)
-                .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, "There is no item with the specified id"));
+                .orElseThrow(() -> new BadRequestException("There is no item with the specified id", Collections.emptyMap()));
     }
 }

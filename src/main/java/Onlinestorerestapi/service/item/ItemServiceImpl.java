@@ -46,7 +46,7 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     public ItemResponseDTO createItem(ItemCreateDTO itemCreateDTO, MultipartFile logo, List<MultipartFile> pictures) {
         if (itemRepository.existsByName(itemCreateDTO.getName())) {
-            throw new ApiException(HttpStatus.CONFLICT, "Item name should be unique");
+            throw new ApiException(HttpStatus.BAD_REQUEST, "Item name should be unique");
         }
 
         Item item = itemMapper.itemCreateDTOToItem(itemCreateDTO, pictures.size());

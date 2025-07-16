@@ -28,3 +28,4 @@
 • add creation date field in the order class
 • save image mime type in database not to calculate it on each request
 • don't delete an item, but flag it as deleted
+• return 409 and 422 responses in place of some 400 responses

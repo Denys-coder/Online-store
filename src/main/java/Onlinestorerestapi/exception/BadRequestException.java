@@ -1,21 +1,19 @@
-package Onlinestorerestapi.dto.error;
+package Onlinestorerestapi.exception;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
 import java.util.Map;
 
-// 400 Bad Request
 @Getter
 @Setter
-@NoArgsConstructor
-public class BadRequestDTO {
+public class BadRequestException extends RuntimeException {
     private String message;
     private Map<String, List<String>> errors;
 
-    public BadRequestDTO(String message, Map<String, List<String>> errors) {
+    public BadRequestException(String message, Map<String, List<String>> errors) {
+        super(message);
         this.message = message;
         this.errors = errors;
     }

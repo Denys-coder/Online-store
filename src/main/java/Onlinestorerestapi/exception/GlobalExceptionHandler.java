@@ -75,7 +75,7 @@ public class GlobalExceptionHandler {
         Map<String, List<String>> errors = new HashMap<>();
 
         for (FieldError error : exception.getBindingResult().getFieldErrors()) {
-            errors.computeIfAbsent(error.getField(), key -> new java.util.ArrayList<>()).add(error.getDefaultMessage());
+            errors.computeIfAbsent(error.getField(), key -> new ArrayList<>()).add(error.getDefaultMessage());
         }
 
         return ResponseEntity
@@ -141,4 +141,21 @@ public class GlobalExceptionHandler {
                 .body(new UnauthorizedDTO());
     }
 
+    // when BadRequestException is thrown
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<BadRequestDTO> handleBadRequestException(BadRequestException exception) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new BadRequestDTO(exception.getMessage(), exception.getErrors()));
+    }
+
+    // when NotFoundException is thrown
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<NotFoundDTO> handleNotFoundException(NotFoundException exception) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new NotFoundDTO(exception.getMessage()));
+    }
 }

@@ -5,14 +5,14 @@ import Onlinestorerestapi.dto.item.ItemPatchDTO;
 import Onlinestorerestapi.dto.item.ItemResponseDTO;
 import Onlinestorerestapi.dto.item.ItemUpdateDTO;
 import Onlinestorerestapi.entity.Item;
+import Onlinestorerestapi.exception.BadRequestException;
+import Onlinestorerestapi.exception.NotFoundException;
 import Onlinestorerestapi.mapper.ItemMapper;
 import Onlinestorerestapi.repository.ItemRepository;
 import Onlinestorerestapi.repository.OrderRepository;
 import Onlinestorerestapi.service.image.ImageStorageService;
 import Onlinestorerestapi.util.ImageUtils;
-import Onlinestorerestapi.exception.ApiException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,7 +46,7 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     public ItemResponseDTO createItem(ItemCreateDTO itemCreateDTO, MultipartFile logo, List<MultipartFile> pictures) {
         if (itemRepository.existsByName(itemCreateDTO.getName())) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "Item name should be unique");
+            throw new BadRequestException("Item name should be unique", Collections.emptyMap());
         }
 
         Item item = itemMapper.itemCreateDTOToItem(itemCreateDTO, pictures.size());
@@ -121,12 +121,12 @@ public class ItemServiceImpl implements ItemService {
 
     private Item getItemByIdOrThrow(int itemId) {
         return itemRepository.findById(itemId)
-                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "No such item"));
+                .orElseThrow(() -> new NotFoundException("No such item"));
     }
 
     private void validateItemIdMatch(int pathId, int bodyId) {
         if (pathId != bodyId) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "Item id in the path and in the body should match");
+            throw new BadRequestException("Item id in the path and in the body should match", Collections.emptyMap());
         }
     }
 
@@ -136,7 +136,7 @@ public class ItemServiceImpl implements ItemService {
                     .map(Item::getName)
                     .orElse("");
             if (!name.equals(existingName)) {
-                throw new ApiException(HttpStatus.BAD_REQUEST, "Item name should be unique or the same");
+                throw new BadRequestException("Item name should be unique or the same", Collections.emptyMap());
             }
         }
     }

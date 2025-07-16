@@ -8,11 +8,10 @@ import Onlinestorerestapi.entity.User;
 import Onlinestorerestapi.mapper.UserMapper;
 import Onlinestorerestapi.repository.UserRepository;
 import Onlinestorerestapi.security.UserPrincipal;
-import Onlinestorerestapi.exception.ApiException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -45,7 +44,7 @@ public class AuthServiceImpl implements AuthService {
             User user = userRepository.findUserByEmail(authenticatedUsername);
             return userMapper.userToUserResponseDTO(user);
         } catch (AuthenticationException e) {
-            throw new ApiException(HttpStatus.UNAUTHORIZED, "Invalid username or password");
+            throw new BadCredentialsException("Invalid username or password");
         }
     }
 

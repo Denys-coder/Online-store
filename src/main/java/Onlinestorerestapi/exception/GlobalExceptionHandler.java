@@ -1,10 +1,12 @@
 package Onlinestorerestapi.exception;
 
+import Onlinestorerestapi.dto.error.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
@@ -23,38 +25,38 @@ public class GlobalExceptionHandler {
 
     // handles spring.servlet.multipart.max-file-size and spring.servlet.multipart.max-request-size violation exceptions
     @ExceptionHandler(MaxUploadSizeExceededException.class)
-    public ResponseEntity<String> handleMaxUploadSizeException(MaxUploadSizeExceededException exception) {
+    public ResponseEntity<PayloadTooLargeDTO> handleMaxUploadSizeException(MaxUploadSizeExceededException exception) {
         return ResponseEntity
                 .status(HttpStatus.PAYLOAD_TOO_LARGE)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body("One or more file exceed the maximum allowed size limit");
+                .body(new PayloadTooLargeDTO());
     }
 
     // missing RequestPart
     @ExceptionHandler(MissingServletRequestPartException.class)
-    public ResponseEntity<String> handleMissingServletRequestPartException(MissingServletRequestPartException ex) {
-        String errorMessage = String.format("Required part '%s' is missing", ex.getRequestPartName());
+    public ResponseEntity<BadRequestDTO> handleMissingServletRequestPartException(MissingServletRequestPartException exception) {
+        String errorMessage = String.format("Required part '%s' is missing", exception.getRequestPartName());
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(errorMessage);
+                .body(new BadRequestDTO(errorMessage, Collections.emptyMap()));
     }
 
     // Spring Boot fails to parse or map json
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<?> handleHttpMessageNotReadableException(HttpMessageNotReadableException exception) {
+    public ResponseEntity<BadRequestDTO> handleHttpMessageNotReadableException(HttpMessageNotReadableException exception) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body("invalid json");
+                .body(new BadRequestDTO("invalid json", Collections.emptyMap()));
     }
 
     // Spring Boot fails to parse or map query parameters or path variables
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<String> handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException ex) {
-        String parameterName = ex.getName();
-        String expectedType = ex.getRequiredType() != null ? ex.getRequiredType().getSimpleName() : "Unknown";
-        String invalidValue = ex.getValue() != null ? ex.getValue().toString() : "null";
+    public ResponseEntity<BadRequestDTO> handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException exception) {
+        String parameterName = exception.getName();
+        String expectedType = exception.getRequiredType() != null ? exception.getRequiredType().getSimpleName() : "Unknown";
+        String invalidValue = exception.getValue() != null ? exception.getValue().toString() : "null";
 
         String errorMessage = String.format(
                 "Parameter '%s' must be of type '%s'. Value '%s' is invalid.",
@@ -64,12 +66,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(errorMessage);
+                .body(new BadRequestDTO(errorMessage, Collections.emptyMap()));
     }
 
     // Spring Boot fails to validate @RequestBody fields
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, List<String>>> handleValidationException(MethodArgumentNotValidException exception) {
+    public ResponseEntity<BadRequestDTO> handleValidationException(MethodArgumentNotValidException exception) {
         Map<String, List<String>> errors = new HashMap<>();
 
         for (FieldError error : exception.getBindingResult().getFieldErrors()) {
@@ -79,12 +81,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(errors);
+                .body(new BadRequestDTO("Body fields validation failed", errors));
     }
 
     // Spring Boot fails to validate @RequestParam, @PathVariable or direct method parameters
     @ExceptionHandler(HandlerMethodValidationException.class)
-    public ResponseEntity<Map<String, List<String>>> handleMethodValidationException(HandlerMethodValidationException exception) {
+    public ResponseEntity<BadRequestDTO> handleMethodValidationException(HandlerMethodValidationException exception) {
         Map<String, List<String>> errors = new HashMap<>();
 
         exception.getParameterValidationResults().forEach(result -> {
@@ -100,52 +102,43 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(errors);
+                .body(new BadRequestDTO("Validation failure", errors));
     }
 
     // when the request body has an unsupported format
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
-    public ResponseEntity<?> handleUnsupportedMediaType(HttpMediaTypeNotSupportedException ex) {
-        Map<String, String> errors = Map.of(
-                "error", "Unsupported media type",
-                "supported media types", ex.getSupportedMediaTypes().toString());
+    public ResponseEntity<UnsupportedMediaTypeDTO> handleUnsupportedMediaType(HttpMediaTypeNotSupportedException exception) {
         return ResponseEntity
                 .status(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(errors);
-    }
-
-    // handle ApiException
-    @ExceptionHandler(ApiException.class)
-    public ResponseEntity<?> handleApiException(ApiException exception) {
-        return ResponseEntity
-                .status(exception.getStatus())
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(exception.getErrors());
+                .body(new UnsupportedMediaTypeDTO(exception.getSupportedMediaTypes()));
     }
 
     // returned value could not be serialized into what the user needs
     @ExceptionHandler(HttpMediaTypeNotAcceptableException.class)
-    public ResponseEntity<Map<String, String>> handleHttpMediaTypeNotAcceptableException(HttpMediaTypeNotAcceptableException ex) {
-        Map<String, String> error = new HashMap<>();
-        error.put("error", "Not Acceptable");
-        error.put("message", "Supported media type is application/json");
+    public ResponseEntity<NotAcceptableDTO> handleHttpMediaTypeNotAcceptableException(HttpMediaTypeNotAcceptableException exception) {
         return ResponseEntity
                 .status(HttpStatus.NOT_ACCEPTABLE)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(error);
+                .body(new NotAcceptableDTO("Supported media type is application/json"));
     }
 
     // returned value could be serialized into what the user needs, but failed
     @ExceptionHandler(HttpMessageNotWritableException.class)
-    public ResponseEntity<Map<String, String>> handleHttpMessageNotWritableException(HttpMessageNotWritableException ex) {
-        Map<String, String> error = new HashMap<>();
-        error.put("error", "Not Acceptable");
-        error.put("message", "Supported media type is application/json");
+    public ResponseEntity<NotAcceptableDTO> handleHttpMessageNotWritableException(HttpMessageNotWritableException exception) {
         return ResponseEntity
                 .status(HttpStatus.NOT_ACCEPTABLE)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(error);
+                .body(new NotAcceptableDTO("Supported media type is application/json"));
+    }
+
+    // When a user is Unauthenticated
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<UnauthorizedDTO> handleBadCredentialsException(BadCredentialsException exception) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_ACCEPTABLE)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new UnauthorizedDTO());
     }
 
 }

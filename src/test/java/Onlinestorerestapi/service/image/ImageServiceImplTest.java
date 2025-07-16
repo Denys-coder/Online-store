@@ -1,6 +1,7 @@
 package Onlinestorerestapi.service.image;
 
-import Onlinestorerestapi.exception.ApiException;
+import Onlinestorerestapi.exception.BadRequestException;
+import Onlinestorerestapi.exception.NotFoundException;
 import org.apache.tika.Tika;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,8 +48,8 @@ public class ImageServiceImplTest {
         String imageName = "../../etc/passwd";
 
         // then
-        ApiException apiException = assertThrows(ApiException.class, () -> imageService.getImageDTO(imageName));
-        assertEquals("Path traversal not allowed", apiException.getMessage());
+        BadRequestException badRequestException = assertThrows(BadRequestException.class, () -> imageService.getImageDTO(imageName));
+        assertEquals("Path traversal not allowed", badRequestException.getMessage());
     }
 
     @Test
@@ -57,8 +58,8 @@ public class ImageServiceImplTest {
         String imageName = "notExistingImage.jpg";
 
         // then
-        ApiException apiException = assertThrows(ApiException.class, () -> imageService.getImageDTO(imageName));
-        assertEquals("Specified image does not exist: " + imageName, apiException.getMessage());
+        NotFoundException notFoundException = assertThrows(NotFoundException.class, () -> imageService.getImageDTO(imageName));
+        assertEquals("Specified image does not exist: " + imageName, notFoundException.getMessage());
     }
 
     @Test

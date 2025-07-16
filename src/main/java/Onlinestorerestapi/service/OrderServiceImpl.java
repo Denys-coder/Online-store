@@ -199,6 +199,6 @@ public class OrderServiceImpl implements OrderService {
 
     private Item getItemOrThrow(int itemId) {
         return itemRepository.findById(itemId)
-                .orElseThrow(() -> new BadRequestException("There is no item with the specified id", Collections.emptyMap()));
+                .orElseThrow(() -> new NotFoundException("There is no item with the specified id"));
     }
 }

@@ -151,7 +151,7 @@ public class GlobalExceptionHandler {
     }
 
     // when NotFoundException is thrown
-    @ExceptionHandler(BadRequestException.class)
+    @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<NotFoundDTO> handleNotFoundException(NotFoundException exception) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)

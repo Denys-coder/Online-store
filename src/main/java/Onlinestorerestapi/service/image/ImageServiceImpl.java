@@ -2,6 +2,7 @@ package Onlinestorerestapi.service.image;
 
 import Onlinestorerestapi.dto.image.ImageResponseDTO;
 import Onlinestorerestapi.exception.BadRequestException;
+import Onlinestorerestapi.exception.NotFoundException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -52,7 +53,7 @@ public class ImageServiceImpl implements ImageService {
             // Load resource
             Resource resource = new UrlResource(currentImagesPath.toUri());
             if (!resource.exists() || !resource.isReadable()) {
-                throw new BadRequestException("Specified image does not exist: " + imageName, Collections.emptyMap());
+                throw new NotFoundException("Specified image does not exist: " + imageName);
             }
 
             return resource;

@@ -5,9 +5,10 @@ import Onlinestorerestapi.dto.item.ItemPatchDTO;
 import Onlinestorerestapi.dto.item.ItemResponseDTO;
 import Onlinestorerestapi.dto.item.ItemUpdateDTO;
 import Onlinestorerestapi.entity.Item;
+import Onlinestorerestapi.exception.BadRequestException;
+import Onlinestorerestapi.exception.NotFoundException;
 import Onlinestorerestapi.mapper.ItemMapper;
 import Onlinestorerestapi.repository.ItemRepository;
-import Onlinestorerestapi.exception.ApiException;
 import Onlinestorerestapi.repository.OrderRepository;
 import Onlinestorerestapi.service.image.ImageStorageService;
 import Onlinestorerestapi.util.ImageUtils;
@@ -17,7 +18,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.multipart.MultipartFile;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -58,11 +58,11 @@ public class ItemServiceImplTest {
         String exceptionName = "No such item";
 
         // when
-        when(itemRepository.findById(999)).thenThrow(new ApiException(HttpStatus.NOT_FOUND, exceptionName));
+        when(itemRepository.findById(999)).thenThrow(new NotFoundException(exceptionName));
 
         // then
-        ApiException apiException = assertThrows(ApiException.class, () -> itemService.getItemResponseDTO(999));
-        assertEquals(exceptionName, apiException.getMessage());
+        NotFoundException notFoundException = assertThrows(NotFoundException.class, () -> itemService.getItemResponseDTO(999));
+        assertEquals(exceptionName, notFoundException.getMessage());
     }
 
     @Test
@@ -97,8 +97,8 @@ public class ItemServiceImplTest {
         when(itemRepository.existsByName(itemName)).thenReturn(true);
 
         // then
-        ApiException apiException = assertThrows(ApiException.class, () -> itemService.createItem(itemCreateDTO, logo, pictures));
-        assertEquals("Item name should be unique", apiException.getMessage());
+        BadRequestException badRequestException = assertThrows(BadRequestException.class, () -> itemService.createItem(itemCreateDTO, logo, pictures));
+        assertEquals("Item name should be unique", badRequestException.getMessage());
     }
 
     @Test
@@ -147,8 +147,8 @@ public class ItemServiceImplTest {
         List<MultipartFile> pictures = List.of(Mockito.mock(MultipartFile.class), Mockito.mock(MultipartFile.class));
 
         // then
-        ApiException apiException = assertThrows(ApiException.class, () -> itemService.updateItem(itemId, itemUpdateDTO, logo, pictures));
-        assertEquals("Item id in the path and in the body should match", apiException.getMessage());
+        BadRequestException badRequestException = assertThrows(BadRequestException.class, () -> itemService.updateItem(itemId, itemUpdateDTO, logo, pictures));
+        assertEquals("Item id in the path and in the body should match", badRequestException.getMessage());
     }
 
     @Test
@@ -169,8 +169,8 @@ public class ItemServiceImplTest {
         when(itemRepository.findById(1)).thenReturn(Optional.of(anoterItem));
 
         // then
-        ApiException apiException = assertThrows(ApiException.class, () -> itemService.updateItem(itemId, itemUpdateDTO, logo, pictures));
-        assertEquals("Item name should be unique or the same", apiException.getMessage());
+        BadRequestException badRequestException = assertThrows(BadRequestException.class, () -> itemService.updateItem(itemId, itemUpdateDTO, logo, pictures));
+        assertEquals("Item name should be unique or the same", badRequestException.getMessage());
     }
 
     @Test
@@ -187,11 +187,11 @@ public class ItemServiceImplTest {
 
         // when
         when(itemRepository.existsByName(itemUpdateDTOName)).thenReturn(true);
-        when(itemRepository.findById(1)).thenThrow(new ApiException(HttpStatus.NOT_FOUND, exceptionName));
+        when(itemRepository.findById(1)).thenThrow(new NotFoundException(exceptionName));
 
         // then
-        ApiException apiException = assertThrows(ApiException.class, () -> itemService.updateItem(itemId, itemUpdateDTO, logo, pictures));
-        assertEquals(exceptionName, apiException.getMessage());
+        NotFoundException notFoundException = assertThrows(NotFoundException.class, () -> itemService.updateItem(itemId, itemUpdateDTO, logo, pictures));
+        assertEquals(exceptionName, notFoundException.getMessage());
     }
 
     @Test
@@ -243,8 +243,8 @@ public class ItemServiceImplTest {
         itemPatchDTO.setId(2);
 
         // then
-        ApiException apiException = assertThrows(ApiException.class, () -> itemService.patchItem(itemId, itemPatchDTO, null, null));
-        assertEquals("Item id in the path and in the body should match", apiException.getMessage());
+        BadRequestException badRequestException = assertThrows(BadRequestException.class, () -> itemService.patchItem(itemId, itemPatchDTO, null, null));
+        assertEquals("Item id in the path and in the body should match", badRequestException.getMessage());
     }
 
     @Test
@@ -259,8 +259,8 @@ public class ItemServiceImplTest {
         when(itemRepository.existsByName("Not unique name")).thenReturn(true);
 
         // then
-        ApiException apiException = assertThrows(ApiException.class, () -> itemService.patchItem(itemId, itemPatchDTO, null, null));
-        assertEquals("Item name should be unique or the same", apiException.getMessage());
+        BadRequestException badRequestException = assertThrows(BadRequestException.class, () -> itemService.patchItem(itemId, itemPatchDTO, null, null));
+        assertEquals("Item name should be unique or the same", badRequestException.getMessage());
     }
 
     @Test
@@ -274,11 +274,11 @@ public class ItemServiceImplTest {
 
         // when
         when(itemRepository.existsByName("Unique name")).thenReturn(false);
-        when(itemRepository.findById(1)).thenThrow(new ApiException(HttpStatus.NOT_FOUND, exceptionMessage));
+        when(itemRepository.findById(1)).thenThrow(new NotFoundException(exceptionMessage));
 
         // then
-        ApiException apiException = assertThrows(ApiException.class, () -> itemService.patchItem(itemId, itemPatchDTO, null, null));
-        assertEquals(exceptionMessage, apiException.getMessage());
+        NotFoundException notFoundException = assertThrows(NotFoundException.class, () -> itemService.patchItem(itemId, itemPatchDTO, null, null));
+        assertEquals(exceptionMessage, notFoundException.getMessage());
     }
 
     @Test
@@ -359,13 +359,12 @@ public class ItemServiceImplTest {
         String exceptionMessage = "No such item";
 
         // when
-        when(itemRepository.findById(itemId)).thenThrow(new ApiException(HttpStatus.NOT_FOUND, exceptionMessage));
+        when(itemRepository.findById(itemId)).thenThrow(new NotFoundException(exceptionMessage));
 
         // then
-        ApiException exception = assertThrows(ApiException.class, () -> itemService.deleteItem(itemId));
-        assertEquals(exceptionMessage, exception.getMessage());
+        NotFoundException notFoundException = assertThrows(NotFoundException.class, () -> itemService.deleteItem(itemId));
+        assertEquals(exceptionMessage, notFoundException.getMessage());
     }
-
 
     @Test
     void deleteItem_whenValidRequest_deletesItem() {

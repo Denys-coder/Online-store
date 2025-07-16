@@ -7,7 +7,8 @@ import Onlinestorerestapi.dto.order.OrderUpdateDTO;
 import Onlinestorerestapi.entity.Item;
 import Onlinestorerestapi.entity.Order;
 import Onlinestorerestapi.entity.User;
-import Onlinestorerestapi.exception.ApiException;
+import Onlinestorerestapi.exception.BadRequestException;
+import Onlinestorerestapi.exception.NotFoundException;
 import Onlinestorerestapi.mapper.OrderMapper;
 import Onlinestorerestapi.repository.ItemRepository;
 import Onlinestorerestapi.repository.OrderRepository;
@@ -56,8 +57,8 @@ public class OrderServiceImplTest {
         when(authService.getCurrentUser()).thenReturn(user);
 
         // then
-        ApiException apiException = assertThrows(ApiException.class, () -> orderService.getOrderResponseDTO(orderId, 2));
-        assertEquals("User id in path does not match with user id from session", apiException.getMessage());
+        BadRequestException badRequestException = assertThrows(BadRequestException.class, () -> orderService.getOrderResponseDTO(orderId, 2));
+        assertEquals("User id in path does not match with user id from session", badRequestException.getMessage());
     }
 
     @Test
@@ -73,8 +74,8 @@ public class OrderServiceImplTest {
         when(orderRepository.findById(orderId)).thenReturn(Optional.empty());
 
         // then
-        ApiException apiException = assertThrows(ApiException.class, () -> orderService.getOrderResponseDTO(orderId, userId));
-        assertEquals("You have no such order", apiException.getMessage());
+        NotFoundException notFoundException = assertThrows(NotFoundException.class, () -> orderService.getOrderResponseDTO(orderId, userId));
+        assertEquals("You have no such order", notFoundException.getMessage());
     }
 
     @Test
@@ -153,8 +154,8 @@ public class OrderServiceImplTest {
         when(authService.getCurrentUser()).thenReturn(user);
 
         // then
-        ApiException apiException = assertThrows(ApiException.class, () -> orderService.createOrder(orderCreateDTO, 2));
-        assertEquals("User id in path does not match with user id from session", apiException.getMessage());
+        BadRequestException badRequestException = assertThrows(BadRequestException.class, () -> orderService.createOrder(orderCreateDTO, 2));
+        assertEquals("User id in path does not match with user id from session", badRequestException.getMessage());
     }
 
     @Test
@@ -172,8 +173,8 @@ public class OrderServiceImplTest {
         when(itemRepository.findById(itemId)).thenReturn(Optional.empty());
 
         // then
-        ApiException apiException = assertThrows(ApiException.class, () -> orderService.createOrder(orderCreateDTO, userId));
-        assertEquals("There is no item with the specified id", apiException.getMessage());
+        NotFoundException notFoundException = assertThrows(NotFoundException.class, () -> orderService.createOrder(orderCreateDTO, userId));
+        assertEquals("There is no item with the specified id", notFoundException.getMessage());
     }
 
     @Test
@@ -199,8 +200,8 @@ public class OrderServiceImplTest {
         when(orderRepository.findByUser(user)).thenReturn(List.of(order));
 
         // then
-        ApiException apiException = assertThrows(ApiException.class, () -> orderService.createOrder(orderCreateDTO, userId));
-        assertEquals("This item was already ordered", apiException.getMessage());
+        BadRequestException badRequestException = assertThrows(BadRequestException.class, () -> orderService.createOrder(orderCreateDTO, userId));
+        assertEquals("This item was already ordered", badRequestException.getMessage());
     }
 
     @Test
@@ -227,8 +228,8 @@ public class OrderServiceImplTest {
                 "You try to order (%d), but available stock is (%d).",
                 orderCreateDTO.getAmount(),
                 itemToOrder.getAmount());
-        ApiException apiException = assertThrows(ApiException.class, () -> orderService.createOrder(orderCreateDTO, userId));
-        assertEquals(exceptionMessage, apiException.getMessage());
+        BadRequestException badRequestException = assertThrows(BadRequestException.class, () -> orderService.createOrder(orderCreateDTO, userId));
+        assertEquals(exceptionMessage, badRequestException.getMessage());
     }
 
     @Test
@@ -275,8 +276,8 @@ public class OrderServiceImplTest {
         when(authService.getCurrentUser()).thenReturn(user);
 
         // then
-        ApiException apiException = assertThrows(ApiException.class, () -> orderService.updateOrder(orderId, orderUpdateDTO, 2));
-        assertEquals("User id in path does not match with user id from session", apiException.getMessage());
+        BadRequestException badRequestException = assertThrows(BadRequestException.class, () -> orderService.updateOrder(orderId, orderUpdateDTO, 2));
+        assertEquals("User id in path does not match with user id from session", badRequestException.getMessage());
     }
 
     @Test
@@ -293,8 +294,8 @@ public class OrderServiceImplTest {
         when(authService.getCurrentUser()).thenReturn(user);
 
         // then
-        ApiException apiException = assertThrows(ApiException.class, () -> orderService.updateOrder(orderId, orderUpdateDTO, userID));
-        assertEquals("Order id in the path and in the body should match", apiException.getMessage());
+        BadRequestException badRequestException = assertThrows(BadRequestException.class, () -> orderService.updateOrder(orderId, orderUpdateDTO, userID));
+        assertEquals("Order id in the path and in the body should match", badRequestException.getMessage());
     }
 
     @Test
@@ -314,8 +315,8 @@ public class OrderServiceImplTest {
         when(itemRepository.findById(itemId)).thenReturn(Optional.empty());
 
         // then
-        ApiException apiException = assertThrows(ApiException.class, () -> orderService.updateOrder(orderId, orderUpdateDTO, userId));
-        assertEquals("There is no item with the specified id", apiException.getMessage());
+        NotFoundException notFoundException = assertThrows(NotFoundException.class, () -> orderService.updateOrder(orderId, orderUpdateDTO, userId));
+        assertEquals("There is no item with the specified id", notFoundException.getMessage());
     }
 
     @Test
@@ -337,8 +338,8 @@ public class OrderServiceImplTest {
         when(orderRepository.findById(orderId)).thenReturn(Optional.empty());
 
         // then
-        ApiException apiException = assertThrows(ApiException.class, () -> orderService.updateOrder(orderId, orderUpdateDTO, userId));
-        assertEquals("You have no such order", apiException.getMessage());
+        NotFoundException notFoundException = assertThrows(NotFoundException.class, () -> orderService.updateOrder(orderId, orderUpdateDTO, userId));
+        assertEquals("You have no such order", notFoundException.getMessage());
     }
 
     @Test
@@ -382,8 +383,8 @@ public class OrderServiceImplTest {
         when(authService.getCurrentUser()).thenReturn(user);
 
         // then
-        ApiException apiException = assertThrows(ApiException.class, () -> orderService.patchOrder(orderId, orderPatchDTO, 2));
-        assertEquals("User id in path does not match with user id from session", apiException.getMessage());
+        BadRequestException badRequestException = assertThrows(BadRequestException.class, () -> orderService.patchOrder(orderId, orderPatchDTO, 2));
+        assertEquals("User id in path does not match with user id from session", badRequestException.getMessage());
     }
 
     @Test
@@ -400,8 +401,8 @@ public class OrderServiceImplTest {
         when(authService.getCurrentUser()).thenReturn(user);
 
         // then
-        ApiException apiException = assertThrows(ApiException.class, () -> orderService.patchOrder(orderId, orderPatchDTO, userId));
-        assertEquals("Order id in the path and in the body should match", apiException.getMessage());
+        BadRequestException badRequestException = assertThrows(BadRequestException.class, () -> orderService.patchOrder(orderId, orderPatchDTO, userId));
+        assertEquals("Order id in the path and in the body should match", badRequestException.getMessage());
     }
 
     @Test
@@ -421,8 +422,8 @@ public class OrderServiceImplTest {
         when(authService.getCurrentUser()).thenReturn(user);
 
         // then
-        ApiException apiException = assertThrows(ApiException.class, () -> orderService.patchOrder(orderId, orderPatchDTO, userId));
-        assertEquals("There is no item with the specified id", apiException.getMessage());
+        NotFoundException notFoundException = assertThrows(NotFoundException.class, () -> orderService.patchOrder(orderId, orderPatchDTO, userId));
+        assertEquals("There is no item with the specified id", notFoundException.getMessage());
     }
 
     @Test
@@ -444,8 +445,8 @@ public class OrderServiceImplTest {
         when(orderRepository.findById(orderId)).thenReturn(Optional.empty());
 
         // then
-        ApiException apiException = assertThrows(ApiException.class, () -> orderService.patchOrder(orderId, orderPatchDTO, userId));
-        assertEquals("You have no such order", apiException.getMessage());
+        NotFoundException notFoundException = assertThrows(NotFoundException.class, () -> orderService.patchOrder(orderId, orderPatchDTO, userId));
+        assertEquals("You have no such order", notFoundException.getMessage());
     }
 
     @Test
@@ -488,8 +489,8 @@ public class OrderServiceImplTest {
         when(authService.getCurrentUser()).thenReturn(user);
 
         // then
-        ApiException apiException = assertThrows(ApiException.class, () -> orderService.deleteOrder(orderId, 2));
-        assertEquals("User id in path does not match with user id from session", apiException.getMessage());
+        BadRequestException badRequestException = assertThrows(BadRequestException.class, () -> orderService.deleteOrder(orderId, 2));
+        assertEquals("User id in path does not match with user id from session", badRequestException.getMessage());
     }
 
     @Test
@@ -505,8 +506,8 @@ public class OrderServiceImplTest {
         when(orderRepository.findById(orderId)).thenReturn(Optional.empty());
 
         // then
-        ApiException apiException = assertThrows(ApiException.class, () -> orderService.deleteOrder(orderId, userId));
-        assertEquals("You have no such order", apiException.getMessage());
+        NotFoundException notFoundException = assertThrows(NotFoundException.class, () -> orderService.deleteOrder(orderId, userId));
+        assertEquals("You have no such order", notFoundException.getMessage());
     }
 
     @Test
@@ -555,8 +556,8 @@ public class OrderServiceImplTest {
         when(authService.getCurrentUser()).thenReturn(user);
 
         // then
-        ApiException apiException = assertThrows(ApiException.class, () -> orderService.fulfillOrders(2));
-        assertEquals("User id in path does not match with user id from session", apiException.getMessage());
+        BadRequestException badRequestException = assertThrows(BadRequestException.class, () -> orderService.fulfillOrders(2));
+        assertEquals("User id in path does not match with user id from session", badRequestException.getMessage());
     }
 
     @Test
@@ -621,9 +622,9 @@ public class OrderServiceImplTest {
         when(orderRepository.findByUser(user)).thenReturn(orders);
 
         // then
-        ApiException apiException = assertThrows(ApiException.class, () -> orderService.fulfillOrders(userId));
-        String errorMessage0 = "order: 1 Ordered amount (3) exceeds available stock (2) for item: item name 1.";
-        assertEquals(errorMessage0, apiException.getErrors().get(0));
+        BadRequestException badRequestException = assertThrows(BadRequestException.class, () -> orderService.fulfillOrders(userId));
+        String errorMessage0 = "Ordered amount (3) exceeds available stock (2) for item: item name 1.";
+        assertEquals(errorMessage0, badRequestException.getErrors().get("order: 1").get(0));
         assertEquals(2, item1.getAmount());
         assertEquals(2, item2.getAmount());
     }
@@ -657,11 +658,11 @@ public class OrderServiceImplTest {
         when(orderRepository.findByUser(user)).thenReturn(orders);
 
         // then
-        ApiException apiException = assertThrows(ApiException.class, () -> orderService.fulfillOrders(userId));
-        String errorMessage0 = "order: 1 Ordered amount (3) exceeds available stock (2) for item: item name 1.";
-        assertEquals(errorMessage0, apiException.getErrors().get(0));
-        String errorMessage1 = "order: 2 Ordered amount (3) exceeds available stock (2) for item: item name 2.";
-        assertEquals(errorMessage1, apiException.getErrors().get(1));
+        BadRequestException badRequestException = assertThrows(BadRequestException.class, () -> orderService.fulfillOrders(userId));
+        String errorMessage0 = "Ordered amount (3) exceeds available stock (2) for item: item name 1.";
+        assertEquals(errorMessage0, badRequestException.getErrors().get("order: 1").get(0));
+        String errorMessage1 = "Ordered amount (3) exceeds available stock (2) for item: item name 2.";
+        assertEquals(errorMessage1, badRequestException.getErrors().get("order: 2").get(0));
         assertEquals(2, item1.getAmount());
         assertEquals(2, item2.getAmount());
     }

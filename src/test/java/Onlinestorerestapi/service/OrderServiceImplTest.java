@@ -712,14 +712,21 @@ public class OrderServiceImplTest {
         item2.setAmount(2);
         order1.setItem(item1);
         order2.setItem(item2);
+        OrderResponseDTO orderResponseDTO1 = new OrderResponseDTO();
+        orderResponseDTO1.setAmount(order1.getAmount());
+        OrderResponseDTO orderResponseDTO2 = new OrderResponseDTO();
+        orderResponseDTO2.setAmount(order2.getAmount());
 
         // when
         when(authService.getCurrentUser()).thenReturn(user);
         when(orderRepository.findByUser(user)).thenReturn(orders);
+        when(orderMapper.orderToOrderResponseDTO(order1)).thenReturn(orderResponseDTO1);
+        when(orderMapper.orderToOrderResponseDTO(order2)).thenReturn(orderResponseDTO2);
 
         // then
-        List<Order> fulfilledOrders = orderService.fulfillOrders(userId);
-        assertEquals(orders, fulfilledOrders);
+        List<OrderResponseDTO> fulfilledOrders = orderService.fulfillOrders(userId);
+        assertEquals(orders.get(0).getAmount(), fulfilledOrders.get(0).getAmount());
+        assertEquals(orders.get(1).getAmount(), fulfilledOrders.get(1).getAmount());
         verify(orderRepository).deleteAll(orders);
         verify(itemRepository).saveAll(any());
         assertEquals(0, item1.getAmount());

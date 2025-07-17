@@ -2,7 +2,6 @@
 
 
 // REFACTOR
-• OrderController.fulfillOrders - return dto
 • UserController.updateUser - return dto
 • UserController.patchUser - return dto
 

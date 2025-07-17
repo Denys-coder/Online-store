@@ -1,7 +1,6 @@
 package Onlinestorerestapi.controller;
 
 import Onlinestorerestapi.dto.order.*;
-import Onlinestorerestapi.entity.Order;
 import Onlinestorerestapi.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -118,9 +117,9 @@ public class OrderController {
             security = @SecurityRequirement(name = "sessionAuth")
     )
     @PostMapping("/fulfill")
-    public ResponseEntity<?> fulfillOrders(@PathVariable int userId) {
+    public ResponseEntity<List<OrderResponseDTO>> fulfillOrders(@PathVariable int userId) {
 
-        List<Order> orders = orderService.fulfillOrders(userId);
+        List<OrderResponseDTO> orders = orderService.fulfillOrders(userId);
         return ResponseEntity.ok().body(orders);
     }
 }

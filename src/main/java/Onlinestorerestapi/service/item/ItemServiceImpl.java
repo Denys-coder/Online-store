@@ -61,7 +61,7 @@ public class ItemServiceImpl implements ItemService {
 
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
-    public Item updateItem(int itemId, ItemUpdateDTO itemUpdateDTO, MultipartFile logo, List<MultipartFile> pictures) {
+    public ItemResponseDTO updateItem(int itemId, ItemUpdateDTO itemUpdateDTO, MultipartFile logo, List<MultipartFile> pictures) {
         validateItemIdMatch(itemId, itemUpdateDTO.getId());
         validateItemNameUniqueOrSame(itemUpdateDTO.getName(), itemId);
 
@@ -77,7 +77,7 @@ public class ItemServiceImpl implements ItemService {
 
         imageStorageService.swapImages(oldLogoAndPictureNames, newLogoAndPictures, newLogoAndPictureNames);
 
-        return item;
+        return itemResponseBuilderService.getItemResponseDTOsByItems(List.of(item)).get(0);
     }
 
     @PreAuthorize("hasRole('ADMIN')")

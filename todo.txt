@@ -1,5 +1,4 @@
 // FIX
-• for each error make dto and always return that dto
 
 
 // REFACTOR

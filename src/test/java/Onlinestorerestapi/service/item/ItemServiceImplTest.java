@@ -217,6 +217,8 @@ public class ItemServiceImplTest {
         List<String> newLogoAndPictureNames = new ArrayList<>();
         newLogoAndPictureNames.add(item.getLogoName());
         newLogoAndPictureNames.addAll(item.getPictureNames());
+        ItemResponseDTO itemResponseDTO = new ItemResponseDTO();
+        itemResponseDTO.setId(itemId);
 
         // when
         when(itemRepository.existsByName(updateItemDTOName)).thenReturn(false);
@@ -227,10 +229,11 @@ public class ItemServiceImplTest {
         when(imageUtils.combineLogoAndPictures(logo, pictures)).thenReturn(newLogoAndPictures);
         when(imageUtils.combineLogoAndPictureNames(item.getLogoName(), item.getPictureNames())).thenReturn(newLogoAndPictureNames);
         doNothing().when(imageStorageService).swapImages(oldLogoAndPictureNames, newLogoAndPictures, newLogoAndPictureNames);
+        when(itemResponseBuilderService.getItemResponseDTOsByItems(List.of(item))).thenReturn(List.of(itemResponseDTO));
 
         // then
-        Item updatedItem = itemService.updateItem(itemId, itemUpdateDTO, logo, pictures);
-        assertEquals(item, updatedItem);
+        ItemResponseDTO updatedItem = itemService.updateItem(itemId, itemUpdateDTO, logo, pictures);
+        assertEquals(item.getId(), updatedItem.getId());
         assertEquals(itemId, itemRepository.save(item).getId());
         verify(imageStorageService).swapImages(oldLogoAndPictureNames, newLogoAndPictures, newLogoAndPictureNames);
     }

@@ -76,9 +76,9 @@ public class ItemController {
                                         @RequestPart("logo") @Image MultipartFile logo,
                                         @RequestPart("pictures") @ImageArray @MaxFileCount(maxFileAmount = 10) List<MultipartFile> pictures) {
 
-        Item item = itemService.updateItem(itemId, itemUpdateDTO, logo, pictures);
+        ItemResponseDTO itemResponseDTO = itemService.updateItem(itemId, itemUpdateDTO, logo, pictures);
 
-        return ResponseEntity.ok().body(item);
+        return ResponseEntity.ok().body(itemResponseDTO);
     }
 
     @PreAuthorize("hasRole('ADMIN')")

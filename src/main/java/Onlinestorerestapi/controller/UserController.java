@@ -4,7 +4,6 @@ import Onlinestorerestapi.dto.user.UserCreateDTO;
 import Onlinestorerestapi.dto.user.UserPatchDTO;
 import Onlinestorerestapi.dto.user.UserResponseDTO;
 import Onlinestorerestapi.dto.user.UserUpdateDTO;
-import Onlinestorerestapi.entity.User;
 import Onlinestorerestapi.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -73,11 +72,11 @@ public class UserController {
             security = @SecurityRequirement(name = "sessionAuth")
     )
     @PatchMapping("/{userId}")
-    public ResponseEntity<?> patchUser(@Valid @RequestBody UserPatchDTO userPatchDTO, @PathVariable int userId) {
+    public ResponseEntity<UserResponseDTO> patchUser(@Valid @RequestBody UserPatchDTO userPatchDTO, @PathVariable int userId) {
 
-        User user = userService.patchUser(userPatchDTO, userId);
+        UserResponseDTO userResponseDTO = userService.patchUser(userPatchDTO, userId);
 
-        return ResponseEntity.ok().body(user);
+        return ResponseEntity.ok().body(userResponseDTO);
     }
 
     @PreAuthorize("isAuthenticated()")

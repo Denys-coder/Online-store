@@ -2,7 +2,6 @@
 
 
 // REFACTOR
-• UserController.patchUser - return dto
 
 
 // IMPLEMENT

@@ -283,13 +283,16 @@ public class UserServiceImplTest {
         String telephoneNumber = "123456789";
         userPatchDTO.setTelephoneNumber(telephoneNumber);
         currentUser.setTelephoneNumber(telephoneNumber);
+        UserResponseDTO userResponseDTOToReturn = new UserResponseDTO();
+        userResponseDTOToReturn.setId(userId);
 
         // when
         when(authService.getCurrentUser()).thenReturn(currentUser);
+        when(userMapper.userToUserResponseDTO(currentUser)).thenReturn(userResponseDTOToReturn);
 
         // then
-        User patchedUser = userService.patchUser(userPatchDTO, userId);
-        assertEquals(currentUser, patchedUser);
+        UserResponseDTO userResponseDTO = userService.patchUser(userPatchDTO, userId);
+        assertEquals(currentUser.getId(), userResponseDTO.getId());
         verify(userMapper).mergeUserPatchDTOIntoUser(userPatchDTO, currentUser);
         verify(userRepository).save(currentUser);
         verify(authService).refreshAuthenticatedUser(currentUser);

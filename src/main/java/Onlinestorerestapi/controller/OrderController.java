@@ -30,7 +30,7 @@ public class OrderController {
     )
     @GetMapping("/{orderId}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> getOrder(@PathVariable int userId, @PathVariable int orderId) {
+    public ResponseEntity<OrderResponseDTO> getOrder(@PathVariable int userId, @PathVariable int orderId) {
 
         OrderResponseDTO orderResponseDTO = orderService.getOrderResponseDTO(orderId, userId);
         return ResponseEntity.ok(orderResponseDTO);
@@ -42,7 +42,7 @@ public class OrderController {
             security = @SecurityRequirement(name = "sessionAuth")
     )
     @GetMapping
-    public ResponseEntity<?> getOrders(@PathVariable int userId) {
+    public ResponseEntity<List<OrderResponseDTO>> getOrders(@PathVariable int userId) {
 
         List<OrderResponseDTO> orderResponseDTOs = orderService.getOrderResponseDTOs(userId);
         return ResponseEntity.ok(orderResponseDTOs);
@@ -54,7 +54,7 @@ public class OrderController {
             security = @SecurityRequirement(name = "sessionAuth")
     )
     @PostMapping
-    public ResponseEntity<?> createOrder(@PathVariable int userId, @Valid @RequestBody OrderCreateDTO orderCreateDTO) throws URISyntaxException {
+    public ResponseEntity<OrderResponseDTO> createOrder(@PathVariable int userId, @Valid @RequestBody OrderCreateDTO orderCreateDTO) throws URISyntaxException {
 
         OrderResponseDTO orderResponseDTO = orderService.createOrder(orderCreateDTO, userId);
 
@@ -70,10 +70,10 @@ public class OrderController {
             security = @SecurityRequirement(name = "sessionAuth")
     )
     @PutMapping("/{orderId}")
-    public ResponseEntity<?> updateOrder(@PathVariable int userId, @PathVariable int orderId, @Valid @RequestBody OrderUpdateDTO orderUpdateDTO) {
+    public ResponseEntity<OrderResponseDTO> updateOrder(@PathVariable int userId, @PathVariable int orderId, @Valid @RequestBody OrderUpdateDTO orderUpdateDTO) {
 
-        Order order = orderService.updateOrder(orderId, orderUpdateDTO, userId);
-        return ResponseEntity.ok().body(order);
+        OrderResponseDTO orderResponseDTO = orderService.updateOrder(orderId, orderUpdateDTO, userId);
+        return ResponseEntity.ok().body(orderResponseDTO);
     }
 
     @PreAuthorize("isAuthenticated()")

@@ -15,7 +15,7 @@ public interface OrderService {
 
     OrderResponseDTO createOrder(OrderCreateDTO orderCreateDTO, int userId);
 
-    Order updateOrder(int orderId, OrderUpdateDTO orderUpdateDTO, int userId);
+    OrderResponseDTO updateOrder(int orderId, OrderUpdateDTO orderUpdateDTO, int userId);
 
     Order patchOrder(int orderId, OrderPatchDTO orderPatchDTO, int userId);
 

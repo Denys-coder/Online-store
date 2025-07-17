@@ -352,20 +352,24 @@ public class OrderServiceImplTest {
         orderUpdateDTO.setItemId(itemId);
         Item item = new Item();
         Order order = new Order();
+        order.setId(orderId);
         User user = new User();
         int userId = 1;
         user.setId(userId);
         order.setUser(user);
+        OrderResponseDTO orderResponseDTOToReturn = new OrderResponseDTO();
+        orderResponseDTOToReturn.setId(orderId);
 
         // when
         when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
         when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
         when(orderRepository.save(order)).thenReturn(order);
         when(authService.getCurrentUser()).thenReturn(user);
+        when(orderMapper.orderToOrderResponseDTO(order)).thenReturn(orderResponseDTOToReturn);
 
         // then
-        Order updatedOrder = orderService.updateOrder(orderId, orderUpdateDTO, userId);
-        assertEquals(order, updatedOrder);
+        OrderResponseDTO orderResponseDTO = orderService.updateOrder(orderId, orderUpdateDTO, userId);
+        assertEquals(order.getId(), orderResponseDTO.getId());
         verify(orderMapper).mergeOrderUpdateDTOIntoOrder(orderUpdateDTO, order);
         verify(orderRepository).save(order);
     }

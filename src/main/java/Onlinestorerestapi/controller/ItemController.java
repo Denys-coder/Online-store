@@ -32,7 +32,7 @@ public class ItemController {
 
     @Operation(summary = "Get item by id")
     @GetMapping({"/{itemId}"})
-    public ResponseEntity<?> getItem(@PathVariable int itemId) {
+    public ResponseEntity<ItemResponseDTO> getItem(@PathVariable int itemId) {
 
         ItemResponseDTO itemResponseDTO = itemService.getItemResponseDTO(itemId);
         return ResponseEntity.ok(itemResponseDTO);
@@ -40,7 +40,7 @@ public class ItemController {
 
     @Operation(summary = "Get all items")
     @GetMapping
-    public ResponseEntity<?> getItems() {
+    public ResponseEntity<List<ItemResponseDTO>> getItems() {
 
         List<ItemResponseDTO> itemResponseDTOs = itemService.getItemResponseDTOs();
         return ResponseEntity.ok(itemResponseDTOs);
@@ -52,7 +52,7 @@ public class ItemController {
             security = @SecurityRequirement(name = "sessionAuth")
     )
     @PostMapping
-    public ResponseEntity<?> createItem(@RequestPart("item") @Valid ItemCreateDTO itemCreateDTO,
+    public ResponseEntity<ItemResponseDTO> createItem(@RequestPart("item") @Valid ItemCreateDTO itemCreateDTO,
                                         @RequestPart("logo") @Image MultipartFile logo,
                                         @RequestPart("images") @ImageArray @MaxFileCount(maxFileAmount = 10) List<MultipartFile> pictures) throws URISyntaxException {
 
@@ -70,7 +70,7 @@ public class ItemController {
             security = @SecurityRequirement(name = "sessionAuth")
     )
     @PutMapping("/{itemId}")
-    public ResponseEntity<?> updateItem(@PathVariable int itemId,
+    public ResponseEntity<ItemResponseDTO> updateItem(@PathVariable int itemId,
                                         @RequestPart("item") @Valid ItemUpdateDTO itemUpdateDTO,
                                         @RequestPart("logo") @Image MultipartFile logo,
                                         @RequestPart("pictures") @ImageArray @MaxFileCount(maxFileAmount = 10) List<MultipartFile> pictures) {
@@ -86,7 +86,7 @@ public class ItemController {
             security = @SecurityRequirement(name = "sessionAuth")
     )
     @PatchMapping("/{itemId}")
-    public ResponseEntity<?> patchItem(@PathVariable int itemId,
+    public ResponseEntity<ItemResponseDTO> patchItem(@PathVariable int itemId,
                                        @RequestPart(name = "item", required = false) @Valid ItemPatchDTO itemPatchDTO,
                                        @RequestPart(name = "logo", required = false) @Image MultipartFile logo,
                                        @RequestPart(name = "pictures", required = false) @ImageArray @MaxFileCount(maxFileAmount = 10) List<MultipartFile> pictures) {

@@ -25,7 +25,7 @@ public class AuthController {
             security = @SecurityRequirement(name = "sessionAuth")
     )
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO, HttpServletRequest request) {
+    public ResponseEntity<UserResponseDTO> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO, HttpServletRequest request) {
         UserResponseDTO userResponseDTO = authService.login(loginRequestDTO, request);
 
         return ResponseEntity.ok(userResponseDTO);
@@ -33,7 +33,7 @@ public class AuthController {
 
     @Operation(summary = "Check whether client is authenticated and its role")
     @GetMapping("/status")
-    public ResponseEntity<?> getAuthStatus() {
+    public ResponseEntity<AuthStatusDTO> getAuthStatus() {
 
         AuthStatusDTO authStatusDTO = authService.getAuthStatusDTO();
 

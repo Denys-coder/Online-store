@@ -33,7 +33,7 @@ public class UserController {
             security = @SecurityRequirement(name = "sessionAuth")
     )
     @GetMapping("/{userId}")
-    public ResponseEntity<?> getUser(@PathVariable int userId) {
+    public ResponseEntity<UserResponseDTO> getUser(@PathVariable int userId) {
 
         UserResponseDTO userResponseDTO = userService.getUserResponseDTO(userId);
 
@@ -45,7 +45,7 @@ public class UserController {
             security = @SecurityRequirement(name = "sessionAuth")
     )
     @PostMapping
-    public ResponseEntity<?> createUser(@Valid @RequestBody UserCreateDTO userCreateDTO) {
+    public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody UserCreateDTO userCreateDTO) {
 
         UserResponseDTO userResponseDTO = userService.createUser(userCreateDTO);
 

@@ -82,10 +82,10 @@ public class OrderController {
             security = @SecurityRequirement(name = "sessionAuth")
     )
     @PatchMapping("/{orderId}")
-    public ResponseEntity<?> patchOrder(@PathVariable int userId, @PathVariable int orderId, @Valid @RequestBody OrderPatchDTO orderPatchDTO) {
+    public ResponseEntity<OrderResponseDTO> patchOrder(@PathVariable int userId, @PathVariable int orderId, @Valid @RequestBody OrderPatchDTO orderPatchDTO) {
 
-        Order order = orderService.patchOrder(orderId, orderPatchDTO, userId);
-        return ResponseEntity.ok().body(order);
+        OrderResponseDTO orderResponseDTO = orderService.patchOrder(orderId, orderPatchDTO, userId);
+        return ResponseEntity.ok().body(orderResponseDTO);
     }
 
     @PreAuthorize("isAuthenticated()")

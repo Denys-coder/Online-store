@@ -463,20 +463,24 @@ public class OrderServiceImplTest {
         orderPatchDTO.setItemId(itemId);
         Item item = new Item();
         Order order = new Order();
+        order.setId(orderId);
         User user = new User();
         int userId = 1;
         user.setId(userId);
         order.setUser(user);
+        OrderResponseDTO orderResponseDTO = new OrderResponseDTO();
+        orderResponseDTO.setId(orderId);
 
         // when
         when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
         when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
         when(orderRepository.save(order)).thenReturn(order);
         when(authService.getCurrentUser()).thenReturn(user);
+        when(orderMapper.orderToOrderResponseDTO(order)).thenReturn(orderResponseDTO);
 
         // then
-        Order patchedOrder = orderService.patchOrder(orderId, orderPatchDTO, userId);
-        assertEquals(order, patchedOrder);
+        OrderResponseDTO patchedOrder = orderService.patchOrder(orderId, orderPatchDTO, userId);
+        assertEquals(order.getId(), patchedOrder.getId());
         verify(orderMapper).mergeOrderPatchDTOIntoOrder(orderPatchDTO, order);
         verify(orderRepository).save(order);
     }

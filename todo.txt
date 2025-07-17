@@ -2,8 +2,6 @@
 
 
 // REFACTOR
-• ItemController.updateItem - return dto
-• ItemController.patchItem - return dto
 • OrderController.updateOrder - return dto
 • OrderController.patchOrder - return dto
 • OrderController.fulfillOrders - return dto

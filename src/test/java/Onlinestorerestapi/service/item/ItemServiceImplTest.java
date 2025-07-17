@@ -307,6 +307,8 @@ public class ItemServiceImplTest {
         List<String> newLogoAndPictureNames = new ArrayList<>();
         newLogoAndPictureNames.add(item.getLogoName());
         newLogoAndPictureNames.addAll(item.getPictureNames());
+        ItemResponseDTO itemResponseDTO = new ItemResponseDTO();
+        itemResponseDTO.setId(itemId);
 
         // when
         when(itemRepository.existsByName(patchItemDTOName)).thenReturn(false);
@@ -317,9 +319,11 @@ public class ItemServiceImplTest {
         when(imageUtils.combineLogoAndPictures(logo, pictures)).thenReturn(newLogoAndPictures);
         when(imageUtils.combineLogoAndPictureNames(item.getLogoName(), item.getPictureNames())).thenReturn(newLogoAndPictureNames);
         doNothing().when(imageStorageService).swapImages(oldLogoAndPictureNames, newLogoAndPictures, newLogoAndPictureNames);
+        when(itemResponseBuilderService.getItemResponseDTOsByItems(List.of(item))).thenReturn(List.of(itemResponseDTO));
 
         // then
-        itemService.patchItem(itemId, itemPatchDTO, logo, pictures);
+        ItemResponseDTO patchedItem = itemService.patchItem(itemId, itemPatchDTO, logo, pictures);
+        assertEquals(item.getId(), patchedItem.getId());
         assertEquals(itemId, itemRepository.save(item).getId());
         verify(imageStorageService).swapImages(oldLogoAndPictureNames, newLogoAndPictures, newLogoAndPictureNames);
     }
@@ -337,6 +341,8 @@ public class ItemServiceImplTest {
         List<String> oldLogoAndPicturesNames = new ArrayList<>();
         List<MultipartFile> newLogoAndPictures = new ArrayList<>();
         List<String> newLogoAndPictureNames = new ArrayList<>();
+        ItemResponseDTO itemResponseDTO = new ItemResponseDTO();
+        itemResponseDTO.setId(itemId);
 
         // when
         when(itemRepository.existsByName(itemName)).thenReturn(false);
@@ -347,10 +353,11 @@ public class ItemServiceImplTest {
         when(imageUtils.combineLogoAndPictures(null, null)).thenReturn(newLogoAndPictures);
         when(imageUtils.combineLogoAndPictureNames(null, Collections.emptyList())).thenReturn(newLogoAndPictureNames);
         doNothing().when(imageStorageService).swapImages(oldLogoAndPicturesNames, newLogoAndPictures, newLogoAndPictureNames);
+        when(itemResponseBuilderService.getItemResponseDTOsByItems(List.of(item))).thenReturn(List.of(itemResponseDTO));
 
         // then
-        Item patchedItem = itemService.patchItem(itemId, itemPatchDTO, null, null);
-        assertEquals(item, patchedItem);
+        ItemResponseDTO patchedItem = itemService.patchItem(itemId, itemPatchDTO, null, null);
+        assertEquals(item.getId(), patchedItem.getId());
         assertEquals(item, itemRepository.save(item));
         verify(imageStorageService).swapImages(oldLogoAndPicturesNames, newLogoAndPictures, newLogoAndPictureNames);
     }

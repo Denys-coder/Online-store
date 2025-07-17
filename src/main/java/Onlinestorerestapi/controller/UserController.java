@@ -61,9 +61,8 @@ public class UserController {
             security = @SecurityRequirement(name = "sessionAuth")
     )
     @PutMapping("/{userId}")
-    public ResponseEntity<?> updateUser(@Valid @RequestBody UserUpdateDTO userUpdateDTO, @PathVariable int userId) {
-
-        User user = userService.updateUser(userUpdateDTO, userId);
+    public ResponseEntity<UserResponseDTO> updateUser(@Valid @RequestBody UserUpdateDTO userUpdateDTO, @PathVariable int userId) {
+        UserResponseDTO user = userService.updateUser(userUpdateDTO, userId);
 
         return ResponseEntity.ok().body(user);
     }

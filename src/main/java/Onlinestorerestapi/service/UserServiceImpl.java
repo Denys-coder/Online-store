@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService {
 
     @PreAuthorize("isAuthenticated()")
     @Transactional
-    public User updateUser(UserUpdateDTO userUpdateDTO, int userId) {
+    public UserResponseDTO updateUser(UserUpdateDTO userUpdateDTO, int userId) {
 
         User currentUser = authService.getCurrentUser();
         if (currentUser.getId() != userId) {
@@ -66,7 +66,7 @@ public class UserServiceImpl implements UserService {
 
         authService.refreshAuthenticatedUser(currentUser);
 
-        return currentUser;
+        return userMapper.userToUserResponseDTO(currentUser);
     }
 
     @PreAuthorize("isAuthenticated()")

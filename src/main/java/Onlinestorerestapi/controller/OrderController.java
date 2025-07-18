@@ -233,6 +233,13 @@ public class OrderController {
                     mediaType = "application/json"
             )
     )
+    @ApiResponse(responseCode = "200",
+            description = "Delete all orders. You need to be a user or an admin",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = OrderResponseDTO.class)
+            )
+    )
     @PreAuthorize("isAuthenticated()")
     @Operation(
             summary = "Delete all orders for current user",

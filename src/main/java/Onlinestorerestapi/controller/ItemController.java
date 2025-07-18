@@ -41,6 +41,14 @@ public class ItemController {
                     schema = @Schema(implementation = BadRequestDTO.class)
             )
     )
+
+    @ApiResponse(responseCode = "200",
+            description = "Get item",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ItemResponseDTO.class)
+            )
+    )
     @Operation(summary = "Get item by id")
     @GetMapping({"/{itemId}"})
     public ResponseEntity<ItemResponseDTO> getItem(@PathVariable int itemId) {

@@ -102,10 +102,12 @@ public class OrderController {
                     mediaType = "application/json"
             )
     )
-
     @ApiResponse(responseCode = "200",
             description = "Create order and receive newly created order. You need to be user or admin to access it",
-            content = @Content(array = @ArraySchema(schema = @Schema(implementation = OrderResponseDTO.class)))
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = OrderResponseDTO.class)
+            )
     )
     @PreAuthorize("isAuthenticated()")
     @Operation(
@@ -134,6 +136,13 @@ public class OrderController {
             description = "Returned when you have no authority to access this resource",
             content = @Content(
                     mediaType = "application/json"
+            )
+    )
+    @ApiResponse(responseCode = "200",
+            description = "Update order and receive newly updated order. You need to be the user who created it",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = OrderResponseDTO.class)
             )
     )
     @PreAuthorize("isAuthenticated()")

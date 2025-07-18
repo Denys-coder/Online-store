@@ -130,6 +130,13 @@ public class UserController {
         return ResponseEntity.ok().body(user);
     }
 
+    @ApiResponse(responseCode = "200",
+            description = "Patch user (yourself). You need to be the same user you are patching",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = UserResponseDTO.class)
+            )
+    )
     @ApiResponse(responseCode = "400",
             description = "Returned when client request has error. Error description would be specified in body",
             content = @Content(

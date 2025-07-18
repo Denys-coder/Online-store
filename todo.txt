@@ -1,13 +1,13 @@
 // FIX
-• make Spring Boot return 404 when url non-existent
-• make Spring Boot return 401 when no authentication is provided
-• add 401, 403, 404, 500 responses in Swagger docs
+• make Spring Boot return 404 when url is non-existent
+• make Spring Boot return 401 when no authentication is provided and add them in Swagger
 
 
 // REFACTOR
 
 
 // IMPLEMENT
+• add 500 responses in Swagger docs
 • add Swagger support
 • add logging
 • use Spring Boot AOP

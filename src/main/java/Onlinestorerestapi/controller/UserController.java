@@ -111,6 +111,13 @@ public class UserController {
                     mediaType = "application/json"
             )
     )
+    @ApiResponse(responseCode = "200",
+            description = "Update user (yourself). You need to be the same user you are updating",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = UserResponseDTO.class)
+            )
+    )
     @PreAuthorize("isAuthenticated()")
     @Operation(
             summary = "Update current user (need to specify all fields",

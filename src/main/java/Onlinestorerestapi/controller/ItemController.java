@@ -95,6 +95,13 @@ public class ItemController {
                     mediaType = "application/json"
             )
     )
+    @ApiResponse(responseCode = "200",
+            description = "Create new item and receive newly created item. You need to be an admin to access this resource",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ItemResponseDTO.class)
+            )
+    )
     @PostMapping
     public ResponseEntity<ItemResponseDTO> createItem(@RequestPart("item") @Valid ItemCreateDTO itemCreateDTO,
                                         @RequestPart("logo") @Image MultipartFile logo,

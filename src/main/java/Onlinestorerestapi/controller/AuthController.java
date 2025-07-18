@@ -57,6 +57,19 @@ public class AuthController {
         return ResponseEntity.ok(userResponseDTO);
     }
 
+    @ApiResponse(responseCode = "400",
+            description = "Returned when client request has error. Error description would be specified in body",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = BadRequestDTO.class)
+            )
+    )@ApiResponse(responseCode = "200",
+            description = "Show whether you authenticated and what is your role",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = AuthStatusDTO.class)
+            )
+    )
     @Operation(summary = "Check whether client is authenticated and its role")
     @GetMapping("/status")
     public ResponseEntity<AuthStatusDTO> getAuthStatus() {

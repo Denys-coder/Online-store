@@ -43,12 +43,6 @@ public class SecurityConfiguration {
 
                         // Admin-only endpoints
                         .requestMatchers(API_V1 + "/items/**").hasRole("ADMIN")
-
-                        // Catch-all: deny everything else unless specified (fail closed pattern)
-                        .anyRequest().denyAll()
-                )
-                .exceptionHandling(exception -> exception
-                        .accessDeniedHandler((request, response, accessDeniedException) -> response.setStatus(HttpServletResponse.SC_NOT_FOUND))
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // Allow session creation
@@ -67,8 +61,7 @@ public class SecurityConfiguration {
                         .deleteCookies("JSESSIONID") // Ensure the session cookie is removed
                 )
                 .formLogin(AbstractHttpConfigurer::disable)
-                .httpBasic(AbstractHttpConfigurer::disable)
-                .anonymous(AbstractHttpConfigurer::disable);
+                .httpBasic(AbstractHttpConfigurer::disable);
 
         return http.build();
     }

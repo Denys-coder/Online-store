@@ -136,7 +136,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<UnauthorizedDTO> handleBadCredentialsException(BadCredentialsException exception) {
         return ResponseEntity
-                .status(HttpStatus.NOT_ACCEPTABLE)
+                .status(HttpStatus.UNAUTHORIZED)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(new UnauthorizedDTO());
     }
@@ -154,7 +154,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<NotFoundDTO> handleNotFoundException(NotFoundException exception) {
         return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
+                .status(HttpStatus.NOT_FOUND)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(new NotFoundDTO(exception.getMessage()));
     }

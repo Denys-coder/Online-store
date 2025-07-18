@@ -2,9 +2,14 @@ package Onlinestorerestapi.controller;
 
 import Onlinestorerestapi.dto.auth.AuthStatusDTO;
 import Onlinestorerestapi.dto.auth.LoginRequestDTO;
+import Onlinestorerestapi.dto.error.BadRequestDTO;
+import Onlinestorerestapi.dto.error.UnauthorizedDTO;
 import Onlinestorerestapi.dto.user.UserResponseDTO;
 import Onlinestorerestapi.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,6 +28,27 @@ public class AuthController {
     @Operation(
             summary = "Logs into the system",
             security = @SecurityRequirement(name = "sessionAuth")
+    )
+    @ApiResponse(responseCode = "200",
+            description = "Returned when user successfully logged in",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = UserResponseDTO.class)
+            )
+    )
+    @ApiResponse(responseCode = "400",
+            description = "Returned when client request has error. Error description would be specified in body",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = BadRequestDTO.class)
+            )
+    )
+    @ApiResponse(responseCode = "401",
+            description = "Username or password is invalid",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = UnauthorizedDTO.class)
+            )
     )
     @PostMapping("/login")
     public ResponseEntity<UserResponseDTO> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO, HttpServletRequest request) {

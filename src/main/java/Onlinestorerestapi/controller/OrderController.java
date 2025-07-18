@@ -170,6 +170,13 @@ public class OrderController {
                     mediaType = "application/json"
             )
     )
+    @ApiResponse(responseCode = "200",
+            description = "Patch order and receive newly patched order. You need to be the user who created it",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = OrderResponseDTO.class)
+            )
+    )
     @PreAuthorize("isAuthenticated()")
     @Operation(
             summary = "Update order (need to specify only fields being updated",

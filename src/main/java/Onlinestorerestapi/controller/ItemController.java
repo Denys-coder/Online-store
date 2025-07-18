@@ -198,6 +198,12 @@ public class ItemController {
                     mediaType = "application/json"
             )
     )
+    @ApiResponse(responseCode = "200",
+            description = "Delete item. You need to be an admin to access this resource",
+            content = @Content(
+                    mediaType = "application/json"
+            )
+    )
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(
             summary = "Delete item",

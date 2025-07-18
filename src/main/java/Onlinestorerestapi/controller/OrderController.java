@@ -265,6 +265,13 @@ public class OrderController {
                     mediaType = "application/json"
             )
     )
+    @ApiResponse(responseCode = "200",
+            description = "Fulfill orders and receive fulfilled order. You need to be a user or an admin",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = OrderResponseDTO.class)
+            )
+    )
     @PreAuthorize("isAuthenticated()")
     @Operation(
             summary = "Fulfill all orders for current user",

@@ -48,6 +48,13 @@ public class UserController {
                     mediaType = "application/json"
             )
     )
+    @ApiResponse(responseCode = "200",
+            description = "Get current user (yourself). You need to be authenticated",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = UserResponseDTO.class)
+            )
+    )
     @GetMapping("/{userId}")
     public ResponseEntity<UserResponseDTO> getUser(@PathVariable int userId) {
 

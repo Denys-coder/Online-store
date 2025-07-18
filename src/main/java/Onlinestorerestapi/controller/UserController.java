@@ -70,6 +70,13 @@ public class UserController {
                     schema = @Schema(implementation = BadRequestDTO.class)
             )
     )
+    @ApiResponse(responseCode = "200",
+            description = "Create new user and receive newly created user. You need to be an admin",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = UserResponseDTO.class)
+            )
+    )
     @Operation(
             summary = "Create new user",
             security = @SecurityRequirement(name = "sessionAuth")

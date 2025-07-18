@@ -128,6 +128,12 @@ public class ItemController {
                     mediaType = "application/json"
             )
     )
+    @ApiResponse(responseCode = "200",
+            description = "Update item and receive newly updated item. You need to be an admin to access this resource",
+            content = @Content(
+                    mediaType = "application/json"
+            )
+    )
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(
             summary = "Update item (need to specify all fields)",

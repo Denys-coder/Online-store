@@ -10,6 +10,7 @@ import Onlinestorerestapi.validation.annotation.item.Image;
 import Onlinestorerestapi.validation.annotation.item.ImageArray;
 import Onlinestorerestapi.validation.annotation.item.MaxFileCount;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -63,6 +64,10 @@ public class ItemController {
                     mediaType = "application/json",
                     schema = @Schema(implementation = BadRequestDTO.class)
             )
+    )
+    @ApiResponse(responseCode = "200",
+            description = "Get all items",
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = ItemResponseDTO.class)))
     )
     @Operation(summary = "Get all items")
     @GetMapping

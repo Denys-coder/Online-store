@@ -44,6 +44,13 @@ public class OrderController {
                     mediaType = "application/json"
             )
     )
+    @ApiResponse(responseCode = "200",
+            description = "Get order. You need to be an the user who created specified order",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = OrderResponseDTO.class)
+            )
+    )
     @GetMapping("/{orderId}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<OrderResponseDTO> getOrder(@PathVariable int userId, @PathVariable int orderId) {

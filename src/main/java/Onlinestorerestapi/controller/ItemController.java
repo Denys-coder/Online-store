@@ -131,7 +131,8 @@ public class ItemController {
     @ApiResponse(responseCode = "200",
             description = "Update item and receive newly updated item. You need to be an admin to access this resource",
             content = @Content(
-                    mediaType = "application/json"
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ItemResponseDTO.class)
             )
     )
     @PreAuthorize("hasRole('ADMIN')")
@@ -166,7 +167,8 @@ public class ItemController {
     @ApiResponse(responseCode = "200",
             description = "Patch item and receive newly patched item. You need to be an admin to access this resource",
             content = @Content(
-                    mediaType = "application/json"
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ItemResponseDTO.class)
             )
     )
     @PreAuthorize("hasRole('ADMIN')")

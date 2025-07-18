@@ -46,7 +46,7 @@ public class OrderController {
             )
     )
     @ApiResponse(responseCode = "200",
-            description = "Get order. You need to be an the user who created specified order",
+            description = "Get your order. You need to be an the user who created specified order",
             content = @Content(
                     mediaType = "application/json",
                     schema = @Schema(implementation = OrderResponseDTO.class)
@@ -74,7 +74,7 @@ public class OrderController {
             )
     )
     @ApiResponse(responseCode = "200",
-            description = "Get all orders",
+            description = "Get all your orders. You need to be user or admin to access it",
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = OrderResponseDTO.class)))
     )
     @PreAuthorize("isAuthenticated()")
@@ -101,6 +101,11 @@ public class OrderController {
             content = @Content(
                     mediaType = "application/json"
             )
+    )
+
+    @ApiResponse(responseCode = "200",
+            description = "Create order and receive newly created order. You need to be user or admin to access it",
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = OrderResponseDTO.class)))
     )
     @PreAuthorize("isAuthenticated()")
     @Operation(

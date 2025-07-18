@@ -207,6 +207,12 @@ public class OrderController {
             summary = "Delete order",
             security = @SecurityRequirement(name = "sessionAuth")
     )
+    @ApiResponse(responseCode = "200",
+            description = "Delete order. You need to be the user who created it",
+            content = @Content(
+                    mediaType = "application/json"
+            )
+    )
     @DeleteMapping("/{orderId}")
     public ResponseEntity<?> deleteOrder(@PathVariable int userId, @PathVariable int orderId) {
 

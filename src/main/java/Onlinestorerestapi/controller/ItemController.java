@@ -1,5 +1,6 @@
 package Onlinestorerestapi.controller;
 
+import Onlinestorerestapi.dto.error.BadRequestDTO;
 import Onlinestorerestapi.dto.item.ItemCreateDTO;
 import Onlinestorerestapi.dto.item.ItemResponseDTO;
 import Onlinestorerestapi.dto.item.ItemPatchDTO;
@@ -9,6 +10,9 @@ import Onlinestorerestapi.validation.annotation.item.Image;
 import Onlinestorerestapi.validation.annotation.item.ImageArray;
 import Onlinestorerestapi.validation.annotation.item.MaxFileCount;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -30,6 +34,13 @@ public class ItemController {
 
     private final ItemService itemService;
 
+    @ApiResponse(responseCode = "400",
+            description = "Returned when client request has error. Error description would be specified in body",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = BadRequestDTO.class)
+            )
+    )
     @Operation(summary = "Get item by id")
     @GetMapping({"/{itemId}"})
     public ResponseEntity<ItemResponseDTO> getItem(@PathVariable int itemId) {
@@ -38,6 +49,13 @@ public class ItemController {
         return ResponseEntity.ok(itemResponseDTO);
     }
 
+    @ApiResponse(responseCode = "400",
+            description = "Returned when client request has error. Error description would be specified in body",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = BadRequestDTO.class)
+            )
+    )
     @Operation(summary = "Get all items")
     @GetMapping
     public ResponseEntity<List<ItemResponseDTO>> getItems() {
@@ -46,10 +64,23 @@ public class ItemController {
         return ResponseEntity.ok(itemResponseDTOs);
     }
 
+    @ApiResponse(responseCode = "400",
+            description = "Returned when client request has error. Error description would be specified in body",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = BadRequestDTO.class)
+            )
+    )
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(
             summary = "Create new item",
             security = @SecurityRequirement(name = "sessionAuth")
+    )
+    @ApiResponse(responseCode = "403",
+            description = "Returned when you have no authority to access this resource",
+            content = @Content(
+                    mediaType = "application/json"
+            )
     )
     @PostMapping
     public ResponseEntity<ItemResponseDTO> createItem(@RequestPart("item") @Valid ItemCreateDTO itemCreateDTO,
@@ -64,6 +95,19 @@ public class ItemController {
                 .body(itemResponseDTO);
     }
 
+    @ApiResponse(responseCode = "400",
+            description = "Returned when client request has error. Error description would be specified in body",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = BadRequestDTO.class)
+            )
+    )
+    @ApiResponse(responseCode = "403",
+            description = "Returned when you have no authority to access this resource",
+            content = @Content(
+                    mediaType = "application/json"
+            )
+    )
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(
             summary = "Update item (need to specify all fields)",
@@ -80,6 +124,19 @@ public class ItemController {
         return ResponseEntity.ok().body(itemResponseDTO);
     }
 
+    @ApiResponse(responseCode = "400",
+            description = "Returned when client request has error. Error description would be specified in body",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = BadRequestDTO.class)
+            )
+    )
+    @ApiResponse(responseCode = "403",
+            description = "Returned when you have no authority to access this resource",
+            content = @Content(
+                    mediaType = "application/json"
+            )
+    )
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(
             summary = "Update item (need to specify only fields being updated",
@@ -96,6 +153,19 @@ public class ItemController {
         return ResponseEntity.ok().body(itemResponseDTO);
     }
 
+    @ApiResponse(responseCode = "400",
+            description = "Returned when client request has error. Error description would be specified in body",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = BadRequestDTO.class)
+            )
+    )
+    @ApiResponse(responseCode = "403",
+            description = "Returned when you have no authority to access this resource",
+            content = @Content(
+                    mediaType = "application/json"
+            )
+    )
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(
             summary = "Delete item",

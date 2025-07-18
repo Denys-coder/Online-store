@@ -1,8 +1,12 @@
 package Onlinestorerestapi.controller;
 
+import Onlinestorerestapi.dto.error.BadRequestDTO;
 import Onlinestorerestapi.dto.image.ImageResponseDTO;
 import Onlinestorerestapi.service.image.ImageService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
@@ -22,6 +26,18 @@ public class ImageController {
 
     private final ImageService imageService;
 
+    @ApiResponse(responseCode = "400",
+            description = "Returned when client request has error. Error description would be specified in body",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = BadRequestDTO.class)
+            )
+    )
+    @ApiResponse(responseCode = "200",
+            description = "Get image",
+            content = @Content(
+                    mediaType = "image/jpeg")
+    )
     @Operation(summary = "Get an image by its name, which is its id")
     @GetMapping("/{imageName}")
     public ResponseEntity<Resource> getImage(@PathVariable String imageName) {

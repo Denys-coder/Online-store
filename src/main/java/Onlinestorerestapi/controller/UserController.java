@@ -1,11 +1,15 @@
 package Onlinestorerestapi.controller;
 
+import Onlinestorerestapi.dto.error.BadRequestDTO;
 import Onlinestorerestapi.dto.user.UserCreateDTO;
 import Onlinestorerestapi.dto.user.UserPatchDTO;
 import Onlinestorerestapi.dto.user.UserResponseDTO;
 import Onlinestorerestapi.dto.user.UserUpdateDTO;
 import Onlinestorerestapi.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,10 +30,23 @@ public class UserController {
 
     private final UserService userService;
 
+    @ApiResponse(responseCode = "400",
+            description = "Returned when client request has error. Error description would be specified in body",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = BadRequestDTO.class)
+            )
+    )
     @PreAuthorize("isAuthenticated()")
     @Operation(
             summary = "Get current user (which is logged in)",
             security = @SecurityRequirement(name = "sessionAuth")
+    )
+    @ApiResponse(responseCode = "403",
+            description = "Returned when you have no authority to access this resource",
+            content = @Content(
+                    mediaType = "application/json"
+            )
     )
     @GetMapping("/{userId}")
     public ResponseEntity<UserResponseDTO> getUser(@PathVariable int userId) {
@@ -39,9 +56,22 @@ public class UserController {
         return ResponseEntity.ok(userResponseDTO);
     }
 
+    @ApiResponse(responseCode = "400",
+            description = "Returned when client request has error. Error description would be specified in body",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = BadRequestDTO.class)
+            )
+    )
     @Operation(
             summary = "Create new user",
             security = @SecurityRequirement(name = "sessionAuth")
+    )
+    @ApiResponse(responseCode = "403",
+            description = "Returned when you have no authority to access this resource",
+            content = @Content(
+                    mediaType = "application/json"
+            )
     )
     @PostMapping
     public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody UserCreateDTO userCreateDTO) {
@@ -54,6 +84,19 @@ public class UserController {
                 .body(userResponseDTO);
     }
 
+    @ApiResponse(responseCode = "400",
+            description = "Returned when client request has error. Error description would be specified in body",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = BadRequestDTO.class)
+            )
+    )
+    @ApiResponse(responseCode = "403",
+            description = "Returned when you have no authority to access this resource",
+            content = @Content(
+                    mediaType = "application/json"
+            )
+    )
     @PreAuthorize("isAuthenticated()")
     @Operation(
             summary = "Update current user (need to specify all fields",
@@ -66,6 +109,19 @@ public class UserController {
         return ResponseEntity.ok().body(user);
     }
 
+    @ApiResponse(responseCode = "400",
+            description = "Returned when client request has error. Error description would be specified in body",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = BadRequestDTO.class)
+            )
+    )
+    @ApiResponse(responseCode = "403",
+            description = "Returned when you have no authority to access this resource",
+            content = @Content(
+                    mediaType = "application/json"
+            )
+    )
     @PreAuthorize("isAuthenticated()")
     @Operation(
             summary = "Update current user (need to specify only fields being updated",
@@ -79,6 +135,19 @@ public class UserController {
         return ResponseEntity.ok().body(userResponseDTO);
     }
 
+    @ApiResponse(responseCode = "400",
+            description = "Returned when client request has error. Error description would be specified in body",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = BadRequestDTO.class)
+            )
+    )
+    @ApiResponse(responseCode = "403",
+            description = "Returned when you have no authority to access this resource",
+            content = @Content(
+                    mediaType = "application/json"
+            )
+    )
     @PreAuthorize("isAuthenticated()")
     @Operation(
             summary = "Log out and delete current user",

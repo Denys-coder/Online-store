@@ -1,8 +1,12 @@
 package Onlinestorerestapi.controller;
 
+import Onlinestorerestapi.dto.error.BadRequestDTO;
 import Onlinestorerestapi.dto.order.*;
 import Onlinestorerestapi.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -27,6 +31,19 @@ public class OrderController {
             summary = "Get order by id",
             security = @SecurityRequirement(name = "sessionAuth")
     )
+    @ApiResponse(responseCode = "400",
+            description = "Returned when client request has error. Error description would be specified in body",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = BadRequestDTO.class)
+            )
+    )
+    @ApiResponse(responseCode = "403",
+            description = "Returned when you have no authority to access this resource",
+            content = @Content(
+                    mediaType = "application/json"
+            )
+    )
     @GetMapping("/{orderId}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<OrderResponseDTO> getOrder(@PathVariable int userId, @PathVariable int orderId) {
@@ -35,6 +52,19 @@ public class OrderController {
         return ResponseEntity.ok(orderResponseDTO);
     }
 
+    @ApiResponse(responseCode = "400",
+            description = "Returned when client request has error. Error description would be specified in body",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = BadRequestDTO.class)
+            )
+    )
+    @ApiResponse(responseCode = "403",
+            description = "Returned when you have no authority to access this resource",
+            content = @Content(
+                    mediaType = "application/json"
+            )
+    )
     @PreAuthorize("isAuthenticated()")
     @Operation(
             summary = "Get all orders",
@@ -47,6 +77,19 @@ public class OrderController {
         return ResponseEntity.ok(orderResponseDTOs);
     }
 
+    @ApiResponse(responseCode = "400",
+            description = "Returned when client request has error. Error description would be specified in body",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = BadRequestDTO.class)
+            )
+    )
+    @ApiResponse(responseCode = "403",
+            description = "Returned when you have no authority to access this resource",
+            content = @Content(
+                    mediaType = "application/json"
+            )
+    )
     @PreAuthorize("isAuthenticated()")
     @Operation(
             summary = "Create order",
@@ -63,6 +106,19 @@ public class OrderController {
                 .body(orderResponseDTO);
     }
 
+    @ApiResponse(responseCode = "400",
+            description = "Returned when client request has error. Error description would be specified in body",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = BadRequestDTO.class)
+            )
+    )
+    @ApiResponse(responseCode = "403",
+            description = "Returned when you have no authority to access this resource",
+            content = @Content(
+                    mediaType = "application/json"
+            )
+    )
     @PreAuthorize("isAuthenticated()")
     @Operation(
             summary = "Update order (need to specify all fields",
@@ -75,6 +131,19 @@ public class OrderController {
         return ResponseEntity.ok().body(orderResponseDTO);
     }
 
+    @ApiResponse(responseCode = "400",
+            description = "Returned when client request has error. Error description would be specified in body",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = BadRequestDTO.class)
+            )
+    )
+    @ApiResponse(responseCode = "403",
+            description = "Returned when you have no authority to access this resource",
+            content = @Content(
+                    mediaType = "application/json"
+            )
+    )
     @PreAuthorize("isAuthenticated()")
     @Operation(
             summary = "Update order (need to specify only fields being updated",
@@ -87,6 +156,19 @@ public class OrderController {
         return ResponseEntity.ok().body(orderResponseDTO);
     }
 
+    @ApiResponse(responseCode = "400",
+            description = "Returned when client request has error. Error description would be specified in body",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = BadRequestDTO.class)
+            )
+    )
+    @ApiResponse(responseCode = "403",
+            description = "Returned when you have no authority to access this resource",
+            content = @Content(
+                    mediaType = "application/json"
+            )
+    )
     @PreAuthorize("isAuthenticated()")
     @Operation(
             summary = "Delete order",
@@ -99,6 +181,19 @@ public class OrderController {
         return ResponseEntity.noContent().build();
     }
 
+    @ApiResponse(responseCode = "400",
+            description = "Returned when client request has error. Error description would be specified in body",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = BadRequestDTO.class)
+            )
+    )
+    @ApiResponse(responseCode = "403",
+            description = "Returned when you have no authority to access this resource",
+            content = @Content(
+                    mediaType = "application/json"
+            )
+    )
     @PreAuthorize("isAuthenticated()")
     @Operation(
             summary = "Delete all orders for current user",
@@ -111,6 +206,19 @@ public class OrderController {
         return ResponseEntity.noContent().build();
     }
 
+    @ApiResponse(responseCode = "400",
+            description = "Returned when client request has error. Error description would be specified in body",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = BadRequestDTO.class)
+            )
+    )
+    @ApiResponse(responseCode = "403",
+            description = "Returned when you have no authority to access this resource",
+            content = @Content(
+                    mediaType = "application/json"
+            )
+    )
     @PreAuthorize("isAuthenticated()")
     @Operation(
             summary = "Fulfill all orders for current user",

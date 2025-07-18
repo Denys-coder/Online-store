@@ -4,6 +4,7 @@ import Onlinestorerestapi.dto.error.BadRequestDTO;
 import Onlinestorerestapi.dto.order.*;
 import Onlinestorerestapi.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -71,6 +72,10 @@ public class OrderController {
             content = @Content(
                     mediaType = "application/json"
             )
+    )
+    @ApiResponse(responseCode = "200",
+            description = "Get all orders",
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = OrderResponseDTO.class)))
     )
     @PreAuthorize("isAuthenticated()")
     @Operation(
